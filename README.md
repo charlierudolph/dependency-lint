@@ -4,7 +4,7 @@ Lints your NPM `dependencies` and `devDependencies` reporting which node modules
 * **unused** and should be removed from your `dependencies` or `devDependencies`
 * **mislabeled** and should be moved from `dependencies` to `devDependencies` or vice versa
 
-# Installation
+## Installation
 ```
 npm install dependency-lint
 ```
