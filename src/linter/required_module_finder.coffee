@@ -1,15 +1,16 @@
+_ = require 'lodash'
 async = require 'async'
 coffeeScript = require 'coffee-script'
 detective = require 'detective'
 FileFinder = require './file_finder'
 fs = require 'fs'
-_ = require 'lodash'
+path = require 'path'
 
 
 class RequiredModuleFinder
 
-  constructor: ({devFiles, dir, ignoreFiles}) ->
-    @fileFinder = new FileFinder {devFiles, dir, ignoreFiles}
+  constructor: ({devFiles, @dir, ignoreFiles}) ->
+    @fileFinder = new FileFinder {devFiles, @dir, ignoreFiles}
 
 
   find: (done) ->
@@ -33,7 +34,8 @@ class RequiredModuleFinder
         try
           data = coffeeScript.compile data
         catch err
-          done err, null
+          err.message = "Error compiling #{path.relative @dir, file}: #{err.message}"
+          done err
 
       done null, detective(data, {@isRequire})
 

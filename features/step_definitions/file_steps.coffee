@@ -14,6 +14,10 @@ module.exports = ->
     fs.outputFile path.join(@tmpDir, file), "require.resolve '#{module}'", done
 
 
+  @Given /^I have a file "([^"]*)" with a coffeescript compilation error$/, (file, done) ->
+    fs.outputFile path.join(@tmpDir, file), "require '", done
+
+
   @Given /^I have configured "([^"]*)" to contain "([^"]*)"$/, (key, value, done) ->
     json = {}
     json[key] = [value]
