@@ -1,0 +1,48 @@
+{
+  "name": "dependency-lint",
+  "version": "1.0.0",
+  "description": "Lints npm dependencies and devDependencies",
+  "main": "index.js",
+  "scripts": {
+    "feature-tests": "cucumber-js",
+    "pretest": "coffeelint src",
+    "test": "npm run-script unit-tests && npm run-script feature-tests",
+    "unit-tests": "mycha run --testDir=src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/charlierudolph/dependency-lint.git"
+  },
+  "keywords": [
+    "dependency",
+    "devDependency",
+    "lint"
+  ],
+  "author": {
+    "name": "Charlie Rudolph",
+    "email": "charles.w.rudolph@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/charlierudolph/dependency-lint/issues"
+  },
+  "homepage": "https://github.com/charlierudolph/dependency-lint",
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "chai-fs": "^0.1.0",
+    "coffeelint": "^1.8.1",
+    "cucumber": "^0.4.7",
+    "mycha": "^0.6.4",
+    "tmp": "0.0.24"
+  },
+  "dependencies": {
+    "async": "^0.9.0",
+    "coffee-script": "^1.9.0",
+    "colors": "^1.0.3",
+    "detective": "^4.0.0",
+    "docopt": "^0.4.1",
+    "fs-extra": "^0.16.3",
+    "glob": "^4.3.5",
+    "lodash": "^3.2.0"
+  }
+}

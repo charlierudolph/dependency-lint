@@ -1,0 +1,14 @@
+{
+  "devFiles":[
+    "^(features|spec|test)/",
+    "_(spec|test).(coffee|js)$"
+  ],
+  "devScripts":[
+    "publish",
+    "test"
+  ],
+  "ignoreFiles":[
+    "^node_modules/"
+  ],
+  "ignoreUnused":[]
+}
