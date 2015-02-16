@@ -29,7 +29,7 @@ If you run into an example where `dependency-lint` marks a node module as unused
 ## Configuration
 Create a configuration file with
 ```
-depepdency-lint --generate-config
+dependency-lint --generate-config
 ```
 
 #### Options
