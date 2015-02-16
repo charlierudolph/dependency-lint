@@ -1,5 +1,5 @@
 # dependency-lint
-Lints you `dependencies` and `devDependencies` reporting which node modules are
+Lints your NPM `dependencies` and `devDependencies` reporting which node modules are
 * **missing** and should be added to your `dependencies` or `devDependencies`
 * **unused** and should be removed from your `dependencies` or `devDependencies`
 * **mislabeled** and should be moved from `dependencies` to `devDependencies` or vice versa
