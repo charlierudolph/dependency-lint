@@ -3,7 +3,7 @@ _ = require 'lodash'
 
 class DependencyLinter
 
-  constructor: ({@ignoreUnused}) ->
+  constructor: ({@allowUnused}) ->
 
 
   # Lints the used and listed modules
@@ -40,15 +40,15 @@ class DependencyLinter
     list.push {name: moduleName} for moduleName in passing
     for error, moduleNames of errors
       for moduleName in moduleNames
-        if error is 'unused' and @isInIgnoredUnused moduleName
-          list.push {name: moduleName, warning: 'unused but ignored'}
+        if error is 'unused' and @canBeUnused moduleName
+          list.push {name: moduleName, warning: 'unused - allowed'}
         else
           list.push {name: moduleName, error}
     _.sortBy list, 'name'
 
 
-  isInIgnoredUnused: (moduleName) ->
-    _.any @ignoreUnused, (regex) -> moduleName.match regex
+  canBeUnused: (moduleName) ->
+    _.any @allowUnused, (regex) -> moduleName.match regex
 
 
   passing: ({used, listed}) ->

@@ -24,10 +24,10 @@ describe 'ConfigurationLoader', ->
 
       it 'returns the default configuration merged with the user configuration', ->
         expect(@config).to.eql
+          allowUnused: []
           devFiles: ['^test/']
           devScripts: ['publish', 'test']
           ignoreFiles: ['^node_modules/']
-          ignoreUnused: []
 
     context 'without a user configuration', ->
       beforeEach (done) ->
@@ -38,7 +38,7 @@ describe 'ConfigurationLoader', ->
 
       it 'returns the default configuration', ->
         expect(@config).to.eql
+          allowUnused: []
           devFiles: ['^(features|spec|test)/', '_(spec|test).(coffee|js)$']
           devScripts: ['publish', 'test']
           ignoreFiles: ['^node_modules/']
-          ignoreUnused: []

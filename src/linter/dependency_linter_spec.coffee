@@ -3,7 +3,7 @@ DependencyLinter = require './dependency_linter'
 
 describe 'DependencyLinter', ->
   beforeEach ->
-    @dependencyLinter = new DependencyLinter {ignoreUnused: ['b']}
+    @dependencyLinter = new DependencyLinter {allowUnused: ['b']}
     @input =
       dependencies: {used: [], listed: []}
       devDependencies: {used: [], listed: []}
@@ -21,7 +21,7 @@ describe 'DependencyLinter', ->
         expect(@result).to.eql @output
 
     describe 'listed as dependency', ->
-      describe 'not on ignore unused list', ->
+      describe 'not on allow unused list', ->
         beforeEach ->
           @input.dependencies.listed.push 'a'
           @result = @dependencyLinter.lint @input
@@ -30,17 +30,17 @@ describe 'DependencyLinter', ->
           @output.dependencies.push {name: 'a', error: 'unused'}
           expect(@result).to.eql @output
 
-      describe 'on ignore unused list', ->
+      describe 'on allowed unused list', ->
         beforeEach ->
           @input.dependencies.listed.push 'b'
           @result = @dependencyLinter.lint @input
 
-        it 'returned with warning: warning but ignored', ->
-          @output.dependencies.push {name: 'b', warning: 'unused but ignored'}
+        it 'returned with warning: unused - allowed', ->
+          @output.dependencies.push {name: 'b', warning: 'unused - allowed'}
           expect(@result).to.eql @output
 
     describe 'listed as devDependency', ->
-      describe 'not on ignore unused list', ->
+      describe 'not on allowed unused list', ->
         beforeEach ->
           @input.devDependencies.listed.push 'a'
           @result = @dependencyLinter.lint @input
@@ -49,13 +49,13 @@ describe 'DependencyLinter', ->
           @output.devDependencies.push {name: 'a', error: 'unused'}
           expect(@result).to.eql @output
 
-      describe 'on ignore unused list', ->
+      describe 'on allowed unused list', ->
         beforeEach ->
           @input.devDependencies.listed.push 'b'
           @result = @dependencyLinter.lint @input
 
-        it 'returned with warning: unused but ignored', ->
-          @output.devDependencies.push {name: 'b', warning: 'unused but ignored'}
+        it 'returned with warning: unused - allowed', ->
+          @output.devDependencies.push {name: 'b', warning: 'unused - allowed'}
           expect(@result).to.eql @output
 
 

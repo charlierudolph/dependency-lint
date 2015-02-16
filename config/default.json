@@ -1,4 +1,5 @@
 {
+  "allowUnused":[],
   "devFiles":[
     "^(features|spec|test)/",
     "_(spec|test).(coffee|js)$"
@@ -9,6 +10,5 @@
   ],
   "ignoreFiles":[
     "^node_modules/"
-  ],
-  "ignoreUnused":[]
+  ]
 }

@@ -33,6 +33,10 @@ depepdency-lint --generate-config
 ```
 
 #### Options
+* `allowUnused`
+  * array of strings to match against a module name to determine if it is allowed to be unused
+  * default: `[]`
+  * Please create an [issue](https://github.com/charlierudolph/dependency-lint/issues) anytime you need to use this
 * `devFiles`
   * array of strings to match againt a filename to determine if it is used only for development
   * default: `["^(features|spec|test)/", "_(spec|test).(coffee|js)$"]`
@@ -42,9 +46,3 @@ depepdency-lint --generate-config
 * `ignoreFiles`
   * array of strings to match against a filename to determine if it should be ignored
   * default: `["^node_modules/"]`
-* `ignoreUnused`
-  * array of strings to match against a module name to determine if it is allowed to be unused
-  * default: `[]`
-  * Please create an [issue](https://github.com/charlierudolph/dependency-lint/issues) anytime you need to use this
-
-

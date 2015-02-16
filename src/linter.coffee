@@ -14,8 +14,8 @@ class Linter
     'stream', 'string_decoder', 'tls', 'tty', 'url', 'util', 'vm', 'zlib'
   ]
 
-  constructor: (@dir, {devFiles, devScripts, ignoreFiles, ignoreUnused}) ->
-    @dependencyLinter = new DependencyLinter {ignoreUnused}
+  constructor: (@dir, {allowUnused, devFiles, devScripts, ignoreFiles}) ->
+    @dependencyLinter = new DependencyLinter {allowUnused}
     @executedModuleFinder = new ExecutedModuleFinder {devScripts, @dir}
     @requiredModuleFinder = new RequiredModuleFinder {devFiles, @dir, ignoreFiles}
     @listedModules = @getListedModules()
