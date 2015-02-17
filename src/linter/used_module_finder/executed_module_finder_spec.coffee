@@ -18,14 +18,14 @@ describe 'ExecutedModuleFinder', ->
       beforeEach (done) ->
         fs.outputJson @packagePath, {}, (err) =>
           if err then return done err
-          @executedModulesFinder = new ExecutedModuleFinder {devScripts: ['test'], dir: @tmpDir}
+          @executedModulesFinder = new ExecutedModuleFinder dir: @tmpDir
           @executedModulesFinder.find (@err, @result) => done()
 
       it 'does not return an error', ->
         expect(@err).to.not.exist
 
       it 'returns an empty result', ->
-        expect(@result).to.eql {dev: [], prod: []}
+        expect(@result).to.eql []
 
 
     context 'script using module exectuable', ->
@@ -41,11 +41,11 @@ describe 'ExecutedModuleFinder', ->
               )
           ], (err) =>
             if err then return done err
-            @executedModulesFinder = new ExecutedModuleFinder {devScripts: ['test'], dir: @tmpDir}
+            @executedModulesFinder = new ExecutedModuleFinder dir: @tmpDir
             @executedModulesFinder.find (@err, @result) => done()
 
         it 'does not return an error', ->
           expect(@err).to.not.exist
 
         it 'returns the module under dev', ->
-          expect(@result).to.eql {dev: ['mycha'], prod: []}
+          expect(@result).to.eql [name: 'mycha', scripts: ['test']]

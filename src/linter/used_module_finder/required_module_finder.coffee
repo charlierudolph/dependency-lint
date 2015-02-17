@@ -9,21 +9,23 @@ path = require 'path'
 
 class RequiredModuleFinder
 
-  constructor: ({devFiles, @dir, ignoreFiles}) ->
-    @fileFinder = new FileFinder {devFiles, @dir, ignoreFiles}
+  BUILT_IN_MODULES: [
+    'assert', 'buffer', 'child_process', 'cluster', 'crypto', 'dgram', 'dns', 'domain', 'events',
+    'fs', 'http', 'https', 'net', 'os', 'path', 'punycode', 'querystring', 'readline', 'reply',
+    'stream', 'string_decoder', 'tls', 'tty', 'url', 'util', 'vm', 'zlib'
+  ]
+
+
+  constructor: ({@dir, ignoreFiles}) ->
+    @fileFinder = new FileFinder {@dir, ignoreFiles}
 
 
   find: (done) ->
     @fileFinder.find (err, files) =>
       if err then return done err
-      async.parallel [
-        (taskDone) => async.map files.prod, @findInFile, taskDone
-        (taskDone) => async.map files.dev, @findInFile, taskDone
-      ], (err, results) ->
+      async.map files, @findInFile, (err, results) ->
         if err then return done err
-        [prod, dev] = (_.flatten(result) for result in results)
-        done null, {prod, dev}
-
+        done null, _.flatten(results)
 
 
   findInFile: (file, done) =>
@@ -37,7 +39,14 @@ class RequiredModuleFinder
           err.message = "Error compiling #{path.relative @dir, file}: #{err.message}"
           done err
 
-      done null, detective(data, {@isRequire})
+      moduleNames = _.chain(detective data, {@isRequire})
+        .filter (name) => name[0] isnt '.' and name not in @BUILT_IN_MODULES
+        .map (name) -> name.replace /\/.*$/, ''
+        .value()
+
+      relativePath = path.relative @dir, file
+
+      done null, ({name, files: [relativePath]} for name in moduleNames)
 
 
   isRequire: ({type, callee}) ->

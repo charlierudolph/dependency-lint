@@ -12,6 +12,8 @@ Feature: Required module: missing
       """
       dependencies:
         ✖ express (missing)
+            used in files:
+              server.coffee
 
       ✖ 1 error
       """
@@ -27,6 +29,8 @@ Feature: Required module: missing
       """
       devDependencies:
         ✖ chai (missing)
+            used in files:
+              server_spec.coffee
 
       ✖ 1 error
       """

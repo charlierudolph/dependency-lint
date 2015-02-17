@@ -3,79 +3,88 @@ _ = require 'lodash'
 
 class DependencyLinter
 
-  constructor: ({@allowUnused}) ->
+  constructor: ({@allowUnused, @devFiles, @devScripts}) ->
 
 
   # Lints the used and listed modules
   #
-  # dependencies - {used, listed} where each is an array of module names
-  # devDependencies - {used, listed} where each is an array of module names
+  # listedModules - {dependencies, devDependencies} where each is an array of module names
+  # usedModules - array of {name, files, scripts}
   #
-  # Returns {dependencies, devDependencies} where each is an array of {error, name, warning}
-  lint: ({dependencies, devDependencies}) ->
-    devDependencies.used = _.difference devDependencies.used, dependencies.used
+  # Returns {dependencies, devDependencies}
+  #         where each is an array of {name, files, scripts, error, warning}
+  lint: ({listedModules, usedModules}) ->
+    result =
+      dependencies: []
+      devDependencies: []
 
-    [missingDependencies,
-     devDependenciesShouldBeDependencies,
-     unusedDevDependencies] = @partition @missing(dependencies), @unused(devDependencies)
+    for {name, files, scripts} in usedModules
+      isDependency = @isDependency files, scripts
+      listedAsDependency = name in listedModules.dependencies
+      listedAsDevDependency = name in listedModules.devDependencies
+      status = @status {isDependency, listedAsDependency, listedAsDevDependency}
+      key = if listedAsDependency or (not listedAsDevDependency and isDependency)
+        'dependencies'
+      else
+        'devDependencies'
+      result[key].push _.assign {name, files, scripts}, status
 
-    [missingDevDependencies,
-     dependenciesShouldBeDevDependencies,
-     unusedDependencies] = @partition @missing(devDependencies), @unused(dependencies)
-
-    dependencies: @buildList @passing(dependencies), {
-      missing: missingDependencies
-      'should be devDependency': dependenciesShouldBeDevDependencies
-      unused: unusedDependencies
-    }
-    devDependencies: @buildList @passing(devDependencies), {
-      missing: missingDevDependencies
-      'should be dependency': devDependenciesShouldBeDependencies
-      unused: unusedDevDependencies
-    }
-
-
-  buildList: (passing, errors) ->
-    list = []
-    list.push {name: moduleName} for moduleName in passing
-    for error, moduleNames of errors
-      for moduleName in moduleNames
-        if error is 'unused' and @canBeUnused moduleName
-          list.push {name: moduleName, warning: 'unused - allowed'}
+    for key, modules of listedModules
+      for name in modules when not _.any(usedModules, (moduleData) -> moduleData.name is name)
+        moduleData = {name}
+        if @allowedToBeUnused name
+          moduleData.warning = 'unused - allowed'
         else
-          list.push {name: moduleName, error}
-    _.sortBy list, 'name'
+          moduleData.error = 'unused'
+        result[key].push moduleData
+
+    result.dependencies = _.sortBy result.dependencies, 'name'
+    result.devDependencies = _.sortBy result.devDependencies, 'name'
+    result
 
 
-  canBeUnused: (moduleName) ->
-    _.any @allowUnused, (regex) -> moduleName.match regex
+  allowedToBeUnused: (name) ->
+    return yes for regex in @allowUnused when name.match regex
+    no
 
 
-  passing: ({used, listed}) ->
-    _.intersection used, listed
+  isDependency: (files, scripts) ->
+    not @isDevDependency files, scripts
 
 
-  missing: ({used, listed}) ->
-    _.difference used, listed
+  isDevDependency: (files, scripts) ->
+    for file in files
+      return no unless @isDevFile file
+    for script in scripts
+      return no unless @isDevScript script
+    yes
 
 
-  unused: ({used, listed}) ->
-    _.difference listed, used
+  isDevFile: (file) ->
+    return yes for regex in @devFiles when file.match regex
+    no
 
 
-  # Parititons two arrays into those unique to each array and the intersection
-  #
-  # Returns an array of length 3
-  # array[0] is the values unique to list1
-  # array[1] is the intersection
-  # array[2] is the values unique to list2
-  partition: (list1, list2) ->
-    intersection = _.intersection list1, list2
-    [
-      _.difference list1, intersection
-      intersection
-      _.difference list2, intersection
-    ]
+  isDevScript: (script) ->
+    return yes for regex in @devScripts when script.match regex
+    no
+
+
+  status: ({isDependency, listedAsDependency, listedAsDevDependency}) ->
+    if isDependency
+      if listedAsDependency
+        {}
+      else if listedAsDevDependency
+        {error: 'should be dependency'}
+      else
+        {error: 'missing'}
+    else
+      if listedAsDevDependency
+        {}
+      else if listedAsDependency
+        {error: 'should be devDependency'}
+      else
+        {error: 'missing'}
 
 
 module.exports = DependencyLinter

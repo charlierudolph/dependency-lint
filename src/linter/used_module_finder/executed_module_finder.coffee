@@ -6,7 +6,7 @@ path = require 'path'
 
 class ExecutedModulesFinder
 
-  constructor: ({@devScripts, @dir}) ->
+  constructor: ({@dir}) ->
     {@scripts, dependencies, devDependencies} = require path.join(@dir, 'package.json')
     @scripts ?= {}
     @modulesListed = _.keys(dependencies).concat _.keys(devDependencies)
@@ -15,12 +15,11 @@ class ExecutedModulesFinder
   find: (done) ->
     @getModuleExecutables (err, moduleExecutables) =>
       if err then return done err
-      result = dev: [], prod: []
-      for name, script of @scripts
-        for module, executables of moduleExecutables
+      result = []
+      for scriptName, script of @scripts
+        for moduleName, executables of moduleExecutables
           for executable in executables when script.match executable
-            key = if @isDevScript name then 'dev' else 'prod'
-            result[key].push module
+            result.push {name: moduleName, scripts: [scriptName]}
       done null, result
 
 
@@ -46,12 +45,6 @@ class ExecutedModulesFinder
         {name, bin} = require(file)
         result[name] = _.keys(bin)
       @ensureAllModulesInstalled result, done
-
-
-  isDevScript: (name) ->
-    for regex in @devScripts
-      return yes if name.match regex
-    no
 
 
 module.exports = ExecutedModulesFinder

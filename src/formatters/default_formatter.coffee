@@ -20,19 +20,24 @@ class DefaultFormatter
     @write ''
 
 
-  moduleOutput: ({error, name, warning}) ->
+  moduleOutput: ({error, files, name, scripts, warning}) ->
     if error
-      colors.red "✖ #{name} (#{error})"
+      colors.red("✖ #{name} (#{error})") + colors.gray(@errorSuffix {files, scripts})
     else if warning
       colors.yellow "- #{name} (#{warning})"
     else
       "#{colors.green '✓'} #{name}"
 
 
-  write: (data, indent = 0) ->
+  indent: (str, count) ->
     prefix = ''
-    prefix += '  ' for [1..indent]
-    @stream.write prefix + data + '\n', 'utf8'
+    prefix += '  ' for [1..count]
+    prefix + str
+
+
+  write: (data, indent = 0) ->
+    data = data.split('\n').map((str) => @indent str, indent).join('\n') + '\n'
+    @stream.write data, 'utf8'
 
 
   errorCount: (results) ->
@@ -40,6 +45,14 @@ class DefaultFormatter
     for title, modules of results
       errors += 1 for {error} in modules when error
     errors
+
+
+  errorSuffix: (usage) ->
+    suffix = ''
+    for type, list of usage when list and list.length > 0
+      suffix += '\n' + @indent "used in #{type}:", 2
+      suffix += '\n' + @indent item, 3 for item in list
+    suffix
 
 
   summaryOutput: (results) ->

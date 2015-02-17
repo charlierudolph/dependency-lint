@@ -1,56 +1,29 @@
 _ = require 'lodash'
-async = require 'async'
 DependencyLinter = require './linter/dependency_linter'
-ExecutedModuleFinder = require './linter/executed_module_finder'
+UsedModuleFinder = require './linter/used_module_finder'
 path = require 'path'
-RequiredModuleFinder = require './linter/required_module_finder'
 
 
 class Linter
 
-  BUILT_IN_MODULES: [
-    'assert', 'buffer', 'child_process', 'cluster', 'crypto', 'dgram', 'dns', 'domain', 'events',
-    'fs', 'http', 'https', 'net', 'os', 'path', 'punycode', 'querystring', 'readline', 'reply',
-    'stream', 'string_decoder', 'tls', 'tty', 'url', 'util', 'vm', 'zlib'
-  ]
 
   constructor: (@dir, {allowUnused, devFiles, devScripts, ignoreFiles}) ->
-    @dependencyLinter = new DependencyLinter {allowUnused}
-    @executedModuleFinder = new ExecutedModuleFinder {devScripts, @dir}
-    @requiredModuleFinder = new RequiredModuleFinder {devFiles, @dir, ignoreFiles}
+    @dependencyLinter = new DependencyLinter {allowUnused, devFiles, devScripts}
+    @usedModuleFinder = new UsedModuleFinder {@dir, ignoreFiles}
     @listedModules = @getListedModules()
 
 
   lint: (done) ->
-    async.parallel [
-      (taskDone) => @requiredModuleFinder.find taskDone
-      (taskDone) => @executedModuleFinder.find taskDone
-    ], (err, [requiredModules, executedModules]) =>
+    @usedModuleFinder.find (err, usedModules) =>
       if err then return done err
-      done null, @dependencyLinter.lint(
-        dependencies:
-          used: @filterModules(requiredModules.prod, executedModules.prod)
-          listed: @listedModules.prod
-        devDependencies:
-          used: @filterModules(requiredModules.dev, executedModules.dev)
-          listed: @listedModules.dev
-      )
+      done null, @dependencyLinter.lint {@listedModules, usedModules}
 
 
   getListedModules: ->
     packageJson = require path.join(@dir, 'package.json')
 
-    prod: _.keys(packageJson.dependencies)
-    dev: _.keys(packageJson.devDependencies)
-
-
-  filterModules: (modules...) ->
-    _.chain(modules)
-      .flatten()
-      .filter (module) => module[0] isnt '.' and module not in @BUILT_IN_MODULES
-      .map (module) -> module.replace /\/.*$/, ''
-      .uniq()
-      .value()
+    dependencies: _.keys(packageJson.dependencies)
+    devDependencies: _.keys(packageJson.devDependencies)
 
 
 module.exports = Linter
