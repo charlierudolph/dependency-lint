@@ -1,7 +1,7 @@
 _ = require 'lodash'
 async = require 'async'
-ExecutedModuleFinder = require './used_module_finder/executed_module_finder'
-RequiredModuleFinder = require './used_module_finder/required_module_finder'
+ExecutedModuleFinder = require './executed_module_finder'
+RequiredModuleFinder = require './required_module_finder'
 
 
 class UsedModuleFinder

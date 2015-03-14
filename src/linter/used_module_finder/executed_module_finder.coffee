@@ -1,12 +1,14 @@
 _ = require 'lodash'
 fs = require 'fs'
 glob = require 'glob'
+ModuleFilterer = require './module_filterer'
 path = require 'path'
 
 
 class ExecutedModulesFinder
 
   constructor: ({@dir}) ->
+    @moduleFilterer = new ModuleFilterer
     {@scripts, dependencies, devDependencies} = require path.join(@dir, 'package.json')
     @scripts ?= {}
     @modulesListed = _.keys(dependencies).concat _.keys(devDependencies)
@@ -15,12 +17,10 @@ class ExecutedModulesFinder
   find: (done) ->
     @getModuleExecutables (err, moduleExecutables) =>
       if err then return done err
-      result = []
-      for scriptName, script of @scripts
-        for moduleName, executables of moduleExecutables
-          for executable in executables when script.match executable
-            result.push {name: moduleName, scripts: [scriptName]}
-      done null, result
+      result = for scriptName, script of @scripts
+        moduleNames = @findInScript script, moduleExecutables
+        {name: moduleName, scripts: [scriptName]} for moduleName in moduleNames
+      done null, _.flatten(result)
 
 
   allModulesInstalled: (moduleExecutables) ->
@@ -35,6 +35,15 @@ class ExecutedModulesFinder
         You have uninstalled modules listed in your package. Please run `npm install`.
         dependency-lint needs all modules to be installed in order to search module executables.
         '''
+
+
+  findInScript: (script, moduleExecutables) ->
+    result = []
+    for moduleName, executables of moduleExecutables
+      for executable in executables
+        result.push moduleName if script.match(executable) and moduleName not in result
+    result = @moduleFilterer.filterExecutedModules result
+    result
 
 
   getModuleExecutables: (done) ->

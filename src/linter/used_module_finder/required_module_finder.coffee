@@ -4,20 +4,16 @@ coffeeScript = require 'coffee-script'
 detective = require 'detective'
 FileFinder = require './file_finder'
 fs = require 'fs'
+ModuleFilterer = require './module_filterer'
 path = require 'path'
 
 
 class RequiredModuleFinder
 
-  BUILT_IN_MODULES: [
-    'assert', 'buffer', 'child_process', 'cluster', 'crypto', 'dgram', 'dns', 'domain', 'events',
-    'fs', 'http', 'https', 'net', 'os', 'path', 'punycode', 'querystring', 'readline', 'reply',
-    'stream', 'string_decoder', 'tls', 'tty', 'url', 'util', 'vm', 'zlib'
-  ]
-
 
   constructor: ({@dir, ignoreFiles}) ->
     @fileFinder = new FileFinder {@dir, ignoreFiles}
+    @moduleFilterer = new ModuleFilterer
 
 
   find: (done) ->
@@ -29,6 +25,8 @@ class RequiredModuleFinder
 
 
   findInFile: (file, done) =>
+    relativePath = path.relative @dir, file
+
     fs.readFile file, encoding: 'utf8', (err, data) =>
       if err then return done err
 
@@ -36,16 +34,11 @@ class RequiredModuleFinder
         try
           data = coffeeScript.compile data
         catch err
-          err.message = "Error compiling #{path.relative @dir, file}: #{err.message}"
+          err.message = "Error compiling #{relativePath}: #{err.message}"
           done err
 
-      moduleNames = _.chain(detective data, {@isRequire})
-        .filter (name) => name[0] isnt '.' and name not in @BUILT_IN_MODULES
-        .map (name) -> name.replace /\/.*$/, ''
-        .value()
-
-      relativePath = path.relative @dir, file
-
+      moduleNames = detective data, {@isRequire}
+      moduleNames = @moduleFilterer.filterRequiredModules moduleNames
       done null, ({name, files: [relativePath]} for name in moduleNames)
 
 

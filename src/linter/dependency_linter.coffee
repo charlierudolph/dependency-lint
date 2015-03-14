@@ -1,4 +1,5 @@
 _ = require 'lodash'
+{globalModules} = require './module_db'
 
 
 class DependencyLinter
@@ -34,6 +35,8 @@ class DependencyLinter
         moduleData = {name}
         if @allowedToBeUnused name
           moduleData.warning = 'unused - allowed'
+        else if name in globalModules
+          moduleData.error = 'global - remove from package.json'
         else
           moduleData.error = 'unused'
         result[key].push moduleData
