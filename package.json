@@ -43,9 +43,9 @@
     "coffee-script": "^1.9.0",
     "colors": "^1.0.3",
     "detective": "^4.0.0",
-    "docopt": "^0.4.1",
+    "docopt": "^0.6.0",
     "fs-extra": "^0.16.3",
-    "glob": "^4.3.5",
+    "glob": "^5.0.3",
     "lodash": "^3.2.0"
   }
 }
