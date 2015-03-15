@@ -1,7 +1,7 @@
 Feature: Required module: relative file
 
   As a developer requiring a relative file
-  I don't want it to be reported as missing
+  I don't want it to be reported as a missing module
 
 
   Scenario: dependency

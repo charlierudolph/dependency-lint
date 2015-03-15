@@ -1,7 +1,7 @@
 Feature: Executed module: missing
 
   As a developer with a script that executes a module not listed in my package.json
-  I want it to be reported as passing
+  I want it to be reported as missing
 
 
   Scenario: dependency

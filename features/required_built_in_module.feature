@@ -1,7 +1,7 @@
 Feature: Required module: built in
 
   As a developer requiring a built in module
-  I do not want it to be reported a missing dependency or devDependency
+  I do not want it to be reported as missing
 
 
   Scenario: dependency

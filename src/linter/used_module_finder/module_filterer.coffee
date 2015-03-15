@@ -15,8 +15,7 @@ class ModuleFilterer
     _.chain(moduleNames)
       .filter (name) ->
         name[0] isnt '.' and
-        name not in builtInModules and
-        name not in globalModules
+        name not in builtInModules
       .map (name) ->
         name.replace /\/.*$/, ''
       .value()

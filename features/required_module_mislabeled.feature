@@ -1,7 +1,7 @@
 Feature: Required module: mislabled
 
-  As a developer requiring a module listed in the wrong dependencies in my package.json
-  I want it to be reported as needing to be moved to the proper dependencies
+  As a developer requiring a module that is listed incorrectly in my package.json
+  I want it to be reported as needing to be moved to the proper place
 
 
   Scenario: dependency listed under devDependencies

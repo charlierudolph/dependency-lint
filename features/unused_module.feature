@@ -17,7 +17,6 @@ Feature: Unused module
     And it exits with a non-zero status
 
 
-
   Scenario: devDependency
     Given I have "chai" installed and listed as a devDependency
     When I run "dependency-lint"

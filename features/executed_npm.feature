@@ -1,7 +1,7 @@
 Feature: Executed module: npm
 
   As a developer with a script that executes npm that is locally installed
-  I want it to be reported as globally installed
+  I want it to be reported as unused because it is globally installed
 
 
   Scenario: dependency not listed
@@ -23,7 +23,7 @@ Feature: Executed module: npm
     Then I see the output
       """
       dependencies:
-        ✖ npm (global - remove from package.json)
+        ✖ npm (unused)
 
       ✖ 1 error
       """
@@ -51,7 +51,7 @@ Feature: Executed module: npm
     Then I see the output
       """
       devDependencies:
-        ✖ npm (global - remove from package.json)
+        ✖ npm (unused)
 
       ✖ 1 error
       """

@@ -1,7 +1,7 @@
 Feature: Unused module
 
   As a developer requiring a module in an example or fixture file
-  I do not want it to be reported a missing dependency or devDependency
+  I do not want it to be reported as missing
 
 
   Scenario: dependency
