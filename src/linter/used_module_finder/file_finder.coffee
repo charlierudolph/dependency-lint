@@ -9,9 +9,12 @@ class FileFinder
 
 
   find: (done) ->
-    glob "#{@dir}/**/*", (err, files) =>
-      if err then return done err
-      done null, @filterFiles(files)
+    glob(
+      "#{@dir}/**/*"
+      ignore: "#{@dir}/**/node_modules/**"
+      (err, files) =>
+        if err then return done err
+        done null, @filterFiles(files))
 
 
   filterFiles: (files) ->

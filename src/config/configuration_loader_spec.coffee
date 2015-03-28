@@ -27,7 +27,7 @@ describe 'ConfigurationLoader', ->
           allowUnused: []
           devFiles: ['^test/']
           devScripts: ['publish', 'test']
-          ignoreFiles: ['^node_modules/']
+          ignoreFiles: []
 
     context 'without a user configuration', ->
       beforeEach (done) ->
@@ -41,4 +41,4 @@ describe 'ConfigurationLoader', ->
           allowUnused: []
           devFiles: ['^(features|spec|test)/', '_(spec|test).(coffee|js)$']
           devScripts: ['publish', 'test']
-          ignoreFiles: ['^node_modules/']
+          ignoreFiles: []

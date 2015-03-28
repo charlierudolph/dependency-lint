@@ -45,4 +45,5 @@ dependency-lint --generate-config
   * default: `["test", "publish"]`
 * `ignoreFiles`
   * array of strings to match against a filename to determine if it should be ignored
-  * default: `["^node_modules/"]`
+  * default: `[]`
+  * the `node_modules` folder is always ignored
