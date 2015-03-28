@@ -7,9 +7,11 @@
     "dependency-lint": "./bin/dependency-lint.js"
   },
   "scripts": {
+    "lint-coffeescript": "coffeelint src",
+    "lint-dependencies": "./bin/dependency-lint.js",
     "feature-tests": "cucumber-js",
-    "pretest": "coffeelint src",
-    "test": "npm run-script unit-tests && npm run-script feature-tests",
+    "pretest": "npm run lint-coffeescript && npm run lint-dependencies",
+    "test": "npm run unit-tests && npm run feature-tests",
     "unit-tests": "mycha run --testDir=src"
   },
   "repository": {

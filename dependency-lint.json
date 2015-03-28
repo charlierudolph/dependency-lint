@@ -1,0 +1,7 @@
+{
+  "devScripts":[
+    "lint",
+    "publish",
+    "test"
+  ]
+}
