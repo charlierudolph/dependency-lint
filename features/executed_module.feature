@@ -1,6 +1,6 @@
 Feature: Executed module
 
-  As a developer with a script that executes a module listed in my package.json
+  As a developer with a script that uses an executable exposed a module listed in my package.json
   I want it to be reported as passing
 
 

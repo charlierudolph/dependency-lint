@@ -29,23 +29,43 @@ describe 'ExecutedModuleFinder', ->
 
 
     context 'script using module exectuable', ->
-      context 'development script', ->
-        beforeEach (done) ->
-          async.parallel [
-            (taskDone) => fs.outputJson @packagePath, {scripts: {test: 'mycha run'}}, taskDone
-            (taskDone) =>
-              fs.outputJson(
-                path.join(@tmpDir, 'node_modules', 'mycha', 'package.json'),
-                name: 'mycha', bin: {mycha: ''}
-                taskDone
-              )
-          ], (err) =>
-            if err then return done err
-            @executedModulesFinder = new ExecutedModuleFinder dir: @tmpDir
-            @executedModulesFinder.find (@err, @result) => done()
+      beforeEach (done) ->
+        async.parallel [
+          (taskDone) => fs.outputJson @packagePath, {scripts: {test: 'mycha run'}}, taskDone
+          (taskDone) =>
+            fs.outputJson(
+              path.join(@tmpDir, 'node_modules', 'mycha', 'package.json'),
+              name: 'mycha', bin: {mycha: ''}
+              taskDone
+            )
+        ], (err) =>
+          if err then return done err
+          @executedModulesFinder = new ExecutedModuleFinder dir: @tmpDir
+          @executedModulesFinder.find (@err, @result) => done()
 
-        it 'does not return an error', ->
-          expect(@err).to.not.exist
+      it 'does not return an error', ->
+        expect(@err).to.not.exist
 
-        it 'returns the module under dev', ->
-          expect(@result).to.eql [name: 'mycha', scripts: ['test']]
+      it 'returns the module under dev', ->
+        expect(@result).to.eql [name: 'mycha', scripts: ['test']]
+
+    context 'script using scoped module exectuable', ->
+      beforeEach (done) ->
+        async.parallel [
+          (taskDone) => fs.outputJson @packagePath, {scripts: {test: 'mycha run'}}, taskDone
+          (taskDone) =>
+            fs.outputJson(
+              path.join(@tmpDir, 'node_modules', '@originate', 'mycha', 'package.json'),
+              name: '@originate/mycha', bin: {mycha: ''}
+              taskDone
+            )
+        ], (err) =>
+          if err then return done err
+          @executedModulesFinder = new ExecutedModuleFinder dir: @tmpDir
+          @executedModulesFinder.find (@err, @result) => done()
+
+      it 'does not return an error', ->
+        expect(@err).to.not.exist
+
+      it 'returns the module under dev', ->
+        expect(@result).to.eql [name: '@originate/mycha', scripts: ['test']]

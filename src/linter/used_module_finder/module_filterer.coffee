@@ -17,7 +17,11 @@ class ModuleFilterer
         name[0] isnt '.' and
         name not in builtInModules
       .map (name) ->
-        name.replace /\/.*$/, ''
+        parts = name.split '/'
+        if name[0] is '@'
+          parts.slice(0, 2).join '/'
+        else
+          parts[0]
       .value()
 
 

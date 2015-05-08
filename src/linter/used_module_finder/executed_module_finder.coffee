@@ -1,4 +1,5 @@
 _ = require 'lodash'
+async = require 'async'
 fs = require 'fs'
 glob = require 'glob'
 ModuleFilterer = require './module_filterer'
@@ -47,10 +48,14 @@ class ExecutedModulesFinder
 
 
   getModuleExecutables: (done) ->
-    glob "#{@dir}/node_modules/*/package.json", (err, files) =>
+    patterns = [
+      "#{@dir}/node_modules/*/package.json"
+      "#{@dir}/node_modules/*/*/package.json" # scoped packages
+    ]
+    async.map patterns, glob, (err, files) =>
       if err then return done err
       result = []
-      for file in files
+      for file in _.flatten files
         {name, bin} = require(file)
         result[name] = _.keys(bin)
       @ensureAllModulesInstalled result, done
