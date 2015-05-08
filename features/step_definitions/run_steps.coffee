@@ -5,13 +5,11 @@ path = require 'path'
 
 module.exports = ->
 
-  @When /^I run "dependency-lint([^"]*)"$/, (args, done) ->
-    execFile(
-      path.join(__dirname, '..', '..', 'bin', 'dependency-lint.js'),
-      args.trim().split(' '),
-      cwd: @tmpDir,
-      (@error, @stdout, @stderr) => done()
-    )
+  @When /^I run "dependency-lint([^"]*)"$/, (argStr, done) ->
+    file = path.join __dirname, '..', '..', 'bin', 'dependency-lint.js'
+    args = if argStr then argStr.trim().split(' ') else []
+    options = cwd: @tmpDir
+    execFile file, args, options, (@error, @stdout, @stderr) => done()
 
 
   @Then /^I see the output$/, (output, done) ->

@@ -1,2 +1,7 @@
-features/
+*_spec.coffee
 coffeelint.json
+circle.yml
+dependency-lint.json
+features/
+mycha.coffee
+spec/

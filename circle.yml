@@ -1,0 +1,10 @@
+machine:
+  node:
+    version: 0.12
+
+test:
+  override:
+    - npm run lint-coffeescript
+    - npm run lint-dependencies
+    - npm run unit-tests
+    - npm run feature-tests
