@@ -12,7 +12,7 @@
     "feature-tests": "cucumber-js",
     "pretest": "npm run lint-coffeescript && npm run lint-dependencies",
     "test": "npm run unit-tests && npm run feature-tests",
-    "unit-tests": "mycha run --testDir=src"
+    "unit-tests": "mycha --reporter dot"
   },
   "repository": {
     "type": "git",
@@ -37,7 +37,9 @@
     "chai-fs": "^0.1.0",
     "coffeelint": "^1.8.1",
     "cucumber": "^0.4.7",
-    "mycha": "^0.6.4",
+    "mycha": "^0.8.0",
+    "sinon": "^1.14.1",
+    "sinon-chai": "^2.7.0",
     "tmp": "^0.0.24"
   },
   "dependencies": {
