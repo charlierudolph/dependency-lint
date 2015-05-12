@@ -24,18 +24,16 @@ class ExecutedModulesFinder
       done null, _.flatten(result)
 
 
-  allModulesInstalled: (moduleExecutables) ->
-    _.difference(@modulesListed, _.keys(moduleExecutables)).length is 0
-
-
   ensureAllModulesInstalled: (moduleExecutables, done) ->
-    if @allModulesInstalled moduleExecutables
+    modulesNotInstalled = _.difference @modulesListed, _.keys(moduleExecutables)
+    if modulesNotInstalled.length is 0
       done null, moduleExecutables
     else
-      done new Error '''
-        You have uninstalled modules listed in your package. Please run `npm install`.
-        dependency-lint needs all modules to be installed in order to search module executables.
-        '''
+      done new Error """
+        The following modules are listed in your `package.json` but are not installed.
+          #{modulesNotInstalled.join '\n  '}
+        All modules need to be installed to properly check for the usage of a module's executables.
+        """
 
 
   findInScript: (script, moduleExecutables) ->

@@ -9,8 +9,9 @@ Feature: Module not installed
     When I run "dependency-lint"
     Then I see the error
       """
-      You have uninstalled modules listed in your package. Please run `npm install`.
-      dependency-lint needs all modules to be installed in order to search module executables.
+      The following modules are listed in your `package.json` but are not installed.
+        coffee-script
+      All modules need to be installed to properly check for the usage of a module's executables.
       """
     And it exits with a non-zero status
 
@@ -20,7 +21,8 @@ Feature: Module not installed
     When I run "dependency-lint"
     Then I see the error
       """
-      You have uninstalled modules listed in your package. Please run `npm install`.
-      dependency-lint needs all modules to be installed in order to search module executables.
+      The following modules are listed in your `package.json` but are not installed.
+        mycha
+      All modules need to be installed to properly check for the usage of a module's executables.
       """
     And it exits with a non-zero status
