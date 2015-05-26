@@ -1,6 +1,6 @@
 {
   "name": "dependency-lint",
-  "version": "1.4.0",
+  "version": "1.4.2",
   "description": "Lints npm dependencies and devDependencies",
   "main": "index.js",
   "bin": {
