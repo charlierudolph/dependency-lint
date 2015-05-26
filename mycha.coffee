@@ -6,8 +6,8 @@ module.exports =
     compilers: 'coffee:coffee-script/register'
     reporter: 'spec'
 
-  # Regular expressions for files that are tests
-  testFileRegex: /_spec\.coffee$/
+  # Path patten used for finding tests (see https://github.com/isaacs/minimatch)
+  testFilePattern: '**/*_spec.coffee'
 
   # Files to include before all tests
   testHelpers: [

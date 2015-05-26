@@ -9,7 +9,7 @@
   "scripts": {
     "lint-coffeescript": "coffeelint src",
     "lint-dependencies": "./bin/dependency-lint.js",
-    "feature-tests": "cucumber-js",
+    "feature-tests": "cucumber-js --format progress",
     "pretest": "npm run lint-coffeescript && npm run lint-dependencies",
     "test": "npm run unit-tests && npm run feature-tests",
     "unit-tests": "mycha --reporter dot"
@@ -33,17 +33,16 @@
   },
   "homepage": "https://github.com/charlierudolph/dependency-lint",
   "devDependencies": {
-    "chai": "^1.10.0",
-    "chai-fs": "^0.1.0",
+    "chai": "^2.3.0",
     "coffeelint": "^1.8.1",
     "cucumber": "^0.4.7",
-    "mycha": "^0.8.0",
+    "mycha": "^0.9.0",
     "sinon": "^1.14.1",
     "sinon-chai": "^2.7.0",
-    "tmp": "^0.0.24"
+    "tmp": "^0.0.26"
   },
   "dependencies": {
-    "async": "^0.9.0",
+    "async": "^1.0.0",
     "coffee-script": "^1.9.0",
     "colors": "^1.0.3",
     "detective": "^4.0.0",

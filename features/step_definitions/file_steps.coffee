@@ -62,8 +62,14 @@ module.exports = ->
 
 
   @Then /^now I have the file "([^"]*)" with the default config$/, (filename, done) ->
-    defaultConfigPath = path.join __dirname, '..', '..', 'config', 'default.json'
-    fs.readFile defaultConfigPath, encoding: 'utf8', (err, data) =>
+    filePaths = [
+      path.join __dirname, '..', '..', 'config', 'default.json'
+      path.join @tmpDir, filename
+    ]
+    iterator = (filePath, next) ->
+      fs.readFile filePath, encoding: 'utf8', next
+    callback = (err, [defaultConfigContent, fileContent] = []) ->
       if err then return done err
-      expect(path.join @tmpDir, filename).to.have.content data
+      expect(fileContent).to.eql defaultConfigContent
       done()
+    async.map filePaths, iterator, callback
