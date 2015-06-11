@@ -19,7 +19,6 @@ Feature: Resolved module
 
   Scenario: devDependency
     Given I have "chai" installed and listed as a devDependency
-    And I have configured "devFiles" to contain "_spec.coffee$"
     And I have a file "server_spec.coffee" which resolves "chai"
     When I run "dependency-lint"
     Then I see the output

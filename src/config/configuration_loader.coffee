@@ -1,5 +1,8 @@
 _ = require 'lodash'
+async = require 'async'
+extensions = require './supported_file_extensions'
 fs = require 'fs'
+fsCson = require 'fs-cson'
 path = require 'path'
 
 
@@ -7,7 +10,7 @@ class ConfigurationLoader
 
   constructor: ({@dir}) ->
     @defaultConfig = @loadDetaultConfig()
-    @userConfigPath = path.join(@dir, 'dependency-lint.json')
+    fsCson.register()
 
 
   load: (done) ->
@@ -22,9 +25,11 @@ class ConfigurationLoader
 
 
   loadUserConfig: (done) ->
-    fs.exists @userConfigPath, (exists) =>
-      config = if exists then require(@userConfigPath) else {}
+    filePaths = _.map extensions, (ext) => path.join @dir, "dependency-lint.#{ext}"
+    callback = (filePath) ->
+      config = if filePath then require filePath
       done null, config
+    async.detect filePaths, fs.exists, callback
 
 
 module.exports = ConfigurationLoader

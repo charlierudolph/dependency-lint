@@ -1,12 +1,15 @@
 {
   "allowUnused":[],
-  "devFiles":[
-    "^(features|spec|test)/",
-    "_(spec|test).(coffee|js)$"
+  "devFilePatterns":[
+    "{features,spec,test}/**/*",
+    "**/*_{spec,test}.{coffee,js}"
   ],
   "devScripts":[
+    "lint",
     "publish",
     "test"
   ],
-  "ignoreFiles":[]
+  "ignoreFilePatterns":[
+    "**/node_modules/**/*"
+  ]
 }

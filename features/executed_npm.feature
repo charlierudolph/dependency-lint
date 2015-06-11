@@ -33,7 +33,6 @@ Feature: Executed module: npm
   Scenario: devDependency
     Given I have no devDependencies listed
     And the "npm" module exposes the executable "npm"
-    And I have configured "devScripts" to contain "test"
     And I have a script named "pretest" defined as "npm run lint"
     When I run "dependency-lint"
     Then I see the output
@@ -45,7 +44,6 @@ Feature: Executed module: npm
   Scenario: devDependency listed
     Given I have "npm" installed and listed as a devDependency
     And the "npm" module exposes the executable "npm"
-    And I have configured "devScripts" to contain "test"
     And I have a script named "pretest" defined as "npm run lint"
     When I run "dependency-lint"
     Then I see the output

@@ -35,7 +35,6 @@ Feature: Required module: npm
 
   Scenario: devDependency not listed
     Given I have no devDependencies listed
-    And I have configured "devFiles" to contain "_spec.coffee$"
     And I have a file "server_spec.coffee" which requires "npm"
     When I run "dependency-lint"
     Then I see the output
@@ -52,7 +51,6 @@ Feature: Required module: npm
 
   Scenario: devDependency listed
     Given I have "npm" installed and listed as a devDependency
-    And I have configured "devFiles" to contain "_spec.coffee$"
     And I have a file "server_spec.coffee" which requires "npm"
     When I run "dependency-lint"
     Then I see the output

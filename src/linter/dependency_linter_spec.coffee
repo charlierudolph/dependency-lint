@@ -5,8 +5,8 @@ describe 'DependencyLinter', ->
   beforeEach ->
     @dependencyLinter = new DependencyLinter
       allowUnused: ['b']
-      devFiles: [/_spec.coffee$/]
-      devScripts: [/test/]
+      devFilePatterns: ['**/*_spec.coffee']
+      devScripts: ['test']
 
     @input =
       listedModules: {dependencies: [], devDependencies: []}

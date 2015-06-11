@@ -29,21 +29,21 @@ If you run into an example where `dependency-lint` marks a node module as unused
 ## Configuration
 Create a configuration file with
 ```
-dependency-lint --generate-config
+dependency-lint --generate-config (coffee | cson | js | json)
 ```
+Any options not set in the configuration file will be given there default value.
 
 #### Options
 * `allowUnused`
-  * array of strings to match against a module name to determine if it is allowed to be unused
+  * array of strings or regular expressions to match against a module name to determine if it is allowed to be unused
   * default: `[]`
   * Please create an [issue](https://github.com/charlierudolph/dependency-lint/issues) anytime you need to use this
-* `devFiles`
-  * array of strings to match againt a filename to determine if it is used only for development
-  * default: `["^(features|spec|test)/", "_(spec|test).(coffee|js)$"]`
+* `devFilePatterns`
+  * array of path patterns to match againt a filename to determine if it is used only for development (see [minimatch](https://github.com/isaacs/minimatch))
+  * default: `['{features|spec|test}/**/*', '**/*_{spec|test}.{coffee|js}']`
 * `devScripts`
-  * array of strings to match against a script name in your `package.json` to determine if it is used only for development
-  * default: `["test", "publish"]`
-* `ignoreFiles`
-  * array of strings to match against a filename to determine if it should be ignored
-  * default: `[]`
-  * the `node_modules` folder is always ignored
+  * array of strings or regular expressions to match against a script name in your `package.json` to determine if it is used only for development
+  * default: `['lint', 'publish', 'test']`
+* `ignoreFilePatterns`
+  * array of path patterns to match against a filename to determine if it should be ignored (see [minimatch](https://github.com/isaacs/minimatch))
+  * default: `['**/node_modules/**/*']`

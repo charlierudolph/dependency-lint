@@ -7,9 +7,9 @@ path = require 'path'
 class Linter
 
 
-  constructor: (@dir, {allowUnused, devFiles, devScripts, ignoreFiles}) ->
-    @dependencyLinter = new DependencyLinter {allowUnused, devFiles, devScripts}
-    @usedModuleFinder = new UsedModuleFinder {@dir, ignoreFiles}
+  constructor: (@dir, {allowUnused, devFilePatterns, devScripts, ignoreFilePatterns}) ->
+    @dependencyLinter = new DependencyLinter {allowUnused, devFilePatterns, devScripts}
+    @usedModuleFinder = new UsedModuleFinder {@dir, ignoreFilePatterns}
     @listedModules = @getListedModules()
 
 

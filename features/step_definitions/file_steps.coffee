@@ -61,9 +61,9 @@ module.exports = ->
     addToJsonFile path.join(@tmpDir, 'node_modules', module, 'package.json'), json, done
 
 
-  @Then /^now I have the file "([^"]*)" with the default config$/, (filename, done) ->
+  @Then /^now I have the file "([^"]*)" with the default (.+) config$/, (filename, ext, done) ->
     filePaths = [
-      path.join __dirname, '..', '..', 'config', 'default.json'
+      path.join __dirname, '..', '..', 'config', "default.#{ext}"
       path.join @tmpDir, filename
     ]
     iterator = (filePath, next) ->

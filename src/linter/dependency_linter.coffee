@@ -1,10 +1,11 @@
 _ = require 'lodash'
 {globalModules} = require './module_db'
+minimatch = require 'minimatch'
 
 
 class DependencyLinter
 
-  constructor: ({@allowUnused, @devFiles, @devScripts}) ->
+  constructor: ({@allowUnused, @devFilePatterns, @devScripts}) ->
 
 
   # Lints the used and listed modules
@@ -62,7 +63,7 @@ class DependencyLinter
 
 
   isDevFile: (file) ->
-    return yes for regex in @devFiles when file.match regex
+    return yes for pattern in @devFilePatterns when minimatch file, pattern
     no
 
 

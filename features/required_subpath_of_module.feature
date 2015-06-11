@@ -19,7 +19,6 @@ Feature: Required module: subpath
 
   Scenario: path is stripped from module name
     Given I have "coffee-script" installed and listed as a devDependency
-    And I have configured "devFiles" to contain "_spec.coffee$"
     And I have a file "server_spec.coffee" which requires "coffee-script/register"
     When I run "dependency-lint"
     Then I see the output

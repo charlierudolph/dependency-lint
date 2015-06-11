@@ -2,7 +2,7 @@ _ = require 'lodash'
 async = require 'async'
 coffeeScript = require 'coffee-script'
 detective = require 'detective'
-FileFinder = require './file_finder'
+glob = require 'glob'
 fs = require 'fs'
 ModuleFilterer = require './module_filterer'
 path = require 'path'
@@ -11,35 +11,32 @@ path = require 'path'
 class RequiredModuleFinder
 
 
-  constructor: ({@dir, ignoreFiles}) ->
-    @fileFinder = new FileFinder {@dir, ignoreFiles}
+  constructor: ({@dir, @ignoreFilePatterns}) ->
     @moduleFilterer = new ModuleFilterer
 
 
   find: (done) ->
-    @fileFinder.find (err, files) =>
-      if err then return done err
-      async.map files, @findInFile, (err, results) ->
-        if err then return done err
-        done null, _.flatten(results)
+    async.waterfall [
+      (next) => glob '**/*.{coffee,js}', {cwd: @dir, ignore: @ignoreFilePatterns}, next
+      (files, next) => async.map files, @findInFile, next
+      (results, next) -> next null, _.flatten(results)
+    ], done
 
 
   findInFile: (file, done) =>
-    relativePath = path.relative @dir, file
-
-    fs.readFile file, encoding: 'utf8', (err, data) =>
+    fs.readFile path.join(@dir, file), encoding: 'utf8', (err, data) =>
       if err then return done err
 
-      if file.match /\.coffee$/
+      if path.extname(file) is '.coffee'
         try
           data = coffeeScript.compile data
         catch err
-          err.message = "Error compiling #{relativePath}: #{err.message}"
+          err.message = "Error compiling #{file}: #{err.message}"
           done err
 
       moduleNames = detective data, {@isRequire}
       moduleNames = @moduleFilterer.filterRequiredModules moduleNames
-      done null, ({name, files: [relativePath]} for name in moduleNames)
+      done null, ({name, files: [file]} for name in moduleNames)
 
 
   isRequire: ({type, callee}) ->

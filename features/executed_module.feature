@@ -21,7 +21,6 @@ Feature: Executed module
   Scenario: devDependency
     Given I have "mycha" installed and listed as a devDependency
     And the "mycha" module exposes the executable "mycha"
-    And I have configured "devScripts" to contain "test"
     And I have a script named "test" defined as "mycha run --reporter spec"
     When I run "dependency-lint"
     Then I see the output
