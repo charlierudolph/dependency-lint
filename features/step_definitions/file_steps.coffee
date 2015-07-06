@@ -19,46 +19,45 @@ module.exports = ->
 
 
   @Given /^I have configured "([^"]*)" to contain "([^"]*)"$/, (key, value, done) ->
-    json = {}
-    json[key] = [value]
-    addToJsonFile path.join(@tmpDir, 'dependency-lint.json'), json, done
+    filePath = path.join @tmpDir, 'dependency-lint.json'
+    content = {}
+    content[key] = [value]
+    addToJsonFile filePath, content, done
 
 
   @Given /^I have no (.*) listed$/, (key, done) ->
-    json = {}
-    json[key] = []
-    addToJsonFile path.join(@tmpDir, 'package.json'), json, done
+    filePath = path.join @tmpDir, 'package.json'
+    content = {}
+    content[key] = []
+    addToJsonFile filePath, content, done
 
 
-  @Given /^I have "([^"]*)"( installed and)? listed as a (.*)$/, (module, installed, type, done) ->
-    actions = [
-      (taskDone) =>
-        key = type.replace 'y', 'ies'
-        json = {}
-        json[key] = {}
-        json[key][module] = '0.0.1'
-        addToJsonFile path.join(@tmpDir, 'package.json'), json, taskDone
-    ]
-    actions.push(
-      (taskDone) =>
-        addToJsonFile(
-          path.join(@tmpDir, 'node_modules', module, 'package.json'),
-          name: module,
-          taskDone)
-    ) if installed
-    async.parallel actions, done
+  @Given /^I have "([^"]*)" installed$/, (name, done) ->
+    filePath = path.join @tmpDir, 'node_modules', name, 'package.json'
+    content = {name}
+    addToJsonFile filePath, content, done
+
+
+  @Given /^I have "([^"]*)" listed as a (.*)$/, (name, type, done) ->
+    filePath = path.join @tmpDir, 'package.json'
+    key = type.replace 'y', 'ies'
+    content = {}
+    content[key] = {}
+    content[key][name] = '0.0.1'
+    addToJsonFile filePath, content, done
 
 
   @Given /^I have a script named "([^"]*)" defined as "([^"]*)"$/, (name, command, done) ->
-    scripts = {}
-    scripts[name] = command
-    addToJsonFile path.join(@tmpDir, 'package.json'), {scripts}, done
+    filePath = path.join @tmpDir, 'package.json'
+    content = scripts: {}
+    content.scripts[name] = command
+    addToJsonFile filePath, content, done
 
 
-  @Given /^the "([^"]*)" module exposes the executable "([^"]*)"$/, (module, executable, done) ->
-    json = {name: module, bin: {}}
+  @Given /^the "([^"]*)" module exposes the executable "([^"]*)"$/, (name, executable, done) ->
+    json = {name, bin: {}}
     json.bin[executable] = ''
-    addToJsonFile path.join(@tmpDir, 'node_modules', module, 'package.json'), json, done
+    addToJsonFile path.join(@tmpDir, 'node_modules', name, 'package.json'), json, done
 
 
   @Then /^now I have the file "([^"]*)" with the default (.+) config$/, (filename, ext, done) ->

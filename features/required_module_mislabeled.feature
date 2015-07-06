@@ -5,7 +5,8 @@ Feature: Required module: mislabled
 
 
   Scenario: dependency listed under devDependencies
-    Given I have "express" installed and listed as a devDependency
+    Given I have "express" installed
+    And I have "express" listed as a devDependency
     And I have a file "server.coffee" which requires "express"
     When I run "dependency-lint"
     Then I see the output
@@ -20,8 +21,30 @@ Feature: Required module: mislabled
     And it exits with a non-zero status
 
 
+  Scenario: dependency listed under dependencies and devDependencies
+    Given I have "express" installed
+    And I have "express" listed as a dependency
+    And I have "express" listed as a devDependency
+    And I have a file "server.coffee" which requires "express"
+    When I run "dependency-lint"
+    Then I see the output
+      """
+      dependencies:
+        ✓ express
+
+      devDependencies:
+        ✖ express (should be dependency)
+            used in files:
+              server.coffee
+
+      ✖ 1 error
+      """
+    And it exits with a non-zero status
+
+
   Scenario: devDependency listed under dependencies
-    Given I have "chai" installed and listed as a dependency
+    Given I have "chai" installed
+    And I have "chai" listed as a dependency
     And I have a file "server_spec.coffee" which requires "chai"
     When I run "dependency-lint"
     Then I see the output
@@ -30,6 +53,27 @@ Feature: Required module: mislabled
         ✖ chai (should be devDependency)
             used in files:
               server_spec.coffee
+
+      ✖ 1 error
+      """
+    And it exits with a non-zero status
+
+
+  Scenario: devDependency listed under dependencies and devDependencies
+    Given I have "chai" installed
+    And I have "chai" listed as a dependency
+    And I have "chai" listed as a devDependency
+    And I have a file "server_spec.coffee" which requires "chai"
+    When I run "dependency-lint"
+    Then I see the output
+      """
+      dependencies:
+        ✖ chai (should be devDependency)
+            used in files:
+              server_spec.coffee
+
+      devDependencies:
+        ✓ chai
 
       ✖ 1 error
       """

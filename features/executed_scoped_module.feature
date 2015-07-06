@@ -5,7 +5,8 @@ Feature: Executed scoped module
 
 
   Scenario: dependency
-    Given I have "@myorg/mypackage" installed and listed as a dependency
+    Given I have "@myorg/mypackage" installed
+    And I have "@myorg/mypackage" listed as a dependency
     And the "@myorg/mypackage" module exposes the executable "myexecutable"
     And I have a script named "install" defined as "myexecutable --opt path/to/file"
     When I run "dependency-lint"
@@ -19,7 +20,8 @@ Feature: Executed scoped module
 
 
   Scenario: devDependency
-    Given I have "@myorg/mypackage" installed and listed as a devDependency
+    Given I have "@myorg/mypackage" installed
+    And I have "@myorg/mypackage" listed as a devDependency
     And the "@myorg/mypackage" module exposes the executable "myexecutable"
     And I have a script named "test" defined as "myexecutable --opt path/to/file"
     When I run "dependency-lint"

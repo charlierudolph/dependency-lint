@@ -95,6 +95,21 @@ describe 'DependencyLinter', ->
           name: 'a', files: ['a.coffee'], scripts: [], error: 'should be dependency')
         expect(@result).to.eql @output
 
+    describe 'listed as dependency and devDependency', ->
+      beforeEach ->
+        @input.listedModules.dependencies.push 'a'
+        @input.listedModules.devDependencies.push 'a'
+        @result = @dependencyLinter.lint @input
+
+      it 'returned with error: should be a dependency', ->
+        @output.dependencies.push {name: 'a', files: ['a.coffee'], scripts: []}
+        @output.devDependencies.push(
+          name: 'a'
+          files: ['a.coffee']
+          scripts: []
+          error: 'should be dependency')
+        expect(@result).to.eql @output
+
 
   describe 'used as a devDependency', ->
     beforeEach ->
@@ -128,6 +143,21 @@ describe 'DependencyLinter', ->
         @output.devDependencies.push {name: 'a', files: ['a_spec.coffee'], scripts: []}
         expect(@result).to.eql @output
 
+    describe 'listed as dependency and devDependency', ->
+      beforeEach ->
+        @input.listedModules.dependencies.push 'a'
+        @input.listedModules.devDependencies.push 'a'
+        @result = @dependencyLinter.lint @input
+
+      it 'returned with error: should be a dependency', ->
+        @output.dependencies.push(
+          name: 'a'
+          files: ['a_spec.coffee']
+          scripts: []
+          error: 'should be devDependency')
+        @output.devDependencies.push {name: 'a', files: ['a_spec.coffee'], scripts: []}
+        expect(@result).to.eql @output
+
 
   describe 'used as a dependency and a devDependency', ->
     beforeEach ->
@@ -157,6 +187,21 @@ describe 'DependencyLinter', ->
         @result = @dependencyLinter.lint @input
 
       it 'returned with error: should be a dependency', ->
+        @output.devDependencies.push(
+          name: 'a'
+          files: ['a.coffee', 'a_spec.coffee']
+          scripts: []
+          error: 'should be dependency')
+        expect(@result).to.eql @output
+
+    describe 'listed as dependency and devDependency', ->
+      beforeEach ->
+        @input.listedModules.dependencies.push 'a'
+        @input.listedModules.devDependencies.push 'a'
+        @result = @dependencyLinter.lint @input
+
+      it 'returned with error: should be a dependency', ->
+        @output.dependencies.push {name: 'a', files: ['a.coffee', 'a_spec.coffee'], scripts: []}
         @output.devDependencies.push(
           name: 'a'
           files: ['a.coffee', 'a_spec.coffee']

@@ -8,10 +8,10 @@ tmp = require 'tmp'
 module.exports = ->
 
   @Before (done) ->
-    async.waterfall [
-      (next) ->
-        tmp.dir {unsafeCleanup: yes}, next
-      (@tmpDir, next) ->
+    async.series [
+      (next) =>
+        tmp.dir {unsafeCleanup: yes}, (err, @tmpDir) => next err
+      (next) =>
         fsExtra.writeJson path.join(@tmpDir, 'package.json'), {}, next
     ], done
 

@@ -21,7 +21,8 @@ Feature: Required module: npm
 
 
   Scenario: dependency listed
-    Given I have "npm" installed and listed as a dependency
+    Given I have "npm" installed
+    And I have "npm" listed as a dependency
     And I have a file "server.coffee" which requires "npm"
     When I run "dependency-lint"
     Then I see the output
@@ -50,7 +51,8 @@ Feature: Required module: npm
 
 
   Scenario: devDependency listed
-    Given I have "npm" installed and listed as a devDependency
+    Given I have "npm" installed
+    And I have "npm" listed as a devDependency
     And I have a file "server_spec.coffee" which requires "npm"
     When I run "dependency-lint"
     Then I see the output

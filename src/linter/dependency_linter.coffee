@@ -20,25 +20,21 @@ class DependencyLinter
       dependencies: []
       devDependencies: []
 
-    for {name, files, scripts} in usedModules
-      isDependency = @isDependency files, scripts
-      listedAsDependency = name in listedModules.dependencies
-      listedAsDevDependency = name in listedModules.devDependencies
-      status = @status {isDependency, listedAsDependency, listedAsDevDependency}
-      key = if listedAsDependency or (not listedAsDevDependency and isDependency)
-        'dependencies'
-      else
-        'devDependencies'
-      result[key].push _.assign {name, files, scripts}, status
+    for usedModule in usedModules
+      status =
+        isDependency: not @isDevDependency usedModule
+        listedAsDependency: usedModule.name in listedModules.dependencies
+        listedAsDevDependency: usedModule.name in listedModules.devDependencies
+      @parseUsedModule usedModule, status, result
 
     for key, modules of listedModules
       for name in modules when not _.any(usedModules, (moduleData) -> moduleData.name is name)
-        moduleData = {name}
+        listedModule = {name}
         if @allowedToBeUnused name
-          moduleData.warning = 'unused - allowed'
+          listedModule.warning = 'unused - allowed'
         else
-          moduleData.error = 'unused'
-        result[key].push moduleData
+          listedModule.error = 'unused'
+        result[key].push listedModule
 
     result.dependencies = _.sortBy result.dependencies, 'name'
     result.devDependencies = _.sortBy result.devDependencies, 'name'
@@ -50,11 +46,7 @@ class DependencyLinter
     no
 
 
-  isDependency: (files, scripts) ->
-    not @isDevDependency files, scripts
-
-
-  isDevDependency: (files, scripts) ->
+  isDevDependency: ({files, scripts}) ->
     for file in files
       return no unless @isDevFile file
     for script in scripts
@@ -72,21 +64,22 @@ class DependencyLinter
     no
 
 
-  status: ({isDependency, listedAsDependency, listedAsDevDependency}) ->
+  parseUsedModule: (usedModule, status, result) ->
+    {isDependency, listedAsDependency, listedAsDevDependency} = status
     if isDependency
       if listedAsDependency
-        {}
-      else if listedAsDevDependency
-        {error: 'should be dependency'}
-      else
-        {error: 'missing'}
-    else
+        result.dependencies.push usedModule
       if listedAsDevDependency
-        {}
-      else if listedAsDependency
-        {error: 'should be devDependency'}
-      else
-        {error: 'missing'}
+        result.devDependencies.push _.assign {}, usedModule, {error: 'should be dependency'}
+      unless listedAsDependency or listedAsDevDependency
+        result.dependencies.push _.assign {}, usedModule, {error: 'missing'}
+    else
+      if listedAsDependency
+        result.dependencies.push _.assign {}, usedModule, {error: 'should be devDependency'}
+      if listedAsDevDependency
+        result.devDependencies.push usedModule
+      unless listedAsDependency or listedAsDevDependency
+        result.devDependencies.push _.assign {}, usedModule, {error: 'missing'}
 
 
 module.exports = DependencyLinter

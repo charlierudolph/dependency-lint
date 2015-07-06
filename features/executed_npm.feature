@@ -16,7 +16,8 @@ Feature: Executed module: npm
 
 
   Scenario: dependency listed
-    Given I have "npm" installed and listed as a dependency
+    Given I have "npm" installed
+    And I have "npm" listed as a dependency
     And the "npm" module exposes the executable "npm"
     And I have a script named "install" defined as "npm run build"
     When I run "dependency-lint"
@@ -42,7 +43,8 @@ Feature: Executed module: npm
 
 
   Scenario: devDependency listed
-    Given I have "npm" installed and listed as a devDependency
+    Given I have "npm" installed
+    And I have "npm" listed as a devDependency
     And the "npm" module exposes the executable "npm"
     And I have a script named "pretest" defined as "npm run lint"
     When I run "dependency-lint"

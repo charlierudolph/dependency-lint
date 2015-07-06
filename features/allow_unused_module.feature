@@ -5,7 +5,8 @@ Feature: Unused module
 
 
   Scenario: dependency
-    Given I have "jade" installed and listed as a dependency
+    Given I have "jade" installed
+    And I have "jade" listed as a dependency
     And I have configured "allowUnused" to contain "jade"
     When I run "dependency-lint"
     Then I see the output
@@ -18,7 +19,8 @@ Feature: Unused module
 
 
   Scenario: devDependency
-    Given I have "coffeelint-variable-scope" installed and listed as a devDependency
+    Given I have "coffeelint-variable-scope" installed
+    And I have "coffeelint-variable-scope" listed as a devDependency
     And I have configured "allowUnused" to contain "^coffeelint-"
     When I run "dependency-lint"
     Then I see the output

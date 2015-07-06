@@ -5,7 +5,8 @@ Feature: Executed module
 
 
   Scenario: dependency
-    Given I have "coffee-script" installed and listed as a dependency
+    Given I have "coffee-script" installed
+    And I have "coffee-script" listed as a dependency
     And the "coffee-script" module exposes the executable "coffee"
     And I have a script named "install" defined as "coffee --compile --output lib/ src/"
     When I run "dependency-lint"
@@ -19,7 +20,8 @@ Feature: Executed module
 
 
   Scenario: devDependency
-    Given I have "mycha" installed and listed as a devDependency
+    Given I have "mycha" installed
+    And I have "mycha" listed as a devDependency
     And the "mycha" module exposes the executable "mycha"
     And I have a script named "test" defined as "mycha run --reporter spec"
     When I run "dependency-lint"

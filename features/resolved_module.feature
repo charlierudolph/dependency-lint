@@ -5,7 +5,8 @@ Feature: Resolved module
 
 
   Scenario: dependency
-    Given I have "express" installed and listed as a dependency
+    Given I have "express" installed
+    And I have "express" listed as a dependency
     And I have a file "server.coffee" which resolves "express"
     When I run "dependency-lint"
     Then I see the output
@@ -18,7 +19,8 @@ Feature: Resolved module
 
 
   Scenario: devDependency
-    Given I have "chai" installed and listed as a devDependency
+    Given I have "chai" installed
+    And I have "chai" listed as a devDependency
     And I have a file "server_spec.coffee" which resolves "chai"
     When I run "dependency-lint"
     Then I see the output
