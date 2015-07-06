@@ -50,7 +50,7 @@
     "detective": "^4.0.0",
     "docopt": "^0.6.0",
     "fs-cson": "^0.3.0",
-    "fs-extra": "^0.19.0",
+    "fs-extra": "^0.21.0",
     "glob": "^5.0.3",
     "lodash": "^3.2.0",
     "minimatch": "^2.0.8"
