@@ -1,7 +1,9 @@
 _ = require 'lodash'
 async = require 'async'
+asyncHandlers = require 'async-handlers'
 extensions = require './supported_file_extensions'
 fs = require 'fs'
+fsExtra = require 'fs-extra'
 fsCson = require 'fs-cson'
 path = require 'path'
 
@@ -9,27 +11,39 @@ path = require 'path'
 class ConfigurationLoader
 
   constructor: ({@dir}) ->
-    @defaultConfig = @loadDetaultConfig()
+    @defaultConfigPath = path.join __dirname, '..', '..', 'config', 'default.json'
     fsCson.register()
 
 
   load: (done) ->
-    @loadUserConfig (err, userConfig) =>
-      if err then return done err
-      config = _.assign {}, @defaultConfig, userConfig
-      done null, config
+    merge = (args) -> _.assign {}, args...
+    async.parallel [
+      @loadDefaultConfig
+      @loadUserConfig
+    ], asyncHandlers.transform(merge, done)
 
 
-  loadDetaultConfig: ->
-    require path.join(__dirname, '..', '..', 'config', 'default.json')
+  loadConfig: (filePath, done) ->
+    unless filePath then return done()
+    try
+      result = require filePath
+    catch err
+      if err.message.indexOf(filePath) is -1
+        err.message = "#{filePath}: #{err.message}"
+      done err
+    done null, result
 
 
-  loadUserConfig: (done) ->
+  loadDefaultConfig: (done) =>
+    fsExtra.readJson @defaultConfigPath, done
+
+
+  loadUserConfig: (done) =>
     filePaths = _.map extensions, (ext) => path.join @dir, "dependency-lint.#{ext}"
-    callback = (filePath) ->
-      config = if filePath then require filePath
-      done null, config
-    async.detect filePaths, fs.exists, callback
+    async.waterfall [
+      (next) -> async.detect filePaths, fs.exists, (result) -> next null, result
+      @loadConfig
+    ], done
 
 
 module.exports = ConfigurationLoader

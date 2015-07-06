@@ -7,19 +7,21 @@ tmp = require 'tmp'
 
 describe 'ExecutedModuleFinder', ->
   beforeEach (done) ->
-    tmp.dir {unsafeCleanup: true}, (err, @tmpDir) =>
-      if err then return done err
-      @packagePath = path.join @tmpDir, 'package.json'
-      @executablesPath = path.join @tmpDir, 'node_modules', '.bin'
-      fs.mkdirp @executablesPath, done
+    tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
 
   describe 'find', ->
+    beforeEach ->
+      @packagePath = path.join @tmpDir, 'package.json'
+      @findModules = (done) =>
+        @executedModulesFinder = new ExecutedModuleFinder dir: @tmpDir
+        @executedModulesFinder.find (@err, @result) => done()
+
     context 'no scripts', ->
       beforeEach (done) ->
-        fs.outputJson @packagePath, {}, (err) =>
-          if err then return done err
-          @executedModulesFinder = new ExecutedModuleFinder dir: @tmpDir
-          @executedModulesFinder.find (@err, @result) => done()
+        async.series [
+          (next) => fs.outputJson @packagePath, {}, next
+          (next) => new ExecutedModuleFinder(dir: @tmpDir).find (@err, @result) => next()
+        ], done
 
       it 'does not return an error', ->
         expect(@err).to.not.exist
@@ -30,18 +32,18 @@ describe 'ExecutedModuleFinder', ->
 
     context 'script using module exectuable', ->
       beforeEach (done) ->
-        async.parallel [
-          (taskDone) => fs.outputJson @packagePath, {scripts: {test: 'mycha run'}}, taskDone
-          (taskDone) =>
-            fs.outputJson(
-              path.join(@tmpDir, 'node_modules', 'mycha', 'package.json'),
-              name: 'mycha', bin: {mycha: ''}
-              taskDone
-            )
-        ], (err) =>
-          if err then return done err
-          @executedModulesFinder = new ExecutedModuleFinder dir: @tmpDir
-          @executedModulesFinder.find (@err, @result) => done()
+        packageContent = scripts: {test: 'mycha run'}
+        modulePackagePath = path.join @tmpDir, 'node_modules', 'mycha', 'package.json'
+        modulePackageContent = name: 'mycha', bin: {mycha: ''}
+        async.auto {
+          outputPackage: (next) =>
+            fs.outputJson @packagePath, packageContent, next
+          outputModulePackage: (next) ->
+            fs.outputJson modulePackagePath, modulePackageContent, next
+          findModules: ['outputPackage', 'outputModulePackage', (next) =>
+            new ExecutedModuleFinder(dir: @tmpDir).find (@err, @result) => next()
+          ]
+        }, done
 
       it 'does not return an error', ->
         expect(@err).to.not.exist
@@ -49,20 +51,21 @@ describe 'ExecutedModuleFinder', ->
       it 'returns the module under dev', ->
         expect(@result).to.eql [name: 'mycha', scripts: ['test']]
 
+
     context 'script using scoped module exectuable', ->
       beforeEach (done) ->
-        async.parallel [
-          (taskDone) => fs.outputJson @packagePath, {scripts: {test: 'mycha run'}}, taskDone
-          (taskDone) =>
-            fs.outputJson(
-              path.join(@tmpDir, 'node_modules', '@originate', 'mycha', 'package.json'),
-              name: '@originate/mycha', bin: {mycha: ''}
-              taskDone
-            )
-        ], (err) =>
-          if err then return done err
-          @executedModulesFinder = new ExecutedModuleFinder dir: @tmpDir
-          @executedModulesFinder.find (@err, @result) => done()
+        packageContent = scripts: {test: 'mycha run'}
+        modulePackagePath = path.join @tmpDir, 'node_modules', '@originate', 'mycha', 'package.json'
+        modulePackageContent = name: '@originate/mycha', bin: {mycha: ''}
+        async.auto {
+          outputPackage: (next) =>
+            fs.outputJson @packagePath, packageContent, next
+          outputModulePackage: (next) ->
+            fs.outputJson modulePackagePath, modulePackageContent, next
+          findModules: ['outputPackage', 'outputModulePackage', (next) =>
+            new ExecutedModuleFinder(dir: @tmpDir).find (@err, @result) => next()
+          ]
+        }, done
 
       it 'does not return an error', ->
         expect(@err).to.not.exist

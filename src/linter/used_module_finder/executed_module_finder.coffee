@@ -1,5 +1,6 @@
 _ = require 'lodash'
 async = require 'async'
+asyncHandlers = require 'async-handlers'
 fs = require 'fs'
 glob = require 'glob'
 ModuleFilterer = require './module_filterer'
@@ -16,18 +17,24 @@ class ExecutedModulesFinder
 
 
   find: (done) ->
-    @getModuleExecutables (err, moduleExecutables) =>
-      if err then return done err
-      result = for scriptName, script of @scripts
-        moduleNames = @findInScript script, moduleExecutables
-        {name: moduleName, scripts: [scriptName]} for moduleName in moduleNames
-      done null, _.flatten(result)
+    async.auto {
+      packageJsons: @getModulePackageJsons
+      moduleExecutables: ['packageJsons', (next, {packageJsons}) =>
+        next null, @getModuleExecutables(packageJsons)
+      ]
+      ensureInstalled: ['moduleExecutables', (next, {moduleExecutables}) =>
+        @ensureAllModulesInstalled moduleExecutables, next
+      ]
+      formattedExecutables: ['moduleExecutables', (next, {moduleExecutables}) =>
+        next null, @parseModuleExecutables(moduleExecutables)
+      ]
+    }, asyncHandlers.extract('formattedExecutables', done)
 
 
   ensureAllModulesInstalled: (moduleExecutables, done) ->
     modulesNotInstalled = _.difference @modulesListed, _.keys(moduleExecutables)
     if modulesNotInstalled.length is 0
-      done null, moduleExecutables
+      done()
     else
       done new Error """
         The following modules are listed in your `package.json` but are not installed.
@@ -45,18 +52,28 @@ class ExecutedModulesFinder
     result
 
 
-  getModuleExecutables: (done) ->
+  getModulePackageJsons: (done) =>
     patterns = [
       "#{@dir}/node_modules/*/package.json"
       "#{@dir}/node_modules/*/*/package.json" # scoped packages
     ]
-    async.map patterns, glob, (err, files) =>
-      if err then return done err
-      result = []
-      for file in _.flatten files
-        {name, bin} = require(file)
-        result[name] = _.keys(bin)
-      @ensureAllModulesInstalled result, done
+    async.concat patterns, glob, done
+
+
+  getModuleExecutables: (packageJsons) ->
+    result = {}
+    for packageJson in packageJsons
+      {name, bin} = require packageJson
+      result[name] = _.keys bin
+    result
+
+
+  parseModuleExecutables: (moduleExecutables) =>
+    result = []
+    for scriptName, script of @scripts
+      for moduleName in @findInScript script, moduleExecutables
+        result.push {name: moduleName, scripts: [scriptName]}
+    result
 
 
 module.exports = ExecutedModulesFinder

@@ -1,3 +1,4 @@
+asyncHandlers = require 'async-handlers'
 {docopt} = require 'docopt'
 fs = require 'fs-extra'
 path = require 'path'
@@ -20,9 +21,7 @@ generateConfig = ->
   destFilename = "dependency-lint.#{extension}"
   dest = path.join process.cwd(), destFilename
   callback = (err) ->
-    if err
-      console.error err
-      process.exit 1
+    asyncHandlers.exitOnError err
     console.log "Configuration file generated at \"#{destFilename}\""
   fs.copy src, dest, callback
 

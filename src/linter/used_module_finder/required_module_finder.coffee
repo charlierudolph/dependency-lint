@@ -18,25 +18,41 @@ class RequiredModuleFinder
   find: (done) ->
     async.waterfall [
       (next) => glob '**/*.{coffee,js}', {cwd: @dir, ignore: @ignoreFilePatterns}, next
-      (files, next) => async.map files, @findInFile, next
-      (results, next) -> next null, _.flatten(results)
+      (files, next) => async.concat files, @findInFile, next
     ], done
 
 
-  findInFile: (file, done) =>
-    fs.readFile path.join(@dir, file), encoding: 'utf8', (err, data) =>
-      if err then return done err
+  findInFile: (filePath, done) =>
+    async.waterfall [
+      (next) =>
+        fs.readFile path.join(@dir, filePath), encoding: 'utf8', next
+      (content, next) =>
+        @compile {content, filePath}, next
+      (content, next) =>
+        next null, @findInContent({content, filePath})
+    ], done
 
-      if path.extname(file) is '.coffee'
-        try
-          data = coffeeScript.compile data
-        catch err
-          err.message = "Error compiling #{file}: #{err.message}"
-          done err
 
-      moduleNames = detective data, {@isRequire}
-      moduleNames = @moduleFilterer.filterRequiredModules moduleNames
-      done null, ({name, files: [file]} for name in moduleNames)
+  compile: ({content, filePath}, done) ->
+    if path.extname(filePath) is '.coffee'
+      @compileCoffeescript {content, filePath}, done
+    else
+      done null, content
+
+
+  compileCoffeescript: ({content, filePath}, done) ->
+    try
+      result = coffeeScript.compile content
+    catch err
+      err.message = "Error compiling #{filePath}: #{err.message}"
+      return done err
+    done null, result
+
+
+  findInContent: ({content, filePath}) ->
+    moduleNames = detective content, {@isRequire}
+    moduleNames = @moduleFilterer.filterRequiredModules moduleNames
+    {name, files: [filePath]} for name in moduleNames
 
 
   isRequire: ({type, callee}) ->

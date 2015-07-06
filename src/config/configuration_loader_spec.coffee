@@ -1,87 +1,75 @@
+async = require 'async'
 ConfigurationLoader = require './configuration_loader'
+csonParser = require 'cson-parser'
 fs = require 'fs'
-fsExtra = require 'fs-extra'
-fsCson = require 'fs-cson'
 path = require 'path'
 tmp = require 'tmp'
 
 
+validUserConfigs = [
+  extension: 'coffee'
+  content: "module.exports = devFilePatterns: ['test/**/*']"
+,
+  extension: 'cson'
+  content: csonParser.stringify(devFilePatterns: ['test/**/*'])
+,
+  extension: 'js'
+  content: "module.exports = { devFilePatterns: ['test/**/*'] };"
+,
+  extension: 'json'
+  content: JSON.stringify(devFilePatterns: ['test/**/*'])
+]
+
+
 describe 'ConfigurationLoader', ->
   beforeEach (done) ->
-    tmp.dir {unsafeCleanup: true}, (err, @tmpDir) =>
-      if err then return done err
-      @configurationLoader = new ConfigurationLoader {dir: @tmpDir}
-      done()
+    async.series [
+      (next) =>
+        tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => next err
+      (next) =>
+        @configurationLoader = new ConfigurationLoader {dir: @tmpDir}
+        next()
+    ], done
 
   context 'load', ->
     context 'with a user configuration', ->
-      context 'coffee file', ->
-        beforeEach (done) ->
-          src = "module.exports = devFilePatterns: ['test/**/*']"
-          fs.writeFile path.join(@tmpDir, 'dependency-lint.coffee'), src, (err) =>
-            if err then return done err
-            @configurationLoader.load (@err, @config) => done()
+      for {extension, content} in validUserConfigs
+        do (extension, content) ->
+          context "#{extension} file", ->
+            beforeEach ->
+              @configPath = path.join @tmpDir, "dependency-lint.#{extension}"
 
-        it 'does not return an error', ->
-          expect(@err).to.not.exist
+            context 'valid', ->
+              beforeEach (done) ->
+                async.series [
+                  (next) => fs.writeFile @configPath, content, next
+                  (next) => @configurationLoader.load (@err, @result) => next()
+                ], done
 
-        it 'returns the default configuration merged with the user configuration', ->
-          expect(@config).to.eql
-            allowUnused: []
-            devFilePatterns: ['test/**/*']
-            devScripts: ['lint', 'publish', 'test']
-            ignoreFilePatterns: ['**/node_modules/**/*']
+              it 'does not return an error', ->
+                expect(@err).to.not.exist
 
-      context 'cson file', ->
-        beforeEach (done) ->
-          userConfig = devFilePatterns: ['test/**/*']
-          fsCson.writeFile path.join(@tmpDir, 'dependency-lint.cson'), userConfig, (err) =>
-            if err then return done err
-            @configurationLoader.load (@err, @config) => done()
+              it 'returns the default configuration merged with the user configuration', ->
+                expect(@result).to.eql
+                  allowUnused: []
+                  devFilePatterns: ['test/**/*']
+                  devScripts: ['lint', 'publish', 'test']
+                  ignoreFilePatterns: ['**/node_modules/**/*']
 
-        it 'does not return an error', ->
-          expect(@err).to.not.exist
+            context 'invalid', ->
+              beforeEach (done) ->
+                async.series [
+                  (next) => fs.writeFile @configPath, 'invalid', next
+                  (next) => @configurationLoader.load (@err, @result) => next()
+                ], done
 
-        it 'returns the default configuration merged with the user configuration', ->
-          expect(@config).to.eql
-            allowUnused: []
-            devFilePatterns: ['test/**/*']
-            devScripts: ['lint', 'publish', 'test']
-            ignoreFilePatterns: ['**/node_modules/**/*']
+              it 'returns an error', ->
+                expect(@err).to.exist
+                expect(@err.toString()).to.include @configPath
 
-      context 'js file', ->
-        beforeEach (done) ->
-          src = "module.exports = { devFilePatterns: ['test/**/*'] };"
-          fs.writeFile path.join(@tmpDir, 'dependency-lint.js'), src, (err) =>
-            if err then return done err
-            @configurationLoader.load (@err, @config) => done()
+              it 'does not return a result', ->
+                expect(@result).to.not.exist
 
-        it 'does not return an error', ->
-          expect(@err).to.not.exist
-
-        it 'returns the default configuration merged with the user configuration', ->
-          expect(@config).to.eql
-            allowUnused: []
-            devFilePatterns: ['test/**/*']
-            devScripts: ['lint', 'publish', 'test']
-            ignoreFilePatterns: ['**/node_modules/**/*']
-
-      context 'json file', ->
-        beforeEach (done) ->
-          userConfig = devFilePatterns: ['test/**/*']
-          fsExtra.writeJson path.join(@tmpDir, 'dependency-lint.json'), userConfig, (err) =>
-            if err then return done err
-            @configurationLoader.load (@err, @config) => done()
-
-        it 'does not return an error', ->
-          expect(@err).to.not.exist
-
-        it 'returns the default configuration merged with the user configuration', ->
-          expect(@config).to.eql
-            allowUnused: []
-            devFilePatterns: ['test/**/*']
-            devScripts: ['lint', 'publish', 'test']
-            ignoreFilePatterns: ['**/node_modules/**/*']
 
     context 'without a user configuration', ->
       beforeEach (done) ->

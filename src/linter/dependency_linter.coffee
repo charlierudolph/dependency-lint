@@ -15,7 +15,7 @@ class DependencyLinter
   #
   # Returns {dependencies, devDependencies}
   #         where each is an array of {name, files, scripts, error, warning}
-  lint: ({listedModules, usedModules}) ->
+  lint: ({listedModules, usedModules}) =>
     result =
       dependencies: []
       devDependencies: []

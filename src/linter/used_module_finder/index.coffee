@@ -1,5 +1,6 @@
 _ = require 'lodash'
 async = require 'async'
+asyncHandlers = require 'async-handlers'
 ExecutedModuleFinder = require './executed_module_finder'
 RequiredModuleFinder = require './required_module_finder'
 
@@ -11,13 +12,11 @@ class UsedModuleFinder
     @requiredModuleFinder = new RequiredModuleFinder {@dir, ignoreFilePatterns}
 
 
-  find: (done) ->
+  find: (done) =>
     async.parallel [
       (taskDone) => @requiredModuleFinder.find taskDone
       (taskDone) => @executedModuleFinder.find taskDone
-    ], (err, results) =>
-      if err then return done err
-      done null, @normalizeModules(results)
+    ], asyncHandlers.transform(@normalizeModules, done)
 
 
   normalizeModules: (modules...) ->

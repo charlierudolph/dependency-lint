@@ -1,5 +1,6 @@
+async = require 'async'
 {expect} = require 'chai'
-fs = require 'fs-extra'
+fsExtra = require 'fs-extra'
 path = require 'path'
 tmp = require 'tmp'
 
@@ -7,9 +8,12 @@ tmp = require 'tmp'
 module.exports = ->
 
   @Before (done) ->
-    tmp.dir {unsafeCleanup: yes}, (err, @tmpDir) =>
-      if err then return done err
-      fs.outputJson path.join(@tmpDir, 'package.json'), {}, done
+    async.waterfall [
+      (next) ->
+        tmp.dir {unsafeCleanup: yes}, next
+      (@tmpDir, next) ->
+        fsExtra.writeJson path.join(@tmpDir, 'package.json'), {}, next
+    ], done
 
 
   @After (done) ->
