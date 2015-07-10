@@ -1,10 +1,10 @@
 _ = require 'lodash'
-async = require 'async'
-coffeeScript = require 'coffee-script'
-detective = require 'detective'
+
+
+
 glob = require 'glob'
 fs = require 'fs'
-ModuleFilterer = require './module_filterer'
+
 path = require 'path'
 
 
@@ -16,6 +16,7 @@ class RequiredModuleFinder
 
 
   find: (done) ->
+    async = require 'async'
     async.waterfall [
       (next) => glob '**/*.{coffee,js}', {cwd: @dir, ignore: @ignoreFilePatterns}, next
       (files, next) => async.concat files, @findInFile, next
@@ -23,6 +24,7 @@ class RequiredModuleFinder
 
 
   findInFile: (filePath, done) =>
+    async = require 'async'
     async.waterfall [
       (next) =>
         fs.readFile path.join(@dir, filePath), encoding: 'utf8', next
@@ -42,6 +44,7 @@ class RequiredModuleFinder
 
   compileCoffeescript: ({content, filePath}, done) ->
     try
+      coffeeScript = require 'coffee-script'
       result = coffeeScript.compile content
     catch err
       err.message = "Error compiling #{filePath}: #{err.message}"
@@ -50,8 +53,10 @@ class RequiredModuleFinder
 
 
   findInContent: ({content, filePath}) ->
+    detective = require 'detective'
     moduleNames = detective content, {@isRequire}
-    moduleNames = @moduleFilterer.filterRequiredModules moduleNames
+    ModuleFilterer = require './module_filterer'
+    moduleNames = ModuleFilterer.filterRequiredModules moduleNames
     {name, files: [filePath]} for name in moduleNames
 
 

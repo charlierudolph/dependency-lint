@@ -1,7 +1,3 @@
-_ = require 'lodash'
-colors = require 'colors/safe'
-
-
 class DefaultFormatter
 
   # stream - writable stream to send output
@@ -21,6 +17,7 @@ class DefaultFormatter
 
 
   moduleOutput: ({error, files, name, scripts, warning}) ->
+    colors = require 'colors/safe'
     if error
       colors.red("✖ #{name} (#{error})") + colors.gray(@errorSuffix {files, scripts})
     else if warning
@@ -56,6 +53,7 @@ class DefaultFormatter
 
 
   summaryOutput: (results) ->
+    colors = require 'colors/safe'
     errors = @errorCount results
     prefix = colors.green '✓'
     prefix = colors.red '✖' if errors > 0

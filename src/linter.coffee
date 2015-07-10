@@ -1,38 +1,46 @@
-_ = require 'lodash'
-async = require 'async'
-asyncHandlers = require 'async-handlers'
-fsExtra = require 'fs-extra'
-DependencyLinter = require './linter/dependency_linter'
-UsedModuleFinder = require './linter/used_module_finder'
-path = require 'path'
-
-
 class Linter
 
 
-  constructor: (@dir, {allowUnused, devFilePatterns, devScripts, ignoreFilePatterns}) ->
-    @dependencyLinter = new DependencyLinter {allowUnused, devFilePatterns, devScripts}
-    @usedModuleFinder = new UsedModuleFinder {@dir, ignoreFilePatterns}
+  constructor: (@dir, {@allowUnused, @devFilePatterns, @devScripts, @ignoreFilePatterns}) ->
 
 
   lint: (done) ->
-    async.parallel {
-      listedModules: @getListedModules
-      usedModules: @usedModuleFinder.find
-    }, asyncHandlers.transform(@dependencyLinter.lint, done)
+    asyncHandlers = require 'async-handlers'
+    handler = asyncHandlers.transform @lintModules, done
+    async = require 'async'
+    async.parallel {@listedModules, @usedModules}, handler
 
 
+  # Private
   extractListedModules: (packageJson) ->
     {
-      dependencies: _.keys(packageJson.dependencies)
-      devDependencies: _.keys(packageJson.devDependencies)
+      dependencies: Object.keys(packageJson.dependencies or {})
+      devDependencies: Object.keys(packageJson.devDependencies or {})
     }
 
 
-  getListedModules: (done) =>
+  # Private
+  lintModules: ({listedModules, usedModules}) =>
+    DependencyLinter = require './linter/dependency_linter'
+    dependencyLinter = new DependencyLinter {@allowUnused, @devFilePatterns, @devScripts}
+    dependencyLinter.lint {listedModules, usedModules}
+
+
+  # Private
+  listedModules: (done) =>
+    path = require 'path'
     filePath = path.join @dir, 'package.json'
-    callback = asyncHandlers.transform @extractListedModules, done
-    fsExtra.readJson filePath, callback
+    asyncHandlers = require 'async-handlers'
+    handler = asyncHandlers.transform @extractListedModules, done
+    fsExtra = require 'fs-extra'
+    fsExtra.readJson filePath, handler
+
+
+  # Private
+  usedModules: (done) =>
+    UsedModuleFinder = require './linter/used_module_finder'
+    usedModuleFinder = new UsedModuleFinder {@dir, @ignoreFilePatterns}
+    usedModuleFinder.find done
 
 
 module.exports = Linter
