@@ -1,8 +1,3 @@
-_ = require 'lodash'
-{globalModules} = require './module_db'
-minimatch = require 'minimatch'
-
-
 class DependencyLinter
 
   constructor: ({@allowUnused, @devFilePatterns, @devScripts}) ->
@@ -16,6 +11,8 @@ class DependencyLinter
   # Returns {dependencies, devDependencies}
   #         where each is an array of {name, files, scripts, error, warning}
   lint: ({listedModules, usedModules}) =>
+    _ = require 'lodash'
+
     result =
       dependencies: []
       devDependencies: []
@@ -55,6 +52,7 @@ class DependencyLinter
 
 
   isDevFile: (file) ->
+    minimatch = require 'minimatch'
     return yes for pattern in @devFilePatterns when minimatch file, pattern
     no
 

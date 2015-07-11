@@ -5,39 +5,40 @@ class Linter
 
 
   lint: (done) ->
-    asyncHandlers = require 'async-handlers'
-    handler = asyncHandlers.transform @lintModules, done
     async = require 'async'
-    async.parallel {@listedModules, @usedModules}, handler
+    asyncHandlers = require 'async-handlers'
+    async.auto {
+      packageJson: @getPackageJson
+      usedModules: @getUsedModules
+    }, asyncHandlers.transform @lintModules, done
 
 
   # Private
   extractListedModules: (packageJson) ->
     {
-      dependencies: Object.keys(packageJson.dependencies or {})
-      devDependencies: Object.keys(packageJson.devDependencies or {})
+      dependencies: _.keys(packageJson.dependencies)
+      devDependencies: _.keys(packageJson.devDependencies)
     }
 
 
   # Private
-  lintModules: ({listedModules, usedModules}) =>
+  lintModules: ({packageJson, usedModules}) =>
     DependencyLinter = require './linter/dependency_linter'
+    listedModules = extractListedModules packageJson
     dependencyLinter = new DependencyLinter {@allowUnused, @devFilePatterns, @devScripts}
     dependencyLinter.lint {listedModules, usedModules}
 
 
   # Private
-  listedModules: (done) =>
+  getPackageJson: (done) =>
+    fsExtra = require 'fs-extra'
     path = require 'path'
     filePath = path.join @dir, 'package.json'
-    asyncHandlers = require 'async-handlers'
-    handler = asyncHandlers.transform @extractListedModules, done
-    fsExtra = require 'fs-extra'
-    fsExtra.readJson filePath, handler
+    fsExtra.readJson filePath, done
 
 
   # Private
-  usedModules: (done) =>
+  getUsedModules: (listedModules, done) =>
     UsedModuleFinder = require './linter/used_module_finder'
     usedModuleFinder = new UsedModuleFinder {@dir, @ignoreFilePatterns}
     usedModuleFinder.find done

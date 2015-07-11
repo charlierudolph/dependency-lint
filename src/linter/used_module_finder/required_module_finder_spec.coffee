@@ -6,18 +6,24 @@ tmp = require 'tmp'
 
 
 describe 'RequiredModuleFinder', ->
+  before ->
+    @writeContentAndFineModules = ({filePath, content}, done) =>
+      async.series [
+        (next) -> fs.writeFile filePath, content, next
+        (next) => new RequiredModuleFinder(dir: @tmpDir).find (@err, @result) => next()
+      ], done
+
+
   beforeEach (done) ->
     tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
+
 
   describe 'find', ->
     context 'coffeescript file requiring a module', ->
       beforeEach (done) ->
         filePath = path.join @tmpDir, 'a.coffee'
         content = 'b = require "b"'
-        async.series [
-          (next) -> fs.writeFile filePath, content, next
-          (next) => new RequiredModuleFinder(dir: @tmpDir).find (@err, @result) => next()
-        ], done
+        @writeContentAndFineModules {filePath, content}, done
 
       it 'does not return an error', ->
         expect(@err).to.not.exist
@@ -30,10 +36,7 @@ describe 'RequiredModuleFinder', ->
       beforeEach (done) ->
         filePath = path.join @tmpDir, 'a.coffee'
         content = 'b = require.resolve "b"'
-        async.series [
-          (next) -> fs.writeFile filePath, content, next
-          (next) => new RequiredModuleFinder(dir: @tmpDir).find (@err, @result) => next()
-        ], done
+        @writeContentAndFineModules {filePath, content}, done
 
       it 'does not return an error', ->
         expect(@err).to.not.exist
@@ -46,10 +49,7 @@ describe 'RequiredModuleFinder', ->
       beforeEach (done) ->
         filePath = path.join @tmpDir, 'a.js'
         content = 'var b = require("b");'
-        async.series [
-          (next) -> fs.writeFile filePath, content, next
-          (next) => new RequiredModuleFinder(dir: @tmpDir).find (@err, @result) => next()
-        ], done
+        @writeContentAndFineModules {filePath, content}, done
 
       it 'does not return an error', ->
         expect(@err).to.not.exist

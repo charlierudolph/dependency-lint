@@ -1,25 +1,17 @@
-_ = require 'lodash'
-
-
-
-glob = require 'glob'
-fs = require 'fs'
-
-path = require 'path'
-
-
 class RequiredModuleFinder
 
 
   constructor: ({@dir, @ignoreFilePatterns}) ->
-    @moduleFilterer = new ModuleFilterer
 
 
   find: (done) ->
     async = require 'async'
     async.waterfall [
-      (next) => glob '**/*.{coffee,js}', {cwd: @dir, ignore: @ignoreFilePatterns}, next
-      (files, next) => async.concat files, @findInFile, next
+      (next) =>
+        glob = require 'glob'
+        glob '**/*.{coffee,js}', {cwd: @dir, ignore: @ignoreFilePatterns}, next
+      (files, next) =>
+        async.concat files, @findInFile, next
     ], done
 
 
@@ -27,6 +19,8 @@ class RequiredModuleFinder
     async = require 'async'
     async.waterfall [
       (next) =>
+        fs = require 'fs'
+        path = require 'path'
         fs.readFile path.join(@dir, filePath), encoding: 'utf8', next
       (content, next) =>
         @compile {content, filePath}, next
@@ -36,6 +30,7 @@ class RequiredModuleFinder
 
 
   compile: ({content, filePath}, done) ->
+    path = require 'path'
     if path.extname(filePath) is '.coffee'
       @compileCoffeescript {content, filePath}, done
     else
