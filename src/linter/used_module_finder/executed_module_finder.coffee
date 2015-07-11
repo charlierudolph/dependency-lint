@@ -27,7 +27,7 @@ class ExecutedModulesFinder
 
   ensureAllModulesInstalled: (moduleExecutables, done) ->
     _ = require 'lodash'
-    modulesNotInstalled = _.difference @listedModules, _.keys(moduleExecutables)
+    modulesNotInstalled = _.difference @modulesListed, _.keys(moduleExecutables)
     if modulesNotInstalled.length is 0
       done()
     else

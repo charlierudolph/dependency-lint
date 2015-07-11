@@ -1,6 +1,6 @@
 class UsedModuleFinder
 
-  constructor: ({@dir, @ignoreFilePatterns, @listedModules}) ->
+  constructor: ({@dir, @ignoreFilePatterns}) ->
 
 
   find: (done) =>
@@ -16,7 +16,7 @@ class UsedModuleFinder
   # Private
   getExecutedModules: (done) =>
     ExecutedModuleFinder = require './executed_module_finder'
-    executedModuleFinder = new ExecutedModuleFinder {@dir, @listedModules}
+    executedModuleFinder = new ExecutedModuleFinder {@dir}
     executedModuleFinder.find done
 
   # Private

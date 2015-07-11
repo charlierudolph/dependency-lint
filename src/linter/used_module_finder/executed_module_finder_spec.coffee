@@ -10,18 +10,26 @@ describe 'ExecutedModuleFinder', ->
     tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
 
   describe 'find', ->
+    before ->
+      @writePackagesAndFindModules = (packages, done) ->
+        async.series [
+          (taskDone) ->
+            writePackage = ({filePath, content}, next) -> fs.outputJson filePath, content, next
+            async.each packages, writePackage, taskDone
+          (taskDone) =>
+            new ExecutedModuleFinder(dir: @tmpDir).find (@err, @result) => taskDone()
+        ], done
+
     beforeEach ->
       @packagePath = path.join @tmpDir, 'package.json'
-      @findModules = (done) =>
-        @executedModulesFinder = new ExecutedModuleFinder dir: @tmpDir
-        @executedModulesFinder.find (@err, @result) => done()
 
     context 'no scripts', ->
       beforeEach (done) ->
-        async.series [
-          (next) => fs.outputJson @packagePath, {}, next
-          (next) => new ExecutedModuleFinder(dir: @tmpDir).find (@err, @result) => next()
-        ], done
+        packages = [
+          filePath: @packagePath
+          content: {}
+        ]
+        @writePackagesAndFindModules packages, done
 
       it 'does not return an error', ->
         expect(@err).to.not.exist
@@ -32,18 +40,14 @@ describe 'ExecutedModuleFinder', ->
 
     context 'script using module exectuable', ->
       beforeEach (done) ->
-        packageContent = scripts: {test: 'mycha run'}
-        modulePackagePath = path.join @tmpDir, 'node_modules', 'mycha', 'package.json'
-        modulePackageContent = name: 'mycha', bin: {mycha: ''}
-        async.auto {
-          outputPackage: (next) =>
-            fs.outputJson @packagePath, packageContent, next
-          outputModulePackage: (next) ->
-            fs.outputJson modulePackagePath, modulePackageContent, next
-          findModules: ['outputPackage', 'outputModulePackage', (next) =>
-            new ExecutedModuleFinder(dir: @tmpDir).find (@err, @result) => next()
-          ]
-        }, done
+        packages = [
+          filePath: @packagePath
+          content: scripts: {test: 'mycha run'}
+        ,
+          filePath: path.join @tmpDir, 'node_modules', 'mycha', 'package.json'
+          content: name: 'mycha', bin: {mycha: ''}
+        ]
+        @writePackagesAndFindModules packages, done
 
       it 'does not return an error', ->
         expect(@err).to.not.exist
@@ -54,18 +58,14 @@ describe 'ExecutedModuleFinder', ->
 
     context 'script using scoped module exectuable', ->
       beforeEach (done) ->
-        packageContent = scripts: {test: 'mycha run'}
-        modulePackagePath = path.join @tmpDir, 'node_modules', '@originate', 'mycha', 'package.json'
-        modulePackageContent = name: '@originate/mycha', bin: {mycha: ''}
-        async.auto {
-          outputPackage: (next) =>
-            fs.outputJson @packagePath, packageContent, next
-          outputModulePackage: (next) ->
-            fs.outputJson modulePackagePath, modulePackageContent, next
-          findModules: ['outputPackage', 'outputModulePackage', (next) =>
-            new ExecutedModuleFinder(dir: @tmpDir).find (@err, @result) => next()
-          ]
-        }, done
+        packages = [
+          filePath: @packagePath
+          content: scripts: {test: 'mycha run'}
+        ,
+          filePath: path.join @tmpDir, 'node_modules', '@originate', 'mycha', 'package.json'
+          content: name: '@originate/mycha', bin: {mycha: ''}
+        ]
+        @writePackagesAndFindModules packages, done
 
       it 'does not return an error', ->
         expect(@err).to.not.exist

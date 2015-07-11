@@ -63,6 +63,7 @@ class DependencyLinter
 
 
   parseUsedModule: (usedModule, status, result) ->
+    _ = require 'lodash'
     {isDependency, listedAsDependency, listedAsDevDependency} = status
     if isDependency
       if listedAsDependency
