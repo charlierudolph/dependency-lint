@@ -6,6 +6,7 @@ fs = require 'fs'
 fsExtra = require 'fs-extra'
 fsCson = require 'fs-cson'
 path = require 'path'
+yaml = require 'js-yaml'
 
 
 class ConfigurationLoader
@@ -23,15 +24,17 @@ class ConfigurationLoader
     ], asyncHandlers.transform(merge, done)
 
 
-  loadConfig: (filePath, done) ->
-    unless filePath then return done()
-    try
-      result = require filePath
-    catch err
-      if err.message.indexOf(filePath) is -1
-        err.message = "#{filePath}: #{err.message}"
-      done err
-    done null, result
+  loadConfig: (filePath, done) =>
+    return done() unless filePath
+    handler = asyncHandlers.prependToError filePath, done
+    switch path.extname filePath
+      when '.coffee', '.cson', '.js', '.json'
+        @toAsync (-> require filePath), handler
+      when '.yml', '.yaml'
+        async.waterfall [
+          (next) -> fs.readFile filePath, 'utf8', next
+          (content, next) => @toAsync (-> yaml.safeLoad content), next
+        ], handler
 
 
   loadDefaultConfig: (done) =>
@@ -44,6 +47,14 @@ class ConfigurationLoader
       (next) -> async.detect filePaths, fs.exists, (result) -> next null, result
       @loadConfig
     ], done
+
+
+  toAsync: (fn, done) ->
+    try
+      result = fn()
+    catch err
+      done err
+    done null, result
 
 
 module.exports = ConfigurationLoader
