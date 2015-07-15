@@ -1,6 +1,6 @@
 {
   "name": "dependency-lint",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Lints npm dependencies and devDependencies",
   "main": "index.js",
   "bin": {
@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "async": "^1.0.0",
-    "async-handlers": "^1.1.0",
+    "async-handlers": "^1.2.1",
     "coffee-script": "^1.9.0",
     "colors": "^1.0.3",
     "detective": "^4.0.0",
@@ -52,6 +52,7 @@
     "fs-cson": "^0.3.0",
     "fs-extra": "^0.21.0",
     "glob": "^5.0.3",
+    "js-yaml": "^3.3.1",
     "lodash": "^3.2.0",
     "minimatch": "^2.0.8"
   }

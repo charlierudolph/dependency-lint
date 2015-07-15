@@ -6,18 +6,43 @@ path = require 'path'
 tmp = require 'tmp'
 
 
-validUserConfigs = [
+userConfigs = [
   extension: 'coffee'
-  content: "module.exports = devFilePatterns: ['test/**/*']"
+  invalidContent: 'invalid'
+  validContent: '''
+    module.exports =
+      devFilePatterns: ['test/**/*']
+    '''
 ,
   extension: 'cson'
-  content: csonParser.stringify(devFilePatterns: ['test/**/*'])
+  invalidContent: 'invalid'
+  validContent: csonParser.stringify devFilePatterns: ['test/**/*']
 ,
   extension: 'js'
-  content: "module.exports = { devFilePatterns: ['test/**/*'] };"
+  invalidContent: 'invalid'
+  validContent: '''
+    module.exports = {
+      devFilePatterns: ['test/**/*']
+    };
+    '''
 ,
   extension: 'json'
-  content: JSON.stringify(devFilePatterns: ['test/**/*'])
+  invalidContent: 'invalid'
+  validContent: JSON.stringify devFilePatterns: ['test/**/*']
+,
+  extension: 'yaml'
+  invalidContent: 'invalid: {'
+  validContent: '''
+    devFilePatterns:
+    - 'test/**/*'
+    '''
+,
+  extension: 'yml'
+  invalidContent: 'invalid: {'
+  validContent: '''
+    devFilePatterns:
+    - 'test/**/*'
+    '''
 ]
 
 
@@ -33,8 +58,8 @@ describe 'ConfigurationLoader', ->
 
   context 'load', ->
     context 'with a user configuration', ->
-      for {extension, content} in validUserConfigs
-        do (extension, content) ->
+      for {extension, invalidContent, validContent} in userConfigs
+        do (extension, invalidContent, validContent) ->
           context "#{extension} file", ->
             beforeEach ->
               @configPath = path.join @tmpDir, "dependency-lint.#{extension}"
@@ -42,7 +67,7 @@ describe 'ConfigurationLoader', ->
             context 'valid', ->
               beforeEach (done) ->
                 async.series [
-                  (next) => fs.writeFile @configPath, content, next
+                  (next) => fs.writeFile @configPath, validContent, next
                   (next) => @configurationLoader.load (@err, @result) => next()
                 ], done
 
@@ -59,13 +84,13 @@ describe 'ConfigurationLoader', ->
             context 'invalid', ->
               beforeEach (done) ->
                 async.series [
-                  (next) => fs.writeFile @configPath, 'invalid', next
+                  (next) => fs.writeFile @configPath, invalidContent, next
                   (next) => @configurationLoader.load (@err, @result) => next()
                 ], done
 
               it 'returns an error', ->
                 expect(@err).to.exist
-                expect(@err.toString()).to.include @configPath
+                expect(@err.message).to.include @configPath
 
               it 'does not return a result', ->
                 expect(@result).to.not.exist

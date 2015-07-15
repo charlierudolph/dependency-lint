@@ -29,7 +29,7 @@ If you run into an example where `dependency-lint` marks a node module as unused
 ## Configuration
 Create a configuration file with
 ```
-dependency-lint --generate-config (coffee | cson | js | json)
+dependency-lint --generate-config (coffee | cson | js | json | yaml | yml)
 ```
 Any options not set in the configuration file will be given there default value.
 
