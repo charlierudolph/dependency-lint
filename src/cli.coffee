@@ -26,7 +26,5 @@ generateConfig = (extension) ->
 
 if options['--generate-config']
   generateConfig()
-
-  generateConfig extension
 else
   require './run'
