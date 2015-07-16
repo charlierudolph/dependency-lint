@@ -1,3 +1,6 @@
+asyncHandlers = require 'async-handlers'
+
+
 class Linter
 
 
@@ -6,9 +9,8 @@ class Linter
 
   lint: (done) =>
     async = require 'async'
-    asyncHandlers = require 'async-handlers'
     async.auto {
-      packageJson: @getPackageJson
+      listedModules: @getListedModules
       usedModules: @getUsedModules
     }, asyncHandlers.transform(@lintModules, done)
 
@@ -21,14 +23,17 @@ class Linter
     }
 
 
-  lintModules: ({packageJson, usedModules}) =>
+  lintModules: ({listedModules, usedModules}) =>
     DependencyLinter = require './linter/dependency_linter'
-    listedModules = @extractListedModules packageJson
     dependencyLinter = new DependencyLinter {@allowUnused, @devFilePatterns, @devScripts}
     dependencyLinter.lint {listedModules, usedModules}
 
 
-  getPackageJson: (done) =>
+  getListedModules: (done) =>
+    @getPackageJson asyncHandlers.transform(@extractListedModules, done)
+
+
+  getPackageJson: (done) ->
     fsExtra = require 'fs-extra'
     path = require 'path'
     filePath = path.join @dir, 'package.json'
