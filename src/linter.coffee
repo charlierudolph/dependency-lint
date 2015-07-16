@@ -13,7 +13,6 @@ class Linter
     }, asyncHandlers.transform(@lintModules, done)
 
 
-  # Private
   extractListedModules: (packageJson) ->
     _ = require 'lodash'
     {
@@ -22,7 +21,6 @@ class Linter
     }
 
 
-  # Private
   lintModules: ({packageJson, usedModules}) =>
     DependencyLinter = require './linter/dependency_linter'
     listedModules = @extractListedModules packageJson
@@ -30,7 +28,6 @@ class Linter
     dependencyLinter.lint {listedModules, usedModules}
 
 
-  # Private
   getPackageJson: (done) =>
     fsExtra = require 'fs-extra'
     path = require 'path'
@@ -38,7 +35,6 @@ class Linter
     fsExtra.readJson filePath, done
 
 
-  # Private
   getUsedModules: (done) =>
     UsedModuleFinder = require './linter/used_module_finder'
     usedModuleFinder = new UsedModuleFinder {@dir, @ignoreFilePatterns}
