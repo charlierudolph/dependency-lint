@@ -44,7 +44,7 @@ class ExecutedModulesFinder
       for executable in executables
         result.push moduleName if script.match(executable) and moduleName not in result
     ModuleFilterer = require './module_filterer'
-    result = ModuleFilterer.filterExecutedModules result
+    result = new ModuleFilterer().filterExecutedModules result
     result
 
 

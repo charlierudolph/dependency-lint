@@ -51,7 +51,7 @@ class RequiredModuleFinder
     detective = require 'detective'
     moduleNames = detective content, {@isRequire}
     ModuleFilterer = require './module_filterer'
-    moduleNames = ModuleFilterer.filterRequiredModules moduleNames
+    moduleNames = new ModuleFilterer().filterRequiredModules moduleNames
     {name, files: [filePath]} for name in moduleNames
 
 

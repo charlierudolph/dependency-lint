@@ -19,6 +19,10 @@ class ConfigurationLoader
 
 
   loadConfig: (filePath, done) =>
+    async = require 'async'
+    asyncHandlers = require 'async-handlers'
+    fs = require 'fs'
+    path = require 'path'
     yaml = require 'js-yaml'
     return done() unless filePath
     handler = asyncHandlers.prependToError filePath, done
