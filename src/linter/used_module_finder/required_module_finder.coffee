@@ -1,11 +1,13 @@
-class RequiredModuleFinder
+async = require 'async'
+path = require 'path'
 
+
+class RequiredModuleFinder
 
   constructor: ({@dir, @ignoreFilePatterns}) ->
 
 
   find: (done) ->
-    async = require 'async'
     async.waterfall [
       (next) =>
         glob = require 'glob'
@@ -16,11 +18,9 @@ class RequiredModuleFinder
 
 
   findInFile: (filePath, done) =>
-    async = require 'async'
     async.waterfall [
       (next) =>
         fs = require 'fs'
-        path = require 'path'
         fs.readFile path.join(@dir, filePath), encoding: 'utf8', next
       (content, next) =>
         @compile {content, filePath}, next
@@ -30,7 +30,6 @@ class RequiredModuleFinder
 
 
   compile: ({content, filePath}, done) ->
-    path = require 'path'
     if path.extname(filePath) is '.coffee'
       @compileCoffeescript {content, filePath}, done
     else

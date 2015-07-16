@@ -1,7 +1,9 @@
+_ = require 'lodash'
+
+
 class ModuleFilterer
 
   filterExecutedModules: (moduleNames) ->
-    _ = require 'lodash'
     _.chain(moduleNames)
       .filter (name) ->
         {globalModules} = require '../module_db'
@@ -10,7 +12,6 @@ class ModuleFilterer
 
 
   filterRequiredModules: (moduleNames) ->
-    _ = require 'lodash'
     _.chain(moduleNames)
       .filter (name) ->
         {builtInModules} = require '../module_db'

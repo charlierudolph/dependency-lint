@@ -1,3 +1,6 @@
+_ = require 'lodash'
+
+
 class DependencyLinter
 
   constructor: ({@allowUnused, @devFilePatterns, @devScripts}) ->
@@ -11,8 +14,6 @@ class DependencyLinter
   # Returns {dependencies, devDependencies}
   #         where each is an array of {name, files, scripts, error, warning}
   lint: ({listedModules, usedModules}) =>
-    _ = require 'lodash'
-
     result =
       dependencies: []
       devDependencies: []
@@ -63,7 +64,6 @@ class DependencyLinter
 
 
   parseUsedModule: (usedModule, status, result) ->
-    _ = require 'lodash'
     {isDependency, listedAsDependency, listedAsDevDependency} = status
     if isDependency
       if listedAsDependency

@@ -1,7 +1,10 @@
+_ = require 'lodash'
+async = require 'async'
+
+
 class ExecutedModulesFinder
 
   constructor: ({@dir}) ->
-    _ = require 'lodash'
     path = require 'path'
     {@scripts, dependencies, devDependencies} = require path.join(@dir, 'package.json')
     @scripts ?= {}
@@ -9,7 +12,6 @@ class ExecutedModulesFinder
 
 
   find: (done) ->
-    async = require 'async'
     asyncHandlers = require 'async-handlers'
     async.auto {
       packageJsons: @getModulePackageJsons
@@ -26,7 +28,6 @@ class ExecutedModulesFinder
 
 
   ensureAllModulesInstalled: (moduleExecutables, done) ->
-    _ = require 'lodash'
     modulesNotInstalled = _.difference @modulesListed, _.keys(moduleExecutables)
     if modulesNotInstalled.length is 0
       done()
@@ -49,17 +50,15 @@ class ExecutedModulesFinder
 
 
   getModulePackageJsons: (done) =>
+    glob = require 'glob'
     patterns = [
       "#{@dir}/node_modules/*/package.json"
       "#{@dir}/node_modules/*/*/package.json" # scoped packages
     ]
-    glob = require 'glob'
-    async = require 'async'
     async.concat patterns, glob, done
 
 
   getModuleExecutables: (packageJsons) ->
-    _ = require 'lodash'
     result = {}
     for packageJson in packageJsons
       {name, bin} = require packageJson
