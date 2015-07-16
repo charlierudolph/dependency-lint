@@ -2,26 +2,29 @@ ModuleFilterer = require './module_filterer'
 
 
 describe 'ModuleFilterer', ->
+  beforeEach ->
+    @moduleFilterer = new ModuleFilterer
+
 
   describe 'filterExecutedModules', ->
     it 'removes global modules', ->
-      result = ModuleFilterer.filterExecutedModules ['npm']
+      result = @moduleFilterer.filterExecutedModules ['npm']
       expect(result).to.eql []
 
 
   describe 'filterRequiredModules', ->
     it 'removes relative requires', ->
-      result = ModuleFilterer.filterRequiredModules ['./relative']
+      result = @moduleFilterer.filterRequiredModules ['./relative']
       expect(result).to.eql []
 
     it 'removes built in modules', ->
-      result = ModuleFilterer.filterRequiredModules ['fs']
+      result = @moduleFilterer.filterRequiredModules ['fs']
       expect(result).to.eql []
 
     it 'removes paths into modules', ->
-      result = ModuleFilterer.filterRequiredModules ['coffee-script/register']
+      result = @moduleFilterer.filterRequiredModules ['coffee-script/register']
       expect(result).to.eql ['coffee-script']
 
     it 'removes paths into scoped modules', ->
-      result = ModuleFilterer.filterRequiredModules ['@myorg/mypackage/nested']
+      result = @moduleFilterer.filterRequiredModules ['@myorg/mypackage/nested']
       expect(result).to.eql ['@myorg/mypackage']
