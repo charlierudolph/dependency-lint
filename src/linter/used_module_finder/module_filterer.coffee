@@ -1,5 +1,4 @@
 _ = require 'lodash'
-{builtInModules, globalModules} = require '../module_db'
 
 
 class ModuleFilterer
@@ -7,6 +6,7 @@ class ModuleFilterer
   filterExecutedModules: (moduleNames) ->
     _.chain(moduleNames)
       .filter (name) ->
+        {globalModules} = require '../module_db'
         name not in globalModules
       .value()
 
@@ -14,6 +14,7 @@ class ModuleFilterer
   filterRequiredModules: (moduleNames) ->
     _.chain(moduleNames)
       .filter (name) ->
+        {builtInModules} = require '../module_db'
         name[0] isnt '.' and
         name not in builtInModules
       .map (name) ->

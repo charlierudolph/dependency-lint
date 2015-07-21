@@ -1,22 +1,19 @@
-_ = require 'lodash'
 async = require 'async'
 asyncHandlers = require 'async-handlers'
-extensions = require './supported_file_extensions'
 fs = require 'fs'
-fsExtra = require 'fs-extra'
-fsCson = require 'fs-cson'
 path = require 'path'
-yaml = require 'js-yaml'
 
 
 class ConfigurationLoader
 
   constructor: ({@dir}) ->
+    fsCson = require 'fs-cson'
     @defaultConfigPath = path.join __dirname, '..', '..', 'config', 'default.json'
     fsCson.register()
 
 
   load: (done) ->
+    _ = require 'lodash'
     merge = (args) -> _.assign {}, args...
     async.parallel [
       @loadDefaultConfig
@@ -25,6 +22,7 @@ class ConfigurationLoader
 
 
   loadConfig: (filePath, done) =>
+    yaml = require 'js-yaml'
     return done() unless filePath
     handler = asyncHandlers.prependToError filePath, done
     switch path.extname filePath
@@ -38,11 +36,13 @@ class ConfigurationLoader
 
 
   loadDefaultConfig: (done) =>
+    fsExtra = require 'fs-extra'
     fsExtra.readJson @defaultConfigPath, done
 
 
   loadUserConfig: (done) =>
-    filePaths = _.map extensions, (ext) => path.join @dir, "dependency-lint.#{ext}"
+    extensions = require './supported_file_extensions'
+    filePaths = extensions.map (ext) => path.join @dir, "dependency-lint.#{ext}"
     async.waterfall [
       (next) -> async.detect filePaths, fs.exists, (result) -> next null, result
       @loadConfig

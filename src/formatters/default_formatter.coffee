@@ -1,4 +1,3 @@
-_ = require 'lodash'
 colors = require 'colors/safe'
 
 

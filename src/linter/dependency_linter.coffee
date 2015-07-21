@@ -1,6 +1,4 @@
 _ = require 'lodash'
-{globalModules} = require './module_db'
-minimatch = require 'minimatch'
 
 
 class DependencyLinter
@@ -55,6 +53,7 @@ class DependencyLinter
 
 
   isDevFile: (file) ->
+    minimatch = require 'minimatch'
     return yes for pattern in @devFilePatterns when minimatch file, pattern
     no
 

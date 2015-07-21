@@ -1,27 +1,35 @@
-_ = require 'lodash'
-async = require 'async'
-asyncHandlers = require 'async-handlers'
-ExecutedModuleFinder = require './executed_module_finder'
-RequiredModuleFinder = require './required_module_finder'
-
-
 class UsedModuleFinder
 
-  constructor: ({@dir, ignoreFilePatterns}) ->
-    @executedModuleFinder = new ExecutedModuleFinder {@dir}
-    @requiredModuleFinder = new RequiredModuleFinder {@dir, ignoreFilePatterns}
+  constructor: ({@dir, @ignoreFilePatterns}) ->
 
 
   find: (done) =>
-    async.parallel [
-      (taskDone) => @requiredModuleFinder.find taskDone
-      (taskDone) => @executedModuleFinder.find taskDone
-    ], asyncHandlers.transform(@normalizeModules, done)
+    async = require 'async'
+    asyncHandlers = require 'async-handlers'
+    handler = asyncHandlers.transform @normalizeModules, done
+    async.parallel {
+      executedModules: @getExecutedModules
+      requiredModules: @getRequiredModules
+    }, handler
 
 
-  normalizeModules: (modules...) ->
+  # Private
+  getExecutedModules: (done) =>
+    ExecutedModuleFinder = require './executed_module_finder'
+    executedModuleFinder = new ExecutedModuleFinder {@dir}
+    executedModuleFinder.find done
+
+  # Private
+  getRequiredModules: (done) =>
+    RequiredModuleFinder = require './required_module_finder'
+    requiredModuleFinder = new RequiredModuleFinder {@dir, @ignoreFilePatterns}
+    requiredModuleFinder.find done
+
+
+  # Private
+  normalizeModules: ({executedModules, requiredModules}) ->
     result = {}
-    for {name, files, scripts} in _.flattenDeep(modules)
+    for {name, files, scripts} in executedModules.concat requiredModules
       if result[name]
         result[name].files = result[name].files.concat files if files
         result[name].scripts = result[name].scripts.concat scripts if scripts

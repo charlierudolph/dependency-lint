@@ -1,10 +1,5 @@
-asyncHandlers = require 'async-handlers'
-{docopt} = require 'docopt'
-fs = require 'fs-extra'
-path = require 'path'
 extensions = require './config/supported_file_extensions'
-
-
+{docopt} = require 'docopt'
 options = docopt """
   Usage:
     dependency-lint [--generate-config (#{extensions.join ' | '})]
@@ -15,15 +10,18 @@ options = docopt """
   """
 
 
-generateConfig = ->
+generateConfig = (extension) ->
+  fsExtra = require 'fs-extra'
+  path = require 'path'
   break for extension in extensions when options[extension]
   src = path.join __dirname, '..', 'config', "default.#{extension}"
   destFilename = "dependency-lint.#{extension}"
   dest = path.join process.cwd(), destFilename
   callback = (err) ->
+    asyncHandlers = require 'async-handlers'
     asyncHandlers.exitOnError err
     console.log "Configuration file generated at \"#{destFilename}\""
-  fs.copy src, dest, callback
+  fsExtra.copy src, dest, callback
 
 
 if options['--generate-config']

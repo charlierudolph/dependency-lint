@@ -1,22 +1,18 @@
 _ = require 'lodash'
 async = require 'async'
-asyncHandlers = require 'async-handlers'
-fs = require 'fs'
-glob = require 'glob'
-ModuleFilterer = require './module_filterer'
-path = require 'path'
 
 
 class ExecutedModulesFinder
 
   constructor: ({@dir}) ->
-    @moduleFilterer = new ModuleFilterer
+    path = require 'path'
     {@scripts, dependencies, devDependencies} = require path.join(@dir, 'package.json')
     @scripts ?= {}
     @modulesListed = _.keys(dependencies).concat _.keys(devDependencies)
 
 
   find: (done) ->
+    asyncHandlers = require 'async-handlers'
     async.auto {
       packageJsons: @getModulePackageJsons
       moduleExecutables: ['packageJsons', (next, {packageJsons}) =>
@@ -48,11 +44,13 @@ class ExecutedModulesFinder
     for moduleName, executables of moduleExecutables
       for executable in executables
         result.push moduleName if script.match(executable) and moduleName not in result
-    result = @moduleFilterer.filterExecutedModules result
+    ModuleFilterer = require './module_filterer'
+    result = new ModuleFilterer().filterExecutedModules result
     result
 
 
   getModulePackageJsons: (done) =>
+    glob = require 'glob'
     patterns = [
       "#{@dir}/node_modules/*/package.json"
       "#{@dir}/node_modules/*/*/package.json" # scoped packages

@@ -1,38 +1,49 @@
-_ = require 'lodash'
-async = require 'async'
 asyncHandlers = require 'async-handlers'
-fsExtra = require 'fs-extra'
-DependencyLinter = require './linter/dependency_linter'
-UsedModuleFinder = require './linter/used_module_finder'
-path = require 'path'
 
 
 class Linter
 
 
-  constructor: (@dir, {allowUnused, devFilePatterns, devScripts, ignoreFilePatterns}) ->
-    @dependencyLinter = new DependencyLinter {allowUnused, devFilePatterns, devScripts}
-    @usedModuleFinder = new UsedModuleFinder {@dir, ignoreFilePatterns}
+  constructor: (@dir, {@allowUnused, @devFilePatterns, @devScripts, @ignoreFilePatterns}) ->
 
 
-  lint: (done) ->
-    async.parallel {
+  lint: (done) =>
+    async = require 'async'
+    async.auto {
       listedModules: @getListedModules
-      usedModules: @usedModuleFinder.find
-    }, asyncHandlers.transform(@dependencyLinter.lint, done)
+      usedModules: @getUsedModules
+    }, asyncHandlers.transform(@lintModules, done)
 
 
   extractListedModules: (packageJson) ->
+    _ = require 'lodash'
     {
       dependencies: _.keys(packageJson.dependencies)
       devDependencies: _.keys(packageJson.devDependencies)
     }
 
 
+  lintModules: ({listedModules, usedModules}) =>
+    DependencyLinter = require './linter/dependency_linter'
+    dependencyLinter = new DependencyLinter {@allowUnused, @devFilePatterns, @devScripts}
+    dependencyLinter.lint {listedModules, usedModules}
+
+
   getListedModules: (done) =>
+    @getPackageJson asyncHandlers.transform(@extractListedModules, done)
+
+
+  getPackageJson: (done) ->
+    fsExtra = require 'fs-extra'
+    path = require 'path'
     filePath = path.join @dir, 'package.json'
-    callback = asyncHandlers.transform @extractListedModules, done
-    fsExtra.readJson filePath, callback
+    fsExtra.readJson filePath, done
+
+
+  getUsedModules: (done) =>
+    UsedModuleFinder = require './linter/used_module_finder'
+    usedModuleFinder = new UsedModuleFinder {@dir, @ignoreFilePatterns}
+    usedModuleFinder.find done
 
 
 module.exports = Linter
