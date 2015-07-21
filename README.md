@@ -40,7 +40,7 @@ Any options not set in the configuration file will be given there default value.
   * Please create an [issue](https://github.com/charlierudolph/dependency-lint/issues) anytime you need to use this
 * `devFilePatterns`
   * array of path patterns to match againt a filename to determine if it is used only for development (see [minimatch](https://github.com/isaacs/minimatch))
-  * default: `['{features|spec|test}/**/*', '**/*_{spec|test}.{coffee|js}']`
+  * default: `['{features,spec,test}/**/*', '**/*_{spec,test}.{coffee,js}']`
 * `devScripts`
   * array of strings or regular expressions to match against a script name in your `package.json` to determine if it is used only for development
   * default: `['lint', 'publish', 'test']`
