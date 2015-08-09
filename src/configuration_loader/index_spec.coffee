@@ -6,7 +6,7 @@ path = require 'path'
 tmp = require 'tmp'
 
 
-userConfigs = [
+examples = [
   extension: 'coffee'
   invalidContent: 'invalid'
   validContent: '''
@@ -58,42 +58,41 @@ describe 'ConfigurationLoader', ->
 
   context 'load', ->
     context 'with a user configuration', ->
-      for {extension, invalidContent, validContent} in userConfigs
-        do (extension, invalidContent, validContent) ->
-          context "#{extension} file", ->
-            beforeEach ->
-              @configPath = path.join @tmpDir, "dependency-lint.#{extension}"
+      examples.forEach ({extension, invalidContent, validContent}) ->
+        context "#{extension} file", ->
+          beforeEach ->
+            @configPath = path.join @tmpDir, "dependency-lint.#{extension}"
 
-            context 'valid', ->
-              beforeEach (done) ->
-                async.series [
-                  (next) => fs.writeFile @configPath, validContent, next
-                  (next) => @configurationLoader.load (@err, @result) => next()
-                ], done
+          context 'valid', ->
+            beforeEach (done) ->
+              async.series [
+                (next) => fs.writeFile @configPath, validContent, next
+                (next) => @configurationLoader.load (@err, @result) => next()
+              ], done
 
-              it 'does not return an error', ->
-                expect(@err).to.not.exist
+            it 'does not return an error', ->
+              expect(@err).to.not.exist
 
-              it 'returns the default configuration merged with the user configuration', ->
-                expect(@result).to.eql
-                  allowUnused: []
-                  devFilePatterns: ['test/**/*']
-                  devScripts: ['lint', 'publish', 'test']
-                  ignoreFilePatterns: ['node_modules/**/*']
+            it 'returns the default configuration merged with the user configuration', ->
+              expect(@result).to.eql
+                allowUnused: []
+                devFilePatterns: ['test/**/*']
+                devScripts: ['lint', 'publish', 'test']
+                ignoreFilePatterns: ['node_modules/**/*']
 
-            context 'invalid', ->
-              beforeEach (done) ->
-                async.series [
-                  (next) => fs.writeFile @configPath, invalidContent, next
-                  (next) => @configurationLoader.load (@err, @result) => next()
-                ], done
+          context 'invalid', ->
+            beforeEach (done) ->
+              async.series [
+                (next) => fs.writeFile @configPath, invalidContent, next
+                (next) => @configurationLoader.load (@err, @result) => next()
+              ], done
 
-              it 'returns an error', ->
-                expect(@err).to.exist
-                expect(@err.message).to.include @configPath
+            it 'returns an error', ->
+              expect(@err).to.exist
+              expect(@err.message).to.include @configPath
 
-              it 'does not return a result', ->
-                expect(@result).to.not.exist
+            it 'does not return a result', ->
+              expect(@result).to.not.exist
 
 
     context 'without a user configuration', ->
