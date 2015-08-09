@@ -1,5 +1,5 @@
 async = require 'async'
-ConfigurationLoader = require './configuration_loader'
+ConfigurationLoader = require './'
 csonParser = require 'cson-parser'
 fs = require 'fs'
 path = require 'path'

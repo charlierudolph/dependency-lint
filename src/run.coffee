@@ -1,6 +1,6 @@
 async = require 'async'
 asyncHandlers = require 'async-handlers'
-ConfigurationLoader = require './config/configuration_loader'
+ConfigurationLoader = require './configuration_loader'
 Linter = require './linter'
 DefaultFormatter = require './formatters/default_formatter'
 

@@ -2,7 +2,7 @@ asyncHandlers = require 'async-handlers'
 {docopt} = require 'docopt'
 fs = require 'fs-extra'
 path = require 'path'
-extensions = require './config/supported_file_extensions'
+extensions = require './configuration_loader/supported_file_extensions'
 
 
 options = docopt """
