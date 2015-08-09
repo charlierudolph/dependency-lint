@@ -4,9 +4,13 @@ Feature: Executed module: npm
   I want it to be reported as unused because it is globally installed
 
 
+  Background:
+    Given I have "npm" installed
+    And the "npm" module exposes the executable "npm"
+
+
   Scenario: dependency not listed
     Given I have no dependencies listed
-    And the "npm" module exposes the executable "npm"
     And I have a script named "install" defined as "npm run build"
     When I run "dependency-lint"
     Then I see the output
@@ -16,9 +20,7 @@ Feature: Executed module: npm
 
 
   Scenario: dependency listed
-    Given I have "npm" installed
-    And I have "npm" listed as a dependency
-    And the "npm" module exposes the executable "npm"
+    Given I have "npm" listed as a dependency
     And I have a script named "install" defined as "npm run build"
     When I run "dependency-lint"
     Then I see the output
@@ -33,7 +35,6 @@ Feature: Executed module: npm
 
   Scenario: devDependency
     Given I have no devDependencies listed
-    And the "npm" module exposes the executable "npm"
     And I have a script named "pretest" defined as "npm run lint"
     When I run "dependency-lint"
     Then I see the output
@@ -43,9 +44,7 @@ Feature: Executed module: npm
 
 
   Scenario: devDependency listed
-    Given I have "npm" installed
-    And I have "npm" listed as a devDependency
-    And the "npm" module exposes the executable "npm"
+    Given I have "npm" listed as a devDependency
     And I have a script named "pretest" defined as "npm run lint"
     When I run "dependency-lint"
     Then I see the output

@@ -4,29 +4,31 @@ Feature: Required module
   I want it to be reported as passing
 
 
+  Background:
+    Given I have "myModule" installed
+
+
   Scenario: dependency
-    Given I have "express" installed
-    And I have "express" listed as a dependency
-    And I have a file "server.coffee" which requires "express"
+    Given I have "myModule" listed as a dependency
+    And I have a file "server.coffee" which requires "myModule"
     When I run "dependency-lint"
     Then I see the output
       """
       dependencies:
-        ✓ express
+        ✓ myModule
 
       ✓ 0 errors
       """
 
 
   Scenario: devDependency
-    Given I have "chai" installed
-    And I have "chai" listed as a devDependency
-    And I have a file "server_spec.coffee" which requires "chai"
+    Given I have "myModule" listed as a devDependency
+    And I have a file "server_spec.coffee" which requires "myModule"
     When I run "dependency-lint"
     Then I see the output
       """
       devDependencies:
-        ✓ chai
+        ✓ myModule
 
       ✓ 0 errors
       """

@@ -11,7 +11,7 @@ describe 'ModuleFilterer', ->
 
   describe 'filterRequiredModules', ->
     it 'removes relative requires', ->
-      result = ModuleFilterer.filterRequiredModules ['./relative']
+      result = ModuleFilterer.filterRequiredModules ['./helper']
       expect(result).to.eql []
 
     it 'removes built in modules', ->
@@ -19,9 +19,9 @@ describe 'ModuleFilterer', ->
       expect(result).to.eql []
 
     it 'removes paths into modules', ->
-      result = ModuleFilterer.filterRequiredModules ['coffee-script/register']
-      expect(result).to.eql ['coffee-script']
+      result = ModuleFilterer.filterRequiredModules ['myModule/subPath']
+      expect(result).to.eql ['myModule']
 
     it 'removes paths into scoped modules', ->
-      result = ModuleFilterer.filterRequiredModules ['@myorg/mypackage/nested']
-      expect(result).to.eql ['@myorg/mypackage']
+      result = ModuleFilterer.filterRequiredModules ['@myOrganization/myModule/nested']
+      expect(result).to.eql ['@myOrganization/myModule']

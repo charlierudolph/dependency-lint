@@ -6,25 +6,25 @@ tmp = require 'tmp'
 
 
 examples = [
-  content: 'b = require "b"'
+  content: 'myModule = require "myModule"'
   description: 'coffeescript file requiring a module'
-  expectedResult: [name: 'b', files: ['a.coffee']]
-  filePath: 'a.coffee'
+  expectedResult: [name: 'myModule', files: ['server.coffee']]
+  filePath: 'server.coffee'
 ,
-  content: 'b = require.resolve "b"'
+  content: 'myModule = require.resolve "myModule"'
   description: 'coffeescript file resolving a module'
-  expectedResult: [name: 'b', files: ['a.coffee']]
-  filePath: 'a.coffee'
+  expectedResult: [name: 'myModule', files: ['server.coffee']]
+  filePath: 'server.coffee'
 ,
-  content: 'var b = require("b");'
+  content: 'var myModule = require("myModule");'
   description: 'javascript file requiring a module'
-  expectedResult: [name: 'b', files: ['a.js']]
-  filePath: 'a.js'
+  expectedResult: [name: 'myModule', files: ['server.js']]
+  filePath: 'server.js'
 ,
-  content: 'var b = require.resolve("b");'
+  content: 'var myModule = require.resolve("myModule");'
   description: 'javascript file resolving a module'
-  expectedResult: [name: 'b', files: ['a.js']]
-  filePath: 'a.js'
+  expectedResult: [name: 'myModule', files: ['server.js']]
+  filePath: 'server.js'
 ]
 
 

@@ -4,29 +4,30 @@ Feature: Unused module
   I want it to be able to allow it to be unused
 
 
+  Background:
+    Given I have "myModule" installed
+    And I have configured "allowUnused" to contain "myModule"
+
+
   Scenario: dependency
-    Given I have "jade" installed
-    And I have "jade" listed as a dependency
-    And I have configured "allowUnused" to contain "jade"
+    Given I have "myModule" listed as a dependency
     When I run "dependency-lint"
     Then I see the output
       """
       dependencies:
-        - jade (unused - allowed)
+        - myModule (unused - allowed)
 
       ✓ 0 errors
       """
 
 
   Scenario: devDependency
-    Given I have "coffeelint-variable-scope" installed
-    And I have "coffeelint-variable-scope" listed as a devDependency
-    And I have configured "allowUnused" to contain "^coffeelint-"
+    Given I have "myModule" listed as a devDependency
     When I run "dependency-lint"
     Then I see the output
       """
-        devDependencies:
-          - coffeelint-variable-scope (unused - allowed)
+      devDependencies:
+        - myModule (unused - allowed)
 
       ✓ 0 errors
       """

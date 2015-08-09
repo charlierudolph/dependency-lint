@@ -9,23 +9,25 @@ examples = [
   description: 'dependency not installed'
   expectedError: Error '''
     The following modules are listed in your `package.json` but are not installed.
-      mycha
+      myModule
     All modules need to be installed to properly check for the usage of a module's executables.
     '''
   packages: [
     dir: '.'
-    content: {dependencies: {mycha: '0.0.1'}}
+    content:
+      dependencies: {myModule: '0.0.1'}
   ]
 ,
   description: 'devDependency not installed'
   expectedError: Error '''
     The following modules are listed in your `package.json` but are not installed.
-      mycha
+      myModule
     All modules need to be installed to properly check for the usage of a module's executables.
     '''
   packages: [
     dir: '.'
-    content: {devDependencies: {mycha: '0.0.1'}}
+    content:
+      devDependencies: {myModule: '0.0.1'}
   ]
 ,
   description: 'no scripts'
@@ -36,23 +38,31 @@ examples = [
   ]
 ,
   description: 'script using module exectuable'
-  expectedResult: [name: 'mycha', scripts: ['test']]
+  expectedResult: [name: 'myModule', scripts: ['test']]
   packages: [
     dir: '.'
-    content: {dependencies: {mycha: '0.0.1'}, scripts: {test: 'mycha run'}}
+    content:
+      dependencies: {myModule: '0.0.1'}
+      scripts: {test: 'myExecutable --opt arg'}
   ,
-    dir: 'node_modules/mycha'
-    content: {name: 'mycha', bin: {mycha: ''}}
+    dir: 'node_modules/myModule'
+    content:
+      name: 'myModule'
+      bin: {myExecutable: ''}
   ]
 ,
   description: 'script using scoped module exectuable'
-  expectedResult: [name: '@originate/mycha', scripts: ['test']]
+  expectedResult: [name: '@myOrganization/myModule', scripts: ['test']]
   packages: [
     dir: '.'
-    content: {dependencies: {'@originate/mycha': '0.0.1'}, scripts: {test: 'mycha run'}}
+    content:
+      dependencies: {'@myOrganization/myModule': '0.0.1'}
+      scripts: {test: 'myExecutable --opt arg'}
   ,
-    dir: 'node_modules/@originate/mycha'
-    content: {name: '@originate/mycha', bin: {mycha: ''}}
+    dir: 'node_modules/@myOrganization/myModule'
+    content:
+      name: '@myOrganization/myModule'
+      bin: {myExecutable: ''}
   ]
 ]
 

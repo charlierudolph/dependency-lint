@@ -4,31 +4,32 @@ Feature: Executed scoped module
   I want it to be reported as passing
 
 
+  Background:
+    Given I have "@myOrganization/myModule" installed
+    And the "@myOrganization/myModule" module exposes the executable "myExecutable"
+
+
   Scenario: dependency
-    Given I have "@myorg/mypackage" installed
-    And I have "@myorg/mypackage" listed as a dependency
-    And the "@myorg/mypackage" module exposes the executable "myexecutable"
-    And I have a script named "install" defined as "myexecutable --opt path/to/file"
+    Given I have "@myOrganization/myModule" listed as a dependency
+    And I have a script named "install" defined as "myExecutable --opt arg"
     When I run "dependency-lint"
     Then I see the output
       """
       dependencies:
-        ✓ @myorg/mypackage
+        ✓ @myOrganization/myModule
 
       ✓ 0 errors
       """
 
 
   Scenario: devDependency
-    Given I have "@myorg/mypackage" installed
-    And I have "@myorg/mypackage" listed as a devDependency
-    And the "@myorg/mypackage" module exposes the executable "myexecutable"
-    And I have a script named "test" defined as "myexecutable --opt path/to/file"
+    Given I have "@myOrganization/myModule" listed as a devDependency
+    And I have a script named "test" defined as "myExecutable --opt arg"
     When I run "dependency-lint"
     Then I see the output
       """
       devDependencies:
-        ✓ @myorg/mypackage
+        ✓ @myOrganization/myModule
 
       ✓ 0 errors
       """

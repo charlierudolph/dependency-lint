@@ -4,14 +4,17 @@ Feature: Unused module
   I want it to be reported unused
 
 
+  Background:
+    Given I have "myModule" installed
+
+
   Scenario: dependency
-    Given I have "express" installed
-    And I have "express" listed as a dependency
+    Given I have "myModule" listed as a dependency
     When I run "dependency-lint"
     Then I see the output
       """
       dependencies:
-        ✖ express (unused)
+        ✖ myModule (unused)
 
       ✖ 1 error
       """
@@ -19,13 +22,12 @@ Feature: Unused module
 
 
   Scenario: devDependency
-    Given I have "chai" installed
-    And I have "chai" listed as a devDependency
+    Given I have "myModule" listed as a devDependency
     When I run "dependency-lint"
     Then I see the output
       """
       devDependencies:
-        ✖ chai (unused)
+        ✖ myModule (unused)
 
       ✖ 1 error
       """

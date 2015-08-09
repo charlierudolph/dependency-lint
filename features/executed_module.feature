@@ -4,31 +4,32 @@ Feature: Executed module
   I want it to be reported as passing
 
 
+  Background:
+    Given I have "myModule" installed
+    And the "myModule" module exposes the executable "myExecutable"
+
+
   Scenario: dependency
-    Given I have "coffee-script" installed
-    And I have "coffee-script" listed as a dependency
-    And the "coffee-script" module exposes the executable "coffee"
-    And I have a script named "install" defined as "coffee --compile --output lib/ src/"
+    Given I have "myModule" listed as a dependency
+    And I have a script named "install" defined as "myExecutable --opt arg"
     When I run "dependency-lint"
     Then I see the output
       """
       dependencies:
-        ✓ coffee-script
+        ✓ myModule
 
       ✓ 0 errors
       """
 
 
   Scenario: devDependency
-    Given I have "mycha" installed
-    And I have "mycha" listed as a devDependency
-    And the "mycha" module exposes the executable "mycha"
-    And I have a script named "test" defined as "mycha run --reporter spec"
+    And I have "myModule" listed as a devDependency
+    And I have a script named "test" defined as "myExecutable --opt arg"
     When I run "dependency-lint"
     Then I see the output
       """
       devDependencies:
-        ✓ mycha
+        ✓ myModule
 
       ✓ 0 errors
       """

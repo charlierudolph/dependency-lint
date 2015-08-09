@@ -7,7 +7,7 @@ Feature: Unused module
   Scenario: dependency
     Given I have no dependencies listed
     And I have configured "ignoreFilePatterns" to contain "examples/**/*"
-    And I have a file "examples/server.coffee" which requires "express"
+    And I have a file "examples/server.coffee" which requires "myModule"
     When I run "dependency-lint"
     Then I see the output
       """
@@ -19,7 +19,7 @@ Feature: Unused module
     Given I have no devDependencies listed
     And I have configured "devFilePatterns" to contain "^spec/"
     And I have configured "ignoreFilePatterns" to contain "spec/fixtures/**/*"
-    And I have a file "spec/fixtures/example.coffee" which requires "notReal"
+    And I have a file "spec/fixtures/example.coffee" which requires "myModule"
     When I run "dependency-lint"
     Then I see the output
       """

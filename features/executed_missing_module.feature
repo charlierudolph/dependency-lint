@@ -4,15 +4,19 @@ Feature: Executed module: missing
   I want it to be reported as missing
 
 
+  Background:
+    Given I have "myModule" installed
+    And the "myModule" module exposes the executable "myExecutable"
+
+
   Scenario: dependency
     Given I have no dependencies listed
-    And the "coffee-script" module exposes the executable "coffee"
-    And I have a script named "install" defined as "coffee --compile --output lib/ src/"
+    And I have a script named "install" defined as "myExecutable --opt arg"
     When I run "dependency-lint"
     Then I see the output
       """
       dependencies:
-        ✖ coffee-script (missing)
+        ✖ myModule (missing)
             used in scripts:
               install
 
@@ -23,13 +27,12 @@ Feature: Executed module: missing
 
   Scenario: devDependency
     Given I have no devDependencies listed
-    And the "mycha" module exposes the executable "mycha"
-    And I have a script named "test" defined as "mycha run --reporter spec"
+    And I have a script named "test" defined as "myExecutable --opt arg"
     When I run "dependency-lint"
     Then I see the output
       """
       devDependencies:
-        ✖ mycha (missing)
+        ✖ myModule (missing)
             used in scripts:
               test
 

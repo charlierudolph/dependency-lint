@@ -15,7 +15,7 @@ Feature: Required module: built in
 
 
   Scenario: devDependency
-    Given I have no dependencies listed
+    Given I have no devDependencies listed
     And I have a file "server_spec.coffee" which requires "fs"
     When I run "dependency-lint"
     Then I see the output
