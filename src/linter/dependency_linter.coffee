@@ -42,26 +42,19 @@ class DependencyLinter
 
 
   allowedToBeUnused: (name) ->
-    return yes for regex in @allowUnused when name.match regex
-    no
+    _.any @allowUnused, (regex) -> name.match regex
 
 
   isDevDependency: ({files, scripts}) ->
-    for file in files
-      return no unless @isDevFile file
-    for script in scripts
-      return no unless @isDevScript script
-    yes
+    _.all(files, @isDevFile) and _.all(scripts, @isDevScript)
 
 
-  isDevFile: (file) ->
-    return yes for pattern in @devFilePatterns when minimatch file, pattern
-    no
+  isDevFile: (file) =>
+    _.any @devFilePatterns, (pattern) -> minimatch file, pattern
 
 
-  isDevScript: (script) ->
-    return yes for regex in @devScripts when script.match regex
-    no
+  isDevScript: (script) =>
+    _.any @devScripts, (regex) -> script.match regex
 
 
   parseUsedModule: (usedModule, status, result) ->

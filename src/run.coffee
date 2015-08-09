@@ -1,3 +1,4 @@
+_ = require 'lodash'
 async = require 'async'
 asyncHandlers = require 'async-handlers'
 ConfigurationLoader = require './configuration_loader'
@@ -6,9 +7,8 @@ DefaultFormatter = require './formatters/default_formatter'
 
 
 hasError = (results) ->
-  for title, modules of results
-    return yes for {error} in modules when error
-  no
+  _.any results, (modules) ->
+    _.any modules, ({error}) -> error
 
 
 dir = process.cwd()
