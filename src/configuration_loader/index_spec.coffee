@@ -48,13 +48,8 @@ examples = [
 
 describe 'ConfigurationLoader', ->
   beforeEach (done) ->
-    async.series [
-      (next) =>
-        tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => next err
-      (next) =>
-        @configurationLoader = new ConfigurationLoader {dir: @tmpDir}
-        next()
-    ], done
+    @configurationLoader = new ConfigurationLoader
+    tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
 
   context 'load', ->
     context 'with a user configuration', ->
@@ -67,7 +62,7 @@ describe 'ConfigurationLoader', ->
             beforeEach (done) ->
               async.series [
                 (next) => fs.writeFile @configPath, validContent, next
-                (next) => @configurationLoader.load (@err, @result) => next()
+                (next) => @configurationLoader.load @tmpDir, (@err, @result) => next()
               ], done
 
             it 'does not return an error', ->
@@ -84,7 +79,7 @@ describe 'ConfigurationLoader', ->
             beforeEach (done) ->
               async.series [
                 (next) => fs.writeFile @configPath, invalidContent, next
-                (next) => @configurationLoader.load (@err, @result) => next()
+                (next) => @configurationLoader.load @tmpDir, (@err, @result) => next()
               ], done
 
             it 'returns an error', ->
@@ -97,7 +92,7 @@ describe 'ConfigurationLoader', ->
 
     context 'without a user configuration', ->
       beforeEach (done) ->
-        @configurationLoader.load (@err, @config) => done()
+        @configurationLoader.load @tmpDir, (@err, @config) => done()
 
       it 'does not return an error', ->
         expect(@err).to.not.exist

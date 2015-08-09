@@ -7,16 +7,16 @@ UsedModuleFinder = require './used_module_finder'
 
 class Linter
 
-  constructor: (@dir, {allowUnused, devFilePatterns, devScripts, ignoreFilePatterns}) ->
+  constructor: ({allowUnused, devFilePatterns, devScripts, ignoreFilePatterns}) ->
     @dependencyLinter = new DependencyLinter {allowUnused, devFilePatterns, devScripts}
-    @listedModuleFinder = new ListedModuleFinder {@dir}
-    @usedModuleFinder = new UsedModuleFinder {@dir, ignoreFilePatterns}
+    @listedModuleFinder = new ListedModuleFinder
+    @usedModuleFinder = new UsedModuleFinder {ignoreFilePatterns}
 
 
-  lint: (done) ->
+  lint: (dir, done) ->
     async.parallel {
-      listedModules: @listedModuleFinder.find
-      usedModules: @usedModuleFinder.find
+      listedModules: (next) => @listedModuleFinder.find dir, next
+      usedModules: (next) => @usedModuleFinder.find dir, next
     }, asyncHandlers.transform(@dependencyLinter.lint, done)
 
 

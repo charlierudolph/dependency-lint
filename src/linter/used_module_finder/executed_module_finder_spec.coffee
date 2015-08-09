@@ -72,7 +72,7 @@ describe 'ExecutedModuleFinder', ->
                 fs.outputJson filePath, content, next
               async.each packages, writePackage, taskDone
             (taskDone) =>
-              new ExecutedModuleFinder(dir: @tmpDir).find (@err, @result) => taskDone()
+              new ExecutedModuleFinder().find @tmpDir, (@err, @result) => taskDone()
           ], done
 
         if expectedError

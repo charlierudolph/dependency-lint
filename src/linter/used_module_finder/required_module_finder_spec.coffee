@@ -38,7 +38,7 @@ describe 'RequiredModuleFinder', ->
         beforeEach (done) ->
           async.series [
             (next) => fs.writeFile path.join(@tmpDir, filePath), content, next
-            (next) => new RequiredModuleFinder(dir: @tmpDir).find (@err, @result) => next()
+            (next) => new RequiredModuleFinder({}).find @tmpDir, (@err, @result) => next()
           ], done
 
         it 'does not return an error', ->

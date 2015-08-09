@@ -6,11 +6,8 @@ path = require 'path'
 
 class ListedModuleFinder
 
-  constructor: ({@dir}) ->
-
-
-  find: (done) =>
-    filePath = path.join @dir, 'package.json'
+  find: (dir, done) =>
+    filePath = path.join dir, 'package.json'
     callback = asyncHandlers.transform @extractListedModules, done
     fsExtra.readJson filePath, callback
 

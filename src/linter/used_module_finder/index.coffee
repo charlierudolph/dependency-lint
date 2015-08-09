@@ -7,15 +7,15 @@ RequiredModuleFinder = require './required_module_finder'
 
 class UsedModuleFinder
 
-  constructor: ({@dir, ignoreFilePatterns}) ->
-    @executedModuleFinder = new ExecutedModuleFinder {@dir}
-    @requiredModuleFinder = new RequiredModuleFinder {@dir, ignoreFilePatterns}
+  constructor: ({ignoreFilePatterns}) ->
+    @executedModuleFinder = new ExecutedModuleFinder
+    @requiredModuleFinder = new RequiredModuleFinder {ignoreFilePatterns}
 
 
-  find: (done) =>
+  find: (dir, done) =>
     async.parallel [
-      (taskDone) => @requiredModuleFinder.find taskDone
-      (taskDone) => @executedModuleFinder.find taskDone
+      (next) => @requiredModuleFinder.find dir, next
+      (next) => @executedModuleFinder.find dir, next
     ], asyncHandlers.transform(@normalizeModules, done)
 
 

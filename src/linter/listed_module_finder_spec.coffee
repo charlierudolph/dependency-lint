@@ -19,7 +19,7 @@ describe 'ListedModuleFinder', ->
           moduleB: '0.0.1'
       async.series [
         (next) -> fsExtra.writeJson filePath, packageJsonData, next
-        (next) => new ListedModuleFinder(dir: @tmpDir).find (@err, @result) => next()
+        (next) => new ListedModuleFinder().find @tmpDir, (@err, @result) => next()
       ], done
 
     it 'does not return an error', ->

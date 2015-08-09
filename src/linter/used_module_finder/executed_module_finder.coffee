@@ -9,29 +9,26 @@ path = require 'path'
 
 class ExecutedModulesFinder
 
-  constructor: ({@dir}) ->
-    {@scripts, dependencies, devDependencies} = require path.join(@dir, 'package.json')
-    @scripts ?= {}
-    @modulesListed = _.keys(dependencies).concat _.keys(devDependencies)
-
-
-  find: (done) ->
+  find: (dir, done) ->
+    {scripts, dependencies, devDependencies} = require path.join(dir, 'package.json')
+    scripts ?= {}
+    modulesListed = _.keys(dependencies).concat _.keys(devDependencies)
     async.auto {
-      packageJsons: @getModulePackageJsons
+      packageJsons: (next) => @getModulePackageJsons dir, next
       moduleExecutables: ['packageJsons', (next, {packageJsons}) =>
         next null, @getModuleExecutables(packageJsons)
       ]
       ensureInstalled: ['moduleExecutables', (next, {moduleExecutables}) =>
-        @ensureAllModulesInstalled moduleExecutables, next
+        @ensureAllModulesInstalled {modulesListed, moduleExecutables}, next
       ]
       formattedExecutables: ['moduleExecutables', (next, {moduleExecutables}) =>
-        next null, @parseModuleExecutables(moduleExecutables)
+        next null, @parseModuleExecutables({moduleExecutables, scripts})
       ]
     }, asyncHandlers.extract('formattedExecutables', done)
 
 
-  ensureAllModulesInstalled: (moduleExecutables, done) ->
-    modulesNotInstalled = _.difference @modulesListed, _.keys(moduleExecutables)
+  ensureAllModulesInstalled: ({modulesListed, moduleExecutables}, done) ->
+    modulesNotInstalled = _.difference modulesListed, _.keys(moduleExecutables)
     if modulesNotInstalled.length is 0
       done()
     else
@@ -51,10 +48,10 @@ class ExecutedModulesFinder
     result
 
 
-  getModulePackageJsons: (done) =>
+  getModulePackageJsons: (dir, done) ->
     patterns = [
-      "#{@dir}/node_modules/*/package.json"
-      "#{@dir}/node_modules/*/*/package.json" # scoped packages
+      "#{dir}/node_modules/*/package.json"
+      "#{dir}/node_modules/*/*/package.json" # scoped packages
     ]
     async.concat patterns, glob, done
 
@@ -67,9 +64,9 @@ class ExecutedModulesFinder
     result
 
 
-  parseModuleExecutables: (moduleExecutables) =>
+  parseModuleExecutables: ({moduleExecutables, scripts}) =>
     result = []
-    for scriptName, script of @scripts
+    for scriptName, script of scripts
       for moduleName in @findInScript script, moduleExecutables
         result.push {name: moduleName, scripts: [scriptName]}
     result

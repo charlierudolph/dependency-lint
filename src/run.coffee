@@ -16,9 +16,9 @@ dir = process.cwd()
 
 async.waterfall [
   (next) ->
-    new ConfigurationLoader({dir}).load next
+    new ConfigurationLoader().load dir, next
   (config, next) ->
-    new Linter(dir, config).lint next
+    new Linter(config).lint dir, next
   (results, next) ->
     new DefaultFormatter({stream: process.stdout}).print results
     process.exit 1 if hasError results

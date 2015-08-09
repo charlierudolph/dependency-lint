@@ -11,16 +11,17 @@ yaml = require 'js-yaml'
 
 class ConfigurationLoader
 
-  constructor: ({@dir}) ->
-    @defaultConfigPath = path.join __dirname, '..', '..', 'config', 'default.json'
+  defaultConfigPath: path.join __dirname, '..', '..', 'config', 'default.json'
+
+  constructor: ->
     fsCson.register()
 
 
-  load: (done) ->
+  load: (dir, done) ->
     merge = (args) -> _.assign {}, args...
     async.parallel [
       @loadDefaultConfig
-      @loadUserConfig
+      (next) => @loadUserConfig dir, next
     ], asyncHandlers.transform(merge, done)
 
 
@@ -41,8 +42,8 @@ class ConfigurationLoader
     fsExtra.readJson @defaultConfigPath, done
 
 
-  loadUserConfig: (done) =>
-    filePaths = _.map extensions, (ext) => path.join @dir, "dependency-lint.#{ext}"
+  loadUserConfig: (dir, done) =>
+    filePaths = _.map extensions, (ext) -> path.join dir, "dependency-lint.#{ext}"
     async.waterfall [
       (next) -> async.detect filePaths, fs.exists, (result) -> next null, result
       @loadConfig

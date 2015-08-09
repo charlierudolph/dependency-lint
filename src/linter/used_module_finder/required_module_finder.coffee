@@ -10,21 +10,22 @@ path = require 'path'
 
 class RequiredModuleFinder
 
+  constructor: ({@ignoreFilePatterns}) ->
 
-  constructor: ({@dir, @ignoreFilePatterns}) ->
 
-
-  find: (done) ->
+  find: (dir, done) ->
     async.waterfall [
-      (next) => glob '**/*.{coffee,js}', {cwd: @dir, ignore: @ignoreFilePatterns}, next
-      (files, next) => async.concat files, @findInFile, next
+      (next) => glob '**/*.{coffee,js}', {cwd: dir, ignore: @ignoreFilePatterns}, next
+      (files, next) =>
+        iterator = (filePath, cb) => @findInFile {dir, filePath}, cb
+        async.concat files, iterator, next
     ], done
 
 
-  findInFile: (filePath, done) =>
+  findInFile: ({dir, filePath}, done) ->
     async.waterfall [
-      (next) =>
-        fs.readFile path.join(@dir, filePath), encoding: 'utf8', next
+      (next) ->
+        fs.readFile path.join(dir, filePath), encoding: 'utf8', next
       (content, next) =>
         @compile {content, filePath}, next
       (content, next) =>
