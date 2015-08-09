@@ -23,6 +23,6 @@ module.exports = {
   // to determine if it should be ignored
   //   (see https://github.com/isaacs/minimatch)
   ignoreFilePatterns: [
-    '**/node_modules/**/*'
+    'node_modules/**/*'
   ]
 };

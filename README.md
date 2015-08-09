@@ -46,4 +46,4 @@ Any options not set in the configuration file will be given there default value.
   * default: `['lint', 'publish', 'test']`
 * `ignoreFilePatterns`
   * array of path patterns to match against a filename to determine if it should be ignored (see [minimatch](https://github.com/isaacs/minimatch))
-  * default: `['**/node_modules/**/*']`
+  * default: `['node_modules/**/*']`

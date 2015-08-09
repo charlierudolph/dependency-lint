@@ -79,7 +79,7 @@ describe 'ConfigurationLoader', ->
                   allowUnused: []
                   devFilePatterns: ['test/**/*']
                   devScripts: ['lint', 'publish', 'test']
-                  ignoreFilePatterns: ['**/node_modules/**/*']
+                  ignoreFilePatterns: ['node_modules/**/*']
 
             context 'invalid', ->
               beforeEach (done) ->
@@ -108,4 +108,4 @@ describe 'ConfigurationLoader', ->
           allowUnused: []
           devFilePatterns: ['{features,spec,test}/**/*', '**/*_{spec,test}.{coffee,js}']
           devScripts: ['lint', 'publish', 'test']
-          ignoreFilePatterns: ['**/node_modules/**/*']
+          ignoreFilePatterns: ['node_modules/**/*']
