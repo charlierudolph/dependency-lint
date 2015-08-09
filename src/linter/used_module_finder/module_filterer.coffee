@@ -2,7 +2,7 @@ _ = require 'lodash'
 {builtInModules, globalModules} = require '../module_db'
 
 
-class ModuleFilterer
+ModuleFilterer =
 
   filterExecutedModules: (moduleNames) ->
     _.chain(moduleNames)

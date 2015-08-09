@@ -10,7 +10,6 @@ path = require 'path'
 class ExecutedModulesFinder
 
   constructor: ({@dir}) ->
-    @moduleFilterer = new ModuleFilterer
     {@scripts, dependencies, devDependencies} = require path.join(@dir, 'package.json')
     @scripts ?= {}
     @modulesListed = _.keys(dependencies).concat _.keys(devDependencies)
@@ -48,7 +47,7 @@ class ExecutedModulesFinder
     for moduleName, executables of moduleExecutables
       for executable in executables
         result.push moduleName if script.match(executable) and moduleName not in result
-    result = @moduleFilterer.filterExecutedModules result
+    result = ModuleFilterer.filterExecutedModules result
     result
 
 

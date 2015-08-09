@@ -12,7 +12,6 @@ class RequiredModuleFinder
 
 
   constructor: ({@dir, @ignoreFilePatterns}) ->
-    @moduleFilterer = new ModuleFilterer
 
 
   find: (done) ->
@@ -51,7 +50,7 @@ class RequiredModuleFinder
 
   findInContent: ({content, filePath}) ->
     moduleNames = detective content, {@isRequire}
-    moduleNames = @moduleFilterer.filterRequiredModules moduleNames
+    moduleNames = ModuleFilterer.filterRequiredModules moduleNames
     {name, files: [filePath]} for name in moduleNames
 
 
