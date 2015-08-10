@@ -24,7 +24,7 @@ generateConfig = ->
   destFilename = "dependency-lint.#{extension}"
   dest = path.join process.cwd(), destFilename
   copy src, dest
-    .then "Configuration file generated at \"#{destFilename}\""
+    .then -> console.log "Configuration file generated at \"#{destFilename}\""
     .catch exitOnError
 
 

@@ -6,7 +6,11 @@ Feature: Generating config
 
   Scenario Outline: generate config
     When I run "dependency-lint --generate-config <EXT>"
-    Then now I have the file "dependency-lint.<EXT>" with the default config
+    Then I see the output
+      """
+      Configuration file generated at "dependency-lint.<EXT>"
+      """
+    And now I have the file "dependency-lint.<EXT>" with the default config
     When I run "dependency-lint"
     Then I see the output
       """
