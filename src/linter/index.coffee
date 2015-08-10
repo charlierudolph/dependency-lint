@@ -13,10 +13,10 @@ class Linter
 
 
   lint: (dir) ->
-    promises =
-      listedModules: @listedModuleFinder.find dir
-      usedModules: @usedModuleFinder.find dir
-    Promise.props(promises).then @dependencyLinter.lint
+    Promise.resolve [@listedModuleFinder, @usedModuleFinder]
+      .map (finder) -> finder.find dir
+      .then ([listedModules, usedModules]) =>
+        @dependencyLinter.lint {listedModules, usedModules}
 
 
 module.exports = Linter

@@ -12,7 +12,8 @@ class UsedModuleFinder
 
 
   find: (dir) =>
-    Promise.all [@requiredModuleFinder.find(dir), @executedModuleFinder.find(dir)]
+    Promise.resolve [@executedModuleFinder, @requiredModuleFinder]
+      .map (finder) -> finder.find dir
       .then @normalizeModules
 
 
