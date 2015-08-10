@@ -9,6 +9,6 @@ Feature: Coffeescript compilation error
     When I run "dependency-lint"
     Then I see the error
       """
-      Error compiling server.coffee:
+      server.coffee
       """
     And it exits with a non-zero status

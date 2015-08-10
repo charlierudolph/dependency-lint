@@ -42,9 +42,8 @@ class RequiredModuleFinder
 
   compileCoffeescript: ({content, filePath}, done) ->
     try
-      result = coffeeScript.compile content
+      result = coffeeScript.compile content, filename: filePath
     catch err
-      err.message = "Error compiling #{filePath}: #{err.message}"
       return done err
     done null, result
 
