@@ -7,9 +7,12 @@
     "dependency-lint": "./bin/dependency-lint.js"
   },
   "scripts": {
+    "build": "gulp",
     "lint-coffeescript": "coffeelint src",
     "lint-dependencies": "./bin/dependency-lint.js",
     "feature-tests": "cucumber-js --format progress",
+    "prefeature-tests": "npm run build",
+    "prepublish": "npm run build",
     "pretest": "npm run lint-coffeescript && npm run lint-dependencies",
     "test": "npm run unit-tests && npm run feature-tests",
     "unit-tests": "mycha --reporter dot"
@@ -37,6 +40,9 @@
     "coffeelint": "^1.8.1",
     "cson-parser": "^1.1.1",
     "cucumber": "^0.5.0",
+    "gulp": "^3.9.0",
+    "gulp-changed": "^1.3.0",
+    "gulp-coffee": "^2.3.1",
     "mycha": "^0.9.0",
     "sinon": "^1.14.1",
     "sinon-chai": "^2.8.0",

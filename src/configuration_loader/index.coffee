@@ -4,17 +4,16 @@ asyncHandlers = require 'async-handlers'
 extensions = require './supported_file_extensions'
 fs = require 'fs'
 fsExtra = require 'fs-extra'
-fsCson = require 'fs-cson'
 path = require 'path'
 yaml = require 'js-yaml'
+
+require 'coffee-script/register'
+require 'fs-cson/register'
 
 
 class ConfigurationLoader
 
   defaultConfigPath: path.join __dirname, '..', '..', 'config', 'default.json'
-
-  constructor: ->
-    fsCson.register()
 
 
   load: (dir, done) ->
