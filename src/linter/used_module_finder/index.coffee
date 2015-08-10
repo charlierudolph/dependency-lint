@@ -1,7 +1,6 @@
 _ = require 'lodash'
-async = require 'async'
-asyncHandlers = require 'async-handlers'
 ExecutedModuleFinder = require './executed_module_finder'
+Promise = require 'bluebird'
 RequiredModuleFinder = require './required_module_finder'
 
 
@@ -12,11 +11,9 @@ class UsedModuleFinder
     @requiredModuleFinder = new RequiredModuleFinder {ignoreFilePatterns}
 
 
-  find: (dir, done) =>
-    async.parallel [
-      (next) => @requiredModuleFinder.find dir, next
-      (next) => @executedModuleFinder.find dir, next
-    ], asyncHandlers.transform(@normalizeModules, done)
+  find: (dir) =>
+    Promise.all [@requiredModuleFinder.find(dir), @executedModuleFinder.find(dir)]
+      .then @normalizeModules
 
 
   normalizeModules: (modules...) ->

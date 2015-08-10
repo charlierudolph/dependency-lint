@@ -1,8 +1,9 @@
-async = require 'async'
-fs = require 'fs'
+getTmpDir = require '../../../spec/support/get_tmp_dir'
 path = require 'path'
+Promise = require 'bluebird'
 RequiredModuleFinder = require './required_module_finder'
-tmp = require 'tmp'
+
+writeFile = Promise.promisify require('fs').writeFile
 
 
 examples = [
@@ -29,17 +30,16 @@ examples = [
 
 
 describe 'RequiredModuleFinder', ->
-  beforeEach (done) ->
-    tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
+  beforeEach ->
+    @requiredModuleFinder = new RequiredModuleFinder {}
+    getTmpDir().save @, 'tmpDir'
 
   describe 'find', ->
     examples.forEach ({content, description, expectedResult, filePath}) ->
       context description, ->
-        beforeEach (done) ->
-          async.series [
-            (next) => fs.writeFile path.join(@tmpDir, filePath), content, next
-            (next) => new RequiredModuleFinder({}).find @tmpDir, (@err, @result) => next()
-          ], done
+        beforeEach ->
+          writeFile path.join(@tmpDir, filePath), content
+            .then => @requiredModuleFinder.find(@tmpDir).save @, 'result', 'err'
 
         it 'does not return an error', ->
           expect(@err).to.not.exist

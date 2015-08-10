@@ -1,8 +1,9 @@
-async = require 'async'
 ExecutedModuleFinder = require './executed_module_finder'
-fs = require 'fs-extra'
+getTmpDir = require '../../../spec/support/get_tmp_dir'
 path = require 'path'
-tmp = require 'tmp'
+Promise = require 'bluebird'
+
+outputJson = Promise.promisify require('fs-extra').outputJson
 
 
 examples = [
@@ -68,22 +69,19 @@ examples = [
 
 
 describe 'ExecutedModuleFinder', ->
-  beforeEach (done) ->
-    tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
+  beforeEach ->
+    @executedModuleFinder = new ExecutedModuleFinder
+    getTmpDir().save @, 'tmpDir'
 
   describe 'find', ->
     examples.forEach ({description, expectedError, expectedResult, packages}) ->
       context description, ->
-        beforeEach (done) ->
-          async.series [
-            (taskDone) =>
-              writePackage = ({dir, content}, next) =>
-                filePath = path.join @tmpDir, dir, 'package.json'
-                fs.outputJson filePath, content, next
-              async.each packages, writePackage, taskDone
-            (taskDone) =>
-              new ExecutedModuleFinder().find @tmpDir, (@err, @result) => taskDone()
-          ], done
+        beforeEach ->
+          Promise.resolve packages
+            .map ({dir, content}) =>
+              filePath = path.join @tmpDir, dir, 'package.json'
+              outputJson filePath, content
+            .then => @executedModuleFinder.find(@tmpDir).save @, 'result', 'err'
 
         if expectedError
           it 'returns the expected error', ->

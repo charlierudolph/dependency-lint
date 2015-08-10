@@ -1,11 +1,13 @@
 _ = require 'lodash'
-async = require 'async'
 coffeeScript = require 'coffee-script'
 detective = require 'detective'
-glob = require 'glob'
-fs = require 'fs'
 ModuleFilterer = require './module_filterer'
 path = require 'path'
+prependToError = require '../../util/prepend_to_error'
+Promise = require 'bluebird'
+
+readFile = Promise.promisify require('fs').readFile
+glob = Promise.promisify require('glob')
 
 
 class RequiredModuleFinder
@@ -13,39 +15,23 @@ class RequiredModuleFinder
   constructor: ({@ignoreFilePatterns}) ->
 
 
-  find: (dir, done) ->
-    async.waterfall [
-      (next) => glob '**/*.{coffee,js}', {cwd: dir, ignore: @ignoreFilePatterns}, next
-      (files, next) =>
-        iterator = (filePath, cb) => @findInFile {dir, filePath}, cb
-        async.concat files, iterator, next
-    ], done
+  find: (dir) ->
+    glob '**/*.{coffee,js}', cwd: dir, ignore: @ignoreFilePatterns
+      .map (filePath) => @findInFile {dir, filePath}
+      .then _.flatten
 
 
-  findInFile: ({dir, filePath}, done) ->
-    async.waterfall [
-      (next) ->
-        fs.readFile path.join(dir, filePath), encoding: 'utf8', next
-      (content, next) =>
-        @compile {content, filePath}, next
-      (content, next) =>
-        next null, @findInContent({content, filePath})
-    ], done
+  findInFile: ({dir, filePath}) ->
+    readFile path.join(dir, filePath), 'utf8'
+      .then (content) => @compile {content, filePath}
+      .then (content) => @findInContent {content, filePath}
 
 
-  compile: ({content, filePath}, done) ->
+  compile: ({content, filePath}) ->
     if path.extname(filePath) is '.coffee'
-      @compileCoffeescript {content, filePath}, done
+      coffeeScript.compile content, filename: filePath
     else
-      done null, content
-
-
-  compileCoffeescript: ({content, filePath}, done) ->
-    try
-      result = coffeeScript.compile content, filename: filePath
-    catch err
-      return done err
-    done null, result
+      content
 
 
   findInContent: ({content, filePath}) ->

@@ -1,9 +1,10 @@
-async = require 'async'
 ConfigurationLoader = require './'
 csonParser = require 'cson-parser'
-fs = require 'fs'
 path = require 'path'
-tmp = require 'tmp'
+Promise = require 'bluebird'
+getTmpDir = require '../../spec/support/get_tmp_dir'
+
+writeFile = Promise.promisify require('fs').writeFile
 
 
 examples = [
@@ -47,9 +48,9 @@ examples = [
 
 
 describe 'ConfigurationLoader', ->
-  beforeEach (done) ->
+  beforeEach ->
     @configurationLoader = new ConfigurationLoader
-    tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
+    getTmpDir().save @, 'tmpDir'
 
   context 'load', ->
     context 'with a user configuration', ->
@@ -59,11 +60,9 @@ describe 'ConfigurationLoader', ->
             @configPath = path.join @tmpDir, "dependency-lint.#{extension}"
 
           context 'valid', ->
-            beforeEach (done) ->
-              async.series [
-                (next) => fs.writeFile @configPath, validContent, next
-                (next) => @configurationLoader.load @tmpDir, (@err, @result) => next()
-              ], done
+            beforeEach ->
+              writeFile @configPath, validContent
+                .then => @configurationLoader.load(@tmpDir).save @, 'result', 'err'
 
             it 'does not return an error', ->
               expect(@err).to.not.exist
@@ -76,11 +75,9 @@ describe 'ConfigurationLoader', ->
                 ignoreFilePatterns: ['node_modules/**/*']
 
           context 'invalid', ->
-            beforeEach (done) ->
-              async.series [
-                (next) => fs.writeFile @configPath, invalidContent, next
-                (next) => @configurationLoader.load @tmpDir, (@err, @result) => next()
-              ], done
+            beforeEach ->
+              writeFile @configPath, invalidContent
+                .then => @configurationLoader.load(@tmpDir).save @, 'result', 'err'
 
             it 'returns an error', ->
               expect(@err).to.exist
@@ -91,14 +88,14 @@ describe 'ConfigurationLoader', ->
 
 
     context 'without a user configuration', ->
-      beforeEach (done) ->
-        @configurationLoader.load @tmpDir, (@err, @config) => done()
+      beforeEach ->
+        @configurationLoader.load(@tmpDir).save @, 'result', 'err'
 
       it 'does not return an error', ->
         expect(@err).to.not.exist
 
       it 'returns the default configuration', ->
-        expect(@config).to.eql
+        expect(@result).to.eql
           allowUnused: []
           devFilePatterns: ['{features,spec,test}/**/*', '**/*_{spec,test}.{coffee,js}']
           devScripts: ['lint', 'publish', 'test']

@@ -1,60 +1,52 @@
 _ = require 'lodash'
-async = require 'async'
-asyncHandlers = require 'async-handlers'
 extensions = require './supported_file_extensions'
 fs = require 'fs'
-fsExtra = require 'fs-extra'
 path = require 'path'
+prependToError = require '../util/prepend_to_error'
+Promise = require 'bluebird'
 yaml = require 'js-yaml'
 
 require 'coffee-script/register'
 require 'fs-cson/register'
 
+access = Promise.promisify fs.access
+readFile = Promise.promisify fs.readFile
+
+defaultConfigPath = path.join __dirname, '..', '..', 'config', 'default.json'
+defaultConfig = require defaultConfigPath
+
 
 class ConfigurationLoader
 
-  defaultConfigPath: path.join __dirname, '..', '..', 'config', 'default.json'
+
+  load: (dir) ->
+    @loadUserConfig dir
+      .then (userConfig) -> _.assign {}, defaultConfig, userConfig
 
 
-  load: (dir, done) ->
-    merge = (args) -> _.assign {}, args...
-    async.parallel [
-      @loadDefaultConfig
-      (next) => @loadUserConfig dir, next
-    ], asyncHandlers.transform(merge, done)
+  findUserConfig: (dir) ->
+    promises = extensions.map (ext) ->
+      filePath = path.join dir, "dependency-lint.#{ext}"
+      access(filePath).then -> filePath
+    Promise.any(promises)
+      .catch -> # user config is not required
 
 
-  loadConfig: (filePath, done) =>
-    return done() unless filePath
-    handler = asyncHandlers.prependToError filePath, done
+  loadConfig: (filePath) ->
+    return unless filePath
+    handler = prependToError filePath
     switch path.extname filePath
       when '.coffee', '.cson', '.js', '.json'
-        @toAsync (-> require filePath), handler
+        Promise.try(-> require filePath)
+          .catch handler
       when '.yml', '.yaml'
-        async.waterfall [
-          (next) -> fs.readFile filePath, 'utf8', next
-          (content, next) => @toAsync (-> yaml.safeLoad content), next
-        ], handler
+        readFile filePath, 'utf8'
+          .then yaml.safeLoad
+          .catch handler
 
 
-  loadDefaultConfig: (done) =>
-    fsExtra.readJson @defaultConfigPath, done
-
-
-  loadUserConfig: (dir, done) =>
-    filePaths = _.map extensions, (ext) -> path.join dir, "dependency-lint.#{ext}"
-    async.waterfall [
-      (next) -> async.detect filePaths, fs.exists, (result) -> next null, result
-      @loadConfig
-    ], done
-
-
-  toAsync: (fn, done) ->
-    try
-      result = fn()
-    catch err
-      done err
-    done null, result
+  loadUserConfig: (dir) =>
+    @findUserConfig(dir).then @loadConfig
 
 
 module.exports = ConfigurationLoader

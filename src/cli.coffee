@@ -1,8 +1,11 @@
-asyncHandlers = require 'async-handlers'
+_ = require 'lodash'
 {docopt} = require 'docopt'
-fs = require 'fs-extra'
-path = require 'path'
+exitOnError = require './util/exit_on_error'
 extensions = require './configuration_loader/supported_file_extensions'
+path = require 'path'
+Promise = require 'bluebird'
+
+copy = Promise.promisify require('fs-extra').copy
 
 
 options = docopt """
@@ -16,14 +19,13 @@ options = docopt """
 
 
 generateConfig = ->
-  break for extension in extensions when options[extension]
+  extension = _.find extensions, (ext) -> options[ext]
   src = path.join __dirname, '..', 'config', "default.#{extension}"
   destFilename = "dependency-lint.#{extension}"
   dest = path.join process.cwd(), destFilename
-  callback = (err) ->
-    asyncHandlers.exitOnError err
-    console.log "Configuration file generated at \"#{destFilename}\""
-  fs.copy src, dest, callback
+  copy src, dest
+    .then "Configuration file generated at \"#{destFilename}\""
+    .catch exitOnError
 
 
 if options['--generate-config']

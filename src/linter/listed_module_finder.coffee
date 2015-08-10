@@ -1,15 +1,13 @@
 _ = require 'lodash'
-asyncHandlers = require 'async-handlers'
-fsExtra = require 'fs-extra'
 path = require 'path'
+Promise = require 'bluebird'
 
 
 class ListedModuleFinder
 
-  find: (dir, done) =>
+  find: (dir) =>
     filePath = path.join dir, 'package.json'
-    callback = asyncHandlers.transform @extractListedModules, done
-    fsExtra.readJson filePath, callback
+    Promise.try(-> require filePath).then @extractListedModules
 
 
   extractListedModules: (packageJson) ->

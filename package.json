@@ -49,8 +49,7 @@
     "tmp": "^0.0.26"
   },
   "dependencies": {
-    "async": "^1.0.0",
-    "async-handlers": "^1.2.1",
+    "bluebird": "^2.9.24",
     "coffee-script": "^1.9.0",
     "colors": "^1.0.3",
     "detective": "^4.0.0",
