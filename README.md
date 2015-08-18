@@ -1,5 +1,5 @@
 # dependency-lint
-[![Build Status](https://img.shields.io/circleci/project/charlierudolph/dependency-lint.svg)](https://circleci.com/gh/charlierudolph/dependency-lint)
+[![Build Status](https://img.shields.io/circleci/project/charlierudolph/dependency-lint/master.svg)](https://circleci.com/gh/charlierudolph/dependency-lint?)
 [![Dependency Status](https://img.shields.io/david/charlierudolph/dependency-lint.svg)](https://david-dm.org/charlierudolph/dependency-lint)
 [![NPM Version](https://img.shields.io/npm/v/dependency-lint.svg)](https://www.npmjs.com/package/dependency-lint)
 
