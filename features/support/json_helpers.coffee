@@ -1,13 +1,17 @@
 _ = require 'lodash'
-fs = require 'fs-extra'
+fsExtra = require 'fs-extra'
+Promise = require 'bluebird'
+
+access = Promise.promisify require('fs').access
+outputJson = Promise.promisify fsExtra.outputJson
+readJson = Promise.promisify fsExtra.readJson
 
 
-addToJsonFile = (filePath, toAdd, done) ->
-  fs.readFile filePath, encoding: 'utf8', (err, data) ->
-    output = {}
-    _.assign(output, JSON.parse(data)) unless err
-    _.assign output, toAdd
-    fs.outputJson filePath, output, done
+addToJsonFile = (filePath, toAdd) ->
+  access filePath
+    .then (-> readJson filePath), (-> {})
+    .then (obj) -> _.assign obj, toAdd
+    .then (obj) -> outputJson filePath, obj
 
 
 module.exports = {addToJsonFile}

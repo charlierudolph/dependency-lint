@@ -1,42 +1,31 @@
 _ = require 'lodash'
-async = require 'async'
-asyncHandlers = require 'async-handlers'
-fs = require 'fs'
-glob = require 'glob'
 ModuleFilterer = require './module_filterer'
+Promise = require 'bluebird'
 path = require 'path'
+
+glob = Promise.promisify require('glob')
 
 
 class ExecutedModulesFinder
 
-  find: (dir, done) ->
+  find: (dir) ->
     {scripts, dependencies, devDependencies} = require path.join(dir, 'package.json')
     scripts ?= {}
     modulesListed = _.keys(dependencies).concat _.keys(devDependencies)
-    async.auto {
-      packageJsons: (next) => @getModulePackageJsons dir, next
-      moduleExecutables: ['packageJsons', (next, {packageJsons}) =>
-        next null, @getModuleExecutables(packageJsons)
-      ]
-      ensureInstalled: ['moduleExecutables', (next, {moduleExecutables}) =>
-        @ensureAllModulesInstalled {modulesListed, moduleExecutables}, next
-      ]
-      formattedExecutables: ['moduleExecutables', (next, {moduleExecutables}) =>
-        next null, @parseModuleExecutables({moduleExecutables, scripts})
-      ]
-    }, asyncHandlers.extract('formattedExecutables', done)
+    @getModulePackageJsons dir
+      .then @getModuleExecutables
+      .tap (moduleExecutables) => @ensureAllModulesInstalled {modulesListed, moduleExecutables}
+      .then (moduleExecutables) => @parseModuleExecutables {moduleExecutables, scripts}
 
 
-  ensureAllModulesInstalled: ({modulesListed, moduleExecutables}, done) ->
+  ensureAllModulesInstalled: ({modulesListed, moduleExecutables}) ->
     modulesNotInstalled = _.difference modulesListed, _.keys(moduleExecutables)
-    if modulesNotInstalled.length is 0
-      done()
-    else
-      done new Error """
-        The following modules are listed in your `package.json` but are not installed.
-          #{modulesNotInstalled.join '\n  '}
-        All modules need to be installed to properly check for the usage of a module's executables.
-        """
+    return if modulesNotInstalled.length is 0
+    throw Error """
+      The following modules are listed in your `package.json` but are not installed.
+        #{modulesNotInstalled.join '\n  '}
+      All modules need to be installed to properly check for the usage of a module's executables.
+      """
 
 
   findInScript: (script, moduleExecutables) ->
@@ -48,12 +37,14 @@ class ExecutedModulesFinder
     result
 
 
-  getModulePackageJsons: (dir, done) ->
+  getModulePackageJsons: (dir) ->
     patterns = [
       "#{dir}/node_modules/*/package.json"
       "#{dir}/node_modules/*/*/package.json" # scoped packages
     ]
-    async.concat patterns, glob, done
+    Promise.resolve patterns
+      .map (pattern) -> glob pattern
+      .then (files) -> _.flatten files
 
 
   getModuleExecutables: (packageJsons) ->

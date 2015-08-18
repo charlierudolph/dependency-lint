@@ -1,8 +1,7 @@
-async = require 'async'
-asyncHandlers = require 'async-handlers'
 DependencyLinter = require './dependency_linter'
 ListedModuleFinder = require './listed_module_finder'
 UsedModuleFinder = require './used_module_finder'
+Promise = require 'bluebird'
 
 
 class Linter
@@ -13,11 +12,11 @@ class Linter
     @usedModuleFinder = new UsedModuleFinder {ignoreFilePatterns}
 
 
-  lint: (dir, done) ->
-    async.parallel {
-      listedModules: (next) => @listedModuleFinder.find dir, next
-      usedModules: (next) => @usedModuleFinder.find dir, next
-    }, asyncHandlers.transform(@dependencyLinter.lint, done)
+  lint: (dir) ->
+    Promise.resolve [@listedModuleFinder, @usedModuleFinder]
+      .map (finder) -> finder.find dir
+      .then ([listedModules, usedModules]) =>
+        @dependencyLinter.lint {listedModules, usedModules}
 
 
 module.exports = Linter

@@ -1,29 +1,27 @@
-async = require 'async'
-fsExtra = require 'fs-extra'
+getTmpDir = require '../../spec/support/get_tmp_dir'
 path = require 'path'
 ListedModuleFinder = require './listed_module_finder'
-tmp = require 'tmp'
+Promise = require 'bluebird'
+
+writeJson = Promise.promisify require('fs-extra').writeJson
 
 
 describe 'ListedModuleFinder', ->
-  beforeEach (done) ->
-    tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
+  beforeEach ->
+    @listedModuleFinder = new ListedModuleFinder
+    getTmpDir().then (@tmpDir) =>
 
   describe 'find', ->
-    beforeEach (done) ->
+    beforeEach ->
       filePath = path.join @tmpDir, 'package.json'
       packageJsonData =
         dependencies:
           moduleA: '0.0.1'
         devDependencies:
           moduleB: '0.0.1'
-      async.series [
-        (next) -> fsExtra.writeJson filePath, packageJsonData, next
-        (next) => new ListedModuleFinder().find @tmpDir, (@err, @result) => next()
-      ], done
+      writeJson filePath, packageJsonData
 
-    it 'does not return an error', ->
-      expect(@err).to.not.exist
-
-    it 'returns the listed modules', ->
-      expect(@result).to.eql dependencies: ['moduleA'], devDependencies: ['moduleB']
+    it 'resolves to the listed modules', ->
+      expect(@listedModuleFinder.find(@tmpDir)).to.become
+        dependencies: ['moduleA']
+        devDependencies: ['moduleB']

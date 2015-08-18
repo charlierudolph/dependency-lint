@@ -1,9 +1,8 @@
 _ = require 'lodash'
-async = require 'async'
-asyncHandlers = require 'async-handlers'
 ConfigurationLoader = require './configuration_loader'
-Linter = require './linter'
 DefaultFormatter = require './formatters/default_formatter'
+exitOnError = require './util/exit_on_error'
+Linter = require './linter'
 
 
 hasError = (results) ->
@@ -14,12 +13,10 @@ hasError = (results) ->
 dir = process.cwd()
 
 
-async.waterfall [
-  (next) ->
-    new ConfigurationLoader().load dir, next
-  (config, next) ->
-    new Linter(config).lint dir, next
-  (results, next) ->
+new ConfigurationLoader().load dir
+  .then (config) ->
+    new Linter(config).lint dir
+  .then (results) ->
     new DefaultFormatter({stream: process.stdout}).print results
     process.exit 1 if hasError results
-], asyncHandlers.exitOnError
+  .catch exitOnError

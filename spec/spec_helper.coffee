@@ -1,8 +1,8 @@
 chai = require 'chai'
-sinon = require 'sinon'
 chai.use require 'sinon-chai'
+chai.use require 'chai-as-promised'
+sinon = require 'sinon'
+
 
 global.expect = chai.expect
 global.sinon = sinon
-
-process.env.NODE_ENV = 'test'

@@ -1,74 +1,73 @@
-async = require 'async'
-fs = require 'fs-extra'
-path = require 'path'
 {addToJsonFile} = require '../support/json_helpers'
+path = require 'path'
+Promise = require 'bluebird'
+
+readFile = Promise.promisify require('fs').readFile
+outputFile = Promise.promisify require('fs-extra').outputFile
 
 
 module.exports = ->
 
-  @Given /^I have a file "([^"]*)" which requires "([^"]*)"$/, (file, module, done) ->
-    fs.outputFile path.join(@tmpDir, file), "require '#{module}'", done
+  @Given /^I have a file "([^"]*)" which requires "([^"]*)"$/, (file, module) ->
+    outputFile path.join(@tmpDir, file), "require '#{module}'"
 
 
-  @Given /^I have a file "([^"]*)" which resolves "([^"]*)"$/, (file, module, done) ->
-    fs.outputFile path.join(@tmpDir, file), "require.resolve '#{module}'", done
+  @Given /^I have a file "([^"]*)" which resolves "([^"]*)"$/, (file, module) ->
+    outputFile path.join(@tmpDir, file), "require.resolve '#{module}'"
 
 
-  @Given /^I have a file "([^"]*)" with a coffeescript compilation error$/, (file, done) ->
-    fs.outputFile path.join(@tmpDir, file), "require '", done
+  @Given /^I have a file "([^"]*)" with a coffeescript compilation error$/, (file) ->
+    outputFile path.join(@tmpDir, file), "require '"
 
 
-  @Given /^I have configured "([^"]*)" to contain "([^"]*)"$/, (key, value, done) ->
+  @Given /^I have configured "([^"]*)" to contain "([^"]*)"$/, (key, value) ->
     filePath = path.join @tmpDir, 'dependency-lint.json'
     content = {}
     content[key] = [value]
-    addToJsonFile filePath, content, done
+    addToJsonFile filePath, content
 
 
-  @Given /^I have no (.*) listed$/, (key, done) ->
+  @Given /^I have no (.*) listed$/, (key) ->
     filePath = path.join @tmpDir, 'package.json'
     content = {}
     content[key] = []
-    addToJsonFile filePath, content, done
+    addToJsonFile filePath, content
 
 
-  @Given /^I have "([^"]*)" installed$/, (name, done) ->
+  @Given /^I have "([^"]*)" installed$/, (name) ->
     filePath = path.join @tmpDir, 'node_modules', name, 'package.json'
     content = {name}
-    addToJsonFile filePath, content, done
+    addToJsonFile filePath, content
 
 
-  @Given /^I have "([^"]*)" listed as a (.*)$/, (name, type, done) ->
+  @Given /^I have "([^"]*)" listed as a (.*)$/, (name, type) ->
     filePath = path.join @tmpDir, 'package.json'
     key = type.replace 'y', 'ies'
     content = {}
     content[key] = {}
     content[key][name] = '0.0.1'
-    addToJsonFile filePath, content, done
+    addToJsonFile filePath, content
 
 
-  @Given /^I have a script named "([^"]*)" defined as "([^"]*)"$/, (name, command, done) ->
+  @Given /^I have a script named "([^"]*)" defined as "([^"]*)"$/, (name, command) ->
     filePath = path.join @tmpDir, 'package.json'
     content = scripts: {}
     content.scripts[name] = command
-    addToJsonFile filePath, content, done
+    addToJsonFile filePath, content
 
 
-  @Given /^the "([^"]*)" module exposes the executable "([^"]*)"$/, (name, executable, done) ->
+  @Given /^the "([^"]*)" module exposes the executable "([^"]*)"$/, (name, executable) ->
     json = {name, bin: {}}
     json.bin[executable] = ''
-    addToJsonFile path.join(@tmpDir, 'node_modules', name, 'package.json'), json, done
+    addToJsonFile path.join(@tmpDir, 'node_modules', name, 'package.json'), json
 
 
-  @Then /^now I have the file "([^"]*)" with the default config$/, (filename, done) ->
+  @Then /^now I have the file "([^"]*)" with the default config$/, (filename) ->
     filePaths = [
       path.join __dirname, '..', '..', 'config', "default#{path.extname filename}"
       path.join @tmpDir, filename
     ]
-    iterator = (filePath, next) ->
-      fs.readFile filePath, encoding: 'utf8', next
-    callback = (err, [defaultConfigContent, fileContent] = []) ->
-      if err then return done err
-      expect(fileContent).to.eql defaultConfigContent
-      done()
-    async.map filePaths, iterator, callback
+    Promise.resolve filePaths
+      .map (filePath) -> readFile filePath, 'utf8'
+      .then ([defaultConfigContent, fileContent]) ->
+        expect(fileContent).to.eql defaultConfigContent
