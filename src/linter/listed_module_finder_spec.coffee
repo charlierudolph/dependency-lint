@@ -9,7 +9,7 @@ writeJson = Promise.promisify require('fs-extra').writeJson
 describe 'ListedModuleFinder', ->
   beforeEach ->
     @listedModuleFinder = new ListedModuleFinder
-    getTmpDir().save @, 'tmpDir'
+    getTmpDir().then (@tmpDir) =>
 
   describe 'find', ->
     beforeEach ->
@@ -20,10 +20,8 @@ describe 'ListedModuleFinder', ->
         devDependencies:
           moduleB: '0.0.1'
       writeJson filePath, packageJsonData
-        .then => @listedModuleFinder.find(@tmpDir).save @, 'result', 'err'
 
-    it 'does not return an error', ->
-      expect(@err).to.not.exist
-
-    it 'returns the listed modules', ->
-      expect(@result).to.eql dependencies: ['moduleA'], devDependencies: ['moduleB']
+    it 'resolves to the listed modules', ->
+      expect(@listedModuleFinder.find(@tmpDir)).to.become
+        dependencies: ['moduleA']
+        devDependencies: ['moduleB']

@@ -8,7 +8,7 @@ outputJson = Promise.promisify require('fs-extra').outputJson
 
 examples = [
   description: 'dependency not installed'
-  expectedError: Error '''
+  expectedError: '''
     The following modules are listed in your `package.json` but are not installed.
       myModule
     All modules need to be installed to properly check for the usage of a module's executables.
@@ -20,7 +20,7 @@ examples = [
   ]
 ,
   description: 'devDependency not installed'
-  expectedError: Error '''
+  expectedError: '''
     The following modules are listed in your `package.json` but are not installed.
       myModule
     All modules need to be installed to properly check for the usage of a module's executables.
@@ -71,7 +71,7 @@ examples = [
 describe 'ExecutedModuleFinder', ->
   beforeEach ->
     @executedModuleFinder = new ExecutedModuleFinder
-    getTmpDir().save @, 'tmpDir'
+    getTmpDir().then (@tmpDir) =>
 
   describe 'find', ->
     examples.forEach ({description, expectedError, expectedResult, packages}) ->
@@ -81,18 +81,10 @@ describe 'ExecutedModuleFinder', ->
             .map ({dir, content}) =>
               filePath = path.join @tmpDir, dir, 'package.json'
               outputJson filePath, content
-            .then => @executedModuleFinder.find(@tmpDir).save @, 'result', 'err'
 
         if expectedError
-          it 'returns the expected error', ->
-            expect(@err).to.eql expectedError
-
-          it 'does not yield a result', ->
-            expect(@result).to.not.exist
-
+          it 'rejects with the expected error', ->
+            expect(@executedModuleFinder.find(@tmpDir)).to.be.rejectedWith expectedError
         else
-          it 'does not yield an error', ->
-            expect(@err).to.not.exist
-
-          it 'returns the expected error', ->
-            expect(@result).to.eql expectedResult
+          it 'resolves with the expected result', ->
+            expect(@executedModuleFinder.find(@tmpDir)).to.become expectedResult

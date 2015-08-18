@@ -7,8 +7,7 @@ module.exports = ->
 
   @Before ->
     getTmpDir()
-      .save @, 'tmpDir'
-      .then => addToJsonFile path.join(@tmpDir, 'package.json'), {}
+      .then (@tmpDir) => addToJsonFile path.join(@tmpDir, 'package.json'), {}
 
   @After ->
     unless @errorExpected

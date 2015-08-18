@@ -50,7 +50,7 @@ examples = [
 describe 'ConfigurationLoader', ->
   beforeEach ->
     @configurationLoader = new ConfigurationLoader
-    getTmpDir().save @, 'tmpDir'
+    getTmpDir().then (@tmpDir) =>
 
   context 'load', ->
     context 'with a user configuration', ->
@@ -62,13 +62,9 @@ describe 'ConfigurationLoader', ->
           context 'valid', ->
             beforeEach ->
               writeFile @configPath, validContent
-                .then => @configurationLoader.load(@tmpDir).save @, 'result', 'err'
 
-            it 'does not return an error', ->
-              expect(@err).to.not.exist
-
-            it 'returns the default configuration merged with the user configuration', ->
-              expect(@result).to.eql
+            it 'resolves to the default configuration merged with the user configuration', ->
+              expect(@configurationLoader.load(@tmpDir)).to.become
                 allowUnused: []
                 devFilePatterns: ['test/**/*']
                 devScripts: ['lint', 'publish', 'test']
@@ -77,25 +73,14 @@ describe 'ConfigurationLoader', ->
           context 'invalid', ->
             beforeEach ->
               writeFile @configPath, invalidContent
-                .then => @configurationLoader.load(@tmpDir).save @, 'result', 'err'
 
-            it 'returns an error', ->
-              expect(@err).to.exist
-              expect(@err.message).to.include @configPath
-
-            it 'does not return a result', ->
-              expect(@result).to.not.exist
+            it 'rejects with an error that includes the path to the config', ->
+              expect(@configurationLoader.load(@tmpDir)).to.be.rejectedWith(@configPath)
 
 
     context 'without a user configuration', ->
-      beforeEach ->
-        @configurationLoader.load(@tmpDir).save @, 'result', 'err'
-
-      it 'does not return an error', ->
-        expect(@err).to.not.exist
-
       it 'returns the default configuration', ->
-        expect(@result).to.eql
+        expect(@configurationLoader.load(@tmpDir)).to.become
           allowUnused: []
           devFilePatterns: ['{features,spec,test}/**/*', '**/*_{spec,test}.{coffee,js}']
           devScripts: ['lint', 'publish', 'test']

@@ -37,6 +37,7 @@
   "homepage": "https://github.com/charlierudolph/dependency-lint",
   "devDependencies": {
     "chai": "^3.0.0",
+    "chai-as-promised": "^5.1.0",
     "coffeelint": "^1.8.1",
     "cson-parser": "^1.1.1",
     "cucumber": "^0.5.0",

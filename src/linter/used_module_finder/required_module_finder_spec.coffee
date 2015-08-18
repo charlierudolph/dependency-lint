@@ -32,17 +32,13 @@ examples = [
 describe 'RequiredModuleFinder', ->
   beforeEach ->
     @requiredModuleFinder = new RequiredModuleFinder {}
-    getTmpDir().save @, 'tmpDir'
+    getTmpDir().then (@tmpDir) =>
 
   describe 'find', ->
     examples.forEach ({content, description, expectedResult, filePath}) ->
       context description, ->
         beforeEach ->
           writeFile path.join(@tmpDir, filePath), content
-            .then => @requiredModuleFinder.find(@tmpDir).save @, 'result', 'err'
 
-        it 'does not return an error', ->
-          expect(@err).to.not.exist
-
-        it 'returns the required module', ->
-          expect(@result).to.eql expectedResult
+        it 'resolves with the required modules', ->
+          expect(@requiredModuleFinder.find(@tmpDir)).to.become expectedResult
