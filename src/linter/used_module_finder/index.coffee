@@ -22,7 +22,7 @@ class UsedModuleFinder
   normalizeModules: (modules...) ->
     result = {}
     for {name, file, script} in _.flattenDeep(modules)
-      result[name] or= {name, files: [], scripts: []}
+      result[name] = {name, files: [], scripts: []} unless result[name]
       result[name].files.push file if file
       result[name].scripts.push script if script
     _.values result
