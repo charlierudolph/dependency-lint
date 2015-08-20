@@ -8,22 +8,22 @@ tmp = require 'tmp'
 examples = [
   content: 'myModule = require "myModule"'
   description: 'coffeescript file requiring a module'
-  expectedResult: [name: 'myModule', files: ['server.coffee']]
+  expectedResult: [name: 'myModule', file: 'server.coffee']
   filePath: 'server.coffee'
 ,
   content: 'myModule = require.resolve "myModule"'
   description: 'coffeescript file resolving a module'
-  expectedResult: [name: 'myModule', files: ['server.coffee']]
+  expectedResult: [name: 'myModule', file: 'server.coffee']
   filePath: 'server.coffee'
 ,
   content: 'var myModule = require("myModule");'
   description: 'javascript file requiring a module'
-  expectedResult: [name: 'myModule', files: ['server.js']]
+  expectedResult: [name: 'myModule', file: 'server.js']
   filePath: 'server.js'
 ,
   content: 'var myModule = require.resolve("myModule");'
   description: 'javascript file resolving a module'
-  expectedResult: [name: 'myModule', files: ['server.js']]
+  expectedResult: [name: 'myModule', file: 'server.js']
   filePath: 'server.js'
 ]
 

@@ -1,5 +1,4 @@
 _ = require 'lodash'
-{globalModules} = require './module_db'
 minimatch = require 'minimatch'
 
 

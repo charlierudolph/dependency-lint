@@ -21,14 +21,11 @@ class UsedModuleFinder
 
   normalizeModules: (modules...) ->
     result = {}
-    for {name, files, scripts} in _.flattenDeep(modules)
-      if result[name]
-        result[name].files = result[name].files.concat files if files
-        result[name].scripts = result[name].scripts.concat scripts if scripts
-      else
-        result[name] = {name, files: files ? [], scripts: scripts ? []}
-
-    moduleData for _, moduleData of result
+    for {name, file, script} in _.flattenDeep(modules)
+      result[name] or= {name, files: [], scripts: []}
+      result[name].files.push file if file
+      result[name].scripts.push script if script
+    _.values result
 
 
 module.exports = UsedModuleFinder
