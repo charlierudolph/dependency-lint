@@ -6,6 +6,11 @@ tmp = require 'tmp'
 
 
 examples = [
+  content: 'myModule = require "myModule'
+  description: 'invalid coffeescript'
+  expectedError: yes
+  filePath: 'server.coffee'
+,
   content: 'myModule = require "myModule"'
   description: 'coffeescript file requiring a module'
   expectedResult: [name: 'myModule', file: 'server.coffee']
@@ -15,6 +20,11 @@ examples = [
   description: 'coffeescript file resolving a module'
   expectedResult: [name: 'myModule', file: 'server.coffee']
   filePath: 'server.coffee'
+,
+  content: 'var myModule = require("myModule"'
+  description: 'invalid javascript'
+  expectedError: yes
+  filePath: 'server.js'
 ,
   content: 'var myModule = require("myModule");'
   description: 'javascript file requiring a module'
@@ -33,7 +43,7 @@ describe 'RequiredModuleFinder', ->
     tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
 
   describe 'find', ->
-    examples.forEach ({content, description, expectedResult, filePath}) ->
+    examples.forEach ({content, description, expectedError, expectedResult, filePath}) ->
       context description, ->
         beforeEach (done) ->
           async.series [
@@ -41,8 +51,14 @@ describe 'RequiredModuleFinder', ->
             (next) => new RequiredModuleFinder({}).find @tmpDir, (@err, @result) => next()
           ], done
 
-        it 'does not return an error', ->
-          expect(@err).to.not.exist
+        if expectedError
+          it 'returns an error', ->
+            expect(@err).to.exist
+            expect(@err.stack).to.include filePath
 
-        it 'returns the required module', ->
-          expect(@result).to.eql expectedResult
+        else
+          it 'does not return an error', ->
+            expect(@err).to.not.exist
+
+          it 'returns the required module', ->
+            expect(@result).to.eql expectedResult

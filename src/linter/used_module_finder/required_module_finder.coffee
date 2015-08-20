@@ -29,7 +29,9 @@ class RequiredModuleFinder
       (content, next) =>
         @compile {content, filePath}, next
       (content, next) =>
-        next null, @findInContent({content, filePath})
+        @findInContent {content, filePath}, next
+      (moduleNames, next) =>
+        next null, @normalizeModuleNames {filePath, moduleNames}
     ], done
 
 
@@ -48,14 +50,13 @@ class RequiredModuleFinder
     done null, result
 
 
-  findInContent: ({content, filePath}) ->
-    moduleNames = detective content, {@isRequire}
-    _.chain moduleNames
-      .reject ModuleNameParser.isBuiltIn
-      .reject ModuleNameParser.isRelative
-      .map ModuleNameParser.stripSubpath
-      .map (name) -> {name, file: filePath}
-      .value()
+  findInContent: ({content, filePath}, done) ->
+    try
+      result = detective content, {@isRequire}
+    catch err
+      err.message = "#{filePath}: #{err.message}"
+      return done err
+    done null, result
 
 
   isRequire: ({type, callee}) ->
@@ -67,6 +68,15 @@ class RequiredModuleFinder
         callee.object.name is 'require' and
         callee.property.type is 'Identifier' and
         callee.property.name is 'resolve'))
+
+
+  normalizeModuleNames: ({filePath, moduleNames}) ->
+    _.chain moduleNames
+      .reject ModuleNameParser.isBuiltIn
+      .reject ModuleNameParser.isRelative
+      .map ModuleNameParser.stripSubpath
+      .map (name) -> {name, file: filePath}
+      .value()
 
 
 module.exports = RequiredModuleFinder
