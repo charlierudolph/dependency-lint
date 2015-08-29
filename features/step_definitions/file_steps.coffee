@@ -1,5 +1,6 @@
 async = require 'async'
-fs = require 'fs-extra'
+fs = require 'fs'
+fsExtra = require 'fs-extra'
 path = require 'path'
 {addToJsonFile} = require '../support/json_helpers'
 
@@ -7,15 +8,15 @@ path = require 'path'
 module.exports = ->
 
   @Given /^I have a file "([^"]*)" which requires "([^"]*)"$/, (file, module, done) ->
-    fs.outputFile path.join(@tmpDir, file), "require '#{module}'", done
+    fsExtra.outputFile path.join(@tmpDir, file), "require '#{module}'", done
 
 
   @Given /^I have a file "([^"]*)" which resolves "([^"]*)"$/, (file, module, done) ->
-    fs.outputFile path.join(@tmpDir, file), "require.resolve '#{module}'", done
+    fsExtra.outputFile path.join(@tmpDir, file), "require.resolve '#{module}'", done
 
 
   @Given /^I have a file "([^"]*)" with a coffeescript compilation error$/, (file, done) ->
-    fs.outputFile path.join(@tmpDir, file), "require '", done
+    fsExtra.outputFile path.join(@tmpDir, file), "require '", done
 
 
   @Given /^I have configured "([^"]*)" to contain "([^"]*)"$/, (key, value, done) ->
@@ -55,9 +56,17 @@ module.exports = ->
 
 
   @Given /^the "([^"]*)" module exposes the executable "([^"]*)"$/, (name, executable, done) ->
-    json = {name, bin: {}}
-    json.bin[executable] = ''
-    addToJsonFile path.join(@tmpDir, 'node_modules', name, 'package.json'), json, done
+    nodeModulesPath = path.join @tmpDir, 'node_modules'
+    nodeModulesBinPath = path.join nodeModulesPath, '.bin'
+    executablePath = path.join nodeModulesPath, name, 'path', 'to', 'executable'
+    async.series [
+      (next) ->
+        fsExtra.outputFile executablePath, '', next
+      (next) ->
+        src = path.relative nodeModulesBinPath, executablePath
+        dest = path.join nodeModulesBinPath, executable
+        fsExtra.ensureSymlink src, dest, next
+    ], done
 
 
   @Then /^now I have the file "([^"]*)" with the default config$/, (filename, done) ->

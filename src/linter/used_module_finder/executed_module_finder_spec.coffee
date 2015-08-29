@@ -1,6 +1,6 @@
 async = require 'async'
 ExecutedModuleFinder = require './executed_module_finder'
-fs = require 'fs-extra'
+fsExtra = require 'fs-extra'
 path = require 'path'
 tmp = require 'tmp'
 
@@ -12,11 +12,8 @@ examples = [
       myModule
     All modules need to be installed to properly check for the usage of a module's executables.
     '''
-  packages: [
-    dir: '.'
-    content:
-      dependencies: {myModule: '0.0.1'}
-  ]
+  packageJson:
+    dependencies: {myModule: '0.0.1'}
 ,
   description: 'devDependency not installed'
   expectedError: Error '''
@@ -24,46 +21,31 @@ examples = [
       myModule
     All modules need to be installed to properly check for the usage of a module's executables.
     '''
-  packages: [
-    dir: '.'
-    content:
-      devDependencies: {myModule: '0.0.1'}
-  ]
+  packageJson:
+    devDependencies: {myModule: '0.0.1'}
 ,
   description: 'no scripts'
   expectedResult: []
-  packages: [
-    dir: '.'
-    content: {}
-  ]
+  packageJson: {}
 ,
   description: 'script using module exectuable'
   expectedResult: [name: 'myModule', script: 'test']
-  packages: [
-    dir: '.'
-    content:
-      dependencies: {myModule: '0.0.1'}
-      scripts: {test: 'myExecutable --opt arg'}
-  ,
-    dir: 'node_modules/myModule'
-    content:
-      name: 'myModule'
-      bin: {myExecutable: ''}
-  ]
+  nodeModule:
+    name: 'myModule'
+    executable: 'myExecutable'
+  packageJson:
+    dependencies: {myModule: '0.0.1'}
+    scripts: {test: 'myExecutable --opt arg'}
+
 ,
   description: 'script using scoped module exectuable'
   expectedResult: [name: '@myOrganization/myModule', script: 'test']
-  packages: [
-    dir: '.'
-    content:
-      dependencies: {'@myOrganization/myModule': '0.0.1'}
-      scripts: {test: 'myExecutable --opt arg'}
-  ,
-    dir: 'node_modules/@myOrganization/myModule'
-    content:
-      name: '@myOrganization/myModule'
-      bin: {myExecutable: ''}
-  ]
+  nodeModule:
+    name: '@myOrganization/myModule'
+    executable: 'myExecutable'
+  packageJson:
+    dependencies: {'@myOrganization/myModule': '0.0.1'}
+    scripts: {test: 'myExecutable --opt arg'}
 ]
 
 
@@ -72,18 +54,23 @@ describe 'ExecutedModuleFinder', ->
     tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
 
   describe 'find', ->
-    examples.forEach ({description, expectedError, expectedResult, packages}) ->
+    examples.forEach ({description, expectedError, expectedResult, nodeModule, packageJson}) ->
       context description, ->
         beforeEach (done) ->
-          async.series [
-            (taskDone) =>
-              writePackage = ({dir, content}, next) =>
-                filePath = path.join @tmpDir, dir, 'package.json'
-                fs.outputJson filePath, content, next
-              async.each packages, writePackage, taskDone
-            (taskDone) =>
-              new ExecutedModuleFinder().find @tmpDir, (@err, @result) => taskDone()
-          ], done
+          actions = []
+          packageJsonPath = path.join @tmpDir, 'package.json'
+          actions.push (next) -> fsExtra.outputJson packageJsonPath, packageJson, next
+          if nodeModule
+            nodeModulesPath = path.join @tmpDir, 'node_modules'
+            nodeModulesBinPath = path.join nodeModulesPath, '.bin'
+            executablePath = path.join nodeModulesPath, nodeModule.name, 'path', 'to', 'executable'
+            actions.push (next) -> fsExtra.outputFile executablePath, '', next
+            actions.push (next) ->
+              src = path.relative nodeModulesBinPath, executablePath
+              dest = path.join nodeModulesBinPath, nodeModule.executable
+              fsExtra.ensureSymlink src, dest, next
+          actions.push (next) => new ExecutedModuleFinder().find @tmpDir, (@err, @result) => next()
+          async.series actions, done
 
         if expectedError
           it 'returns the expected error', ->

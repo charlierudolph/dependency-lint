@@ -11,32 +11,32 @@ class ExecutedModulesFinder
 
   find: (dir, done) ->
     {scripts, dependencies, devDependencies} = require path.join(dir, 'package.json')
-    scripts ?= {}
-    modulesListed = _.keys(dependencies).concat _.keys(devDependencies)
-    async.auto {
-      packageJsons: (next) => @getModulePackageJsons dir, next
-      moduleExecutables: ['packageJsons', (next, {packageJsons}) =>
-        next null, @getModuleExecutables(packageJsons)
-      ]
-      ensureInstalled: ['moduleExecutables', (next, {moduleExecutables}) =>
-        @ensureAllModulesInstalled {modulesListed, moduleExecutables}, next
-      ]
-      formattedExecutables: ['moduleExecutables', (next, {moduleExecutables}) =>
-        next null, @parseModuleExecutables({moduleExecutables, scripts})
-      ]
-    }, asyncHandlers.extract('formattedExecutables', done)
+    scripts = {} unless scripts
+    callback = ([_, moduleExecutables]) => @findModuleExecutableUsage {moduleExecutables, scripts}
+    async.parallel [
+      (next) =>
+        modulesListed = _.keys(dependencies).concat _.keys(devDependencies)
+        @ensureAllModulesInstalled {dir, modulesListed}, next
+      (next) =>
+        @getModuleExecutables dir, next
+    ], asyncHandlers.transform(callback, done)
 
 
-  ensureAllModulesInstalled: ({modulesListed, moduleExecutables}, done) ->
-    modulesNotInstalled = _.difference modulesListed, _.keys(moduleExecutables)
-    if modulesNotInstalled.length is 0
-      done()
-    else
+  ensureAllModulesInstalled: ({dir, modulesListed}, done) ->
+    missing = []
+    iterator = (moduleName, next) ->
+      fs.access path.join(dir, 'node_modules', moduleName), (err) ->
+        if err then missing.push moduleName
+        next()
+    callback = (err) ->
+      if err then return done err
+      if missing.length is 0 then return done()
       done new Error """
         The following modules are listed in your `package.json` but are not installed.
-          #{modulesNotInstalled.join '\n  '}
+          #{missing.join '\n  '}
         All modules need to be installed to properly check for the usage of a module's executables.
         """
+    async.each modulesListed, iterator, callback
 
 
   findInScript: (script, moduleExecutables) ->
@@ -48,27 +48,28 @@ class ExecutedModulesFinder
     result
 
 
-  getModulePackageJsons: (dir, done) ->
-    patterns = [
-      "#{dir}/node_modules/*/package.json"
-      "#{dir}/node_modules/*/*/package.json" # scoped packages
-    ]
-    async.concat patterns, glob, done
-
-
-  getModuleExecutables: (packageJsons) ->
-    result = {}
-    for packageJson in packageJsons
-      {name, bin} = require packageJson
-      result[name] = _.keys bin
-    result
-
-
-  parseModuleExecutables: ({moduleExecutables, scripts}) =>
+  findModuleExecutableUsage: ({moduleExecutables, scripts}) =>
     result = []
     for scriptName, script of scripts
       for moduleName in @findInScript script, moduleExecutables
         result.push {name: moduleName, script: scriptName}
+    result
+
+
+  getModuleExecutables: (dir, done) ->
+    async.auto {
+      files: (next) -> glob "#{dir}/node_modules/.bin/*", next
+      links: ['files', (next, {files}) -> async.map files, fs.readlink, next]
+    }, asyncHandlers.transform(@parseModuleExecutables, done)
+
+
+  parseModuleExecutables: ({files, links}) ->
+    result = {}
+    executables = files.map (file) -> path.basename file
+    links.forEach (link, index) ->
+      name = ModuleNameParser.stripSubpath path.relative('..', link)
+      result[name] = [] unless result[name]
+      result[name].push path.basename executables[index]
     result
 
 
