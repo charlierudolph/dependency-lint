@@ -2,7 +2,6 @@ _ = require 'lodash'
 async = require 'async'
 asyncHandlers = require 'async-handlers'
 fs = require 'fs'
-glob = require 'glob'
 ModuleNameParser = require './module_name_parser'
 path = require 'path'
 
@@ -57,15 +56,22 @@ class ExecutedModulesFinder
 
 
   getModuleExecutables: (dir, done) ->
+    binPath = path.join dir, 'node_modules', '.bin'
     async.auto {
-      files: (next) -> glob "#{dir}/node_modules/.bin/*", next
-      links: ['files', (next, {files}) -> async.map files, fs.readlink, next]
+      executables: (next) ->
+        fs.access binPath, (err) ->
+          if err then return done null, []
+          fs.readdir binPath, next
+
+      links: ['executables', (next, {executables}) ->
+        files = executables.map (file) -> path.join binPath, file
+        async.map files, fs.readlink, next
+      ]
     }, asyncHandlers.transform(@parseModuleExecutables, done)
 
 
-  parseModuleExecutables: ({files, links}) ->
+  parseModuleExecutables: ({executables, links}) ->
     result = {}
-    executables = files.map (file) -> path.basename file
     links.forEach (link, index) ->
       name = ModuleNameParser.stripSubpath path.relative('..', link)
       result[name] = [] unless result[name]
