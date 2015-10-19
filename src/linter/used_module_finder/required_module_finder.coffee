@@ -72,6 +72,7 @@ class RequiredModuleFinder
 
   normalizeModuleNames: ({filePath, moduleNames}) ->
     _.chain moduleNames
+      .map ModuleNameParser.stripLoaders
       .reject ModuleNameParser.isBuiltIn
       .reject ModuleNameParser.isRelative
       .map ModuleNameParser.stripSubpath
