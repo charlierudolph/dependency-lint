@@ -25,5 +25,6 @@ devScripts: [
 # to determine if it should be ignored
 #   (see https://github.com/isaacs/minimatch)
 ignoreFilePatterns: [
+  'lib/**/*'
   'node_modules/**/*'
 ]

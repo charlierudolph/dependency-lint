@@ -7,7 +7,7 @@ tmp = require 'tmp'
 
 module.exports = ->
 
-  @Before (done) ->
+  @Before (scenario, done) ->
     async.series [
       (next) =>
         tmp.dir {unsafeCleanup: yes}, (err, @tmpDir) => next err
@@ -16,8 +16,7 @@ module.exports = ->
     ], done
 
 
-  @After (done) ->
+  @After ->
     unless @errorExpected
       expect(@error).to.not.exist
       expect(@stderr).to.be.empty
-    done()
