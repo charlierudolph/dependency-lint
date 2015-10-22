@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.3.0 (2015-10-22)
+
+* add filename to javascript syntax error messages
+
+---
 ### 2.2.1 (2015-07-28)
 
 * update documentation
