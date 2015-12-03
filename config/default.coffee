@@ -26,3 +26,10 @@ module.exports =
   ignoreFilePatterns: [
     'node_modules/**/*'
   ]
+
+  # ignore webpack loaders when evaluating requires
+  # example:
+  #   require('foo!bar!baz')
+  # evaluates to:
+  #   require('baz')
+  stripLoaders: no

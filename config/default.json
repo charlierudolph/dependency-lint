@@ -11,5 +11,6 @@
   ],
   "ignoreFilePatterns":[
     "node_modules/**/*"
-  ]
+  ],
+  "stripLoaders": false
 }

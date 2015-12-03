@@ -4,9 +4,13 @@ Feature: Required module with a webpack loader
   I want dependency-lint to ignore loaders
 
 
-  Scenario: local dependency with a loader
+  Background:
     Given I have no dependencies listed
-    And I have a file "server.coffee" which requires "my-loader!./other_file"
+    And I have configured "stripLoaders" to be true
+
+
+  Scenario: local dependency with a loader
+    Given I have a file "server.coffee" which requires "my-loader!./other_file"
     When I run "dependency-lint"
     Then I see the output
       """
@@ -15,8 +19,7 @@ Feature: Required module with a webpack loader
 
 
   Scenario: loading a missing-dependency with a loader
-    Given I have no dependencies listed
-    And I have a file "server.coffee" which requires "my-loader!myModule"
+    Given I have a file "server.coffee" which requires "my-loader!myModule"
     When I run "dependency-lint"
     Then I see the output
       """
