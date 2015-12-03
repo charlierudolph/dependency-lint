@@ -74,6 +74,7 @@ describe 'ConfigurationLoader', ->
                 devFilePatterns: ['test/**/*']
                 devScripts: ['lint', 'publish', 'test']
                 ignoreFilePatterns: ['node_modules/**/*']
+                stripLoaders: no
 
           context 'invalid', ->
             beforeEach (done) ->
@@ -103,3 +104,4 @@ describe 'ConfigurationLoader', ->
           devFilePatterns: ['{features,spec,test}/**/*', '**/*_{spec,test}.{coffee,js}']
           devScripts: ['lint', 'publish', 'test']
           ignoreFilePatterns: ['node_modules/**/*']
+          stripLoaders: no

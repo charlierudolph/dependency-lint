@@ -27,6 +27,20 @@ describe 'ModuleNameParser', ->
       expect(ModuleNameParser.isRelative 'other').to.be.false
 
 
+  describe 'stripLoaders', ->
+    it 'returns modules without loaders untouched', ->
+      expect(ModuleNameParser.stripLoaders 'myModule').to.eql 'myModule'
+
+    it 'strips loaders from modules', ->
+      expect(ModuleNameParser.stripLoaders 'my-loader!myModule').to.eql 'myModule'
+
+    it 'strips loaders from relative modules', ->
+      expect(ModuleNameParser.stripLoaders 'my-loader!./myModule').to.eql './myModule'
+
+    it 'strips all loaders', ->
+      expect(ModuleNameParser.stripLoaders 'my-loader!other-loader!myModule').to.eql 'myModule'
+
+
   describe 'stripSubpath', ->
     it 'returns modules without subpaths', ->
       expect(ModuleNameParser.stripSubpath 'myModule').to.eql 'myModule'

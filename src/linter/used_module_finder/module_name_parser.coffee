@@ -18,6 +18,10 @@ ModuleNameParser =
 
   isRelative: (name) -> name[0] is '.'
 
+  stripLoaders: (name) ->
+    [..., name] = name.split '!'
+    name
+
   stripSubpath: (name) ->
     parts = name.split '/'
     if name[0] is '@'

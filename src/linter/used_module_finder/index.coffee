@@ -7,9 +7,9 @@ RequiredModuleFinder = require './required_module_finder'
 
 class UsedModuleFinder
 
-  constructor: ({ignoreFilePatterns}) ->
+  constructor: ({ignoreFilePatterns, stripLoaders}) ->
     @executedModuleFinder = new ExecutedModuleFinder
-    @requiredModuleFinder = new RequiredModuleFinder {ignoreFilePatterns}
+    @requiredModuleFinder = new RequiredModuleFinder {ignoreFilePatterns, stripLoaders}
 
 
   find: (dir, done) =>

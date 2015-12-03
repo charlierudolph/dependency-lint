@@ -26,6 +26,13 @@ module.exports = ->
     addToJsonFile filePath, content, done
 
 
+  @Given /^I have configured "([^"]*)" to be true$/, (key, done) ->
+    filePath = path.join @tmpDir, 'dependency-lint.json'
+    content = {}
+    content[key] = true
+    addToJsonFile filePath, content, done
+
+
   @Given /^I have no (.*) listed$/, (key, done) ->
     filePath = path.join @tmpDir, 'package.json'
     content = {}

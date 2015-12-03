@@ -10,7 +10,7 @@ path = require 'path'
 
 class RequiredModuleFinder
 
-  constructor: ({@ignoreFilePatterns}) ->
+  constructor: ({@ignoreFilePatterns, @stripLoaders}) ->
 
 
   find: (dir, done) ->
@@ -72,6 +72,7 @@ class RequiredModuleFinder
 
   normalizeModuleNames: ({filePath, moduleNames}) ->
     _.chain moduleNames
+      .map if @stripLoaders then ModuleNameParser.stripLoaders
       .reject ModuleNameParser.isBuiltIn
       .reject ModuleNameParser.isRelative
       .map ModuleNameParser.stripSubpath
