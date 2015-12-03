@@ -1,5 +1,4 @@
 async = require 'async'
-coffee = require 'coffee-script'
 fs = require 'fs'
 fsExtra = require 'fs-extra'
 path = require 'path'
@@ -27,10 +26,10 @@ module.exports = ->
     addToJsonFile filePath, content, done
 
 
-  @Given /^I have configured "([^"]*)" to be (.+)$/, (key, value, done) ->
+  @Given /^I have configured "([^"]*)" to be true$/, (key, done) ->
     filePath = path.join @tmpDir, 'dependency-lint.json'
     content = {}
-    content[key] = coffee.eval(value)
+    content[key] = true
     addToJsonFile filePath, content, done
 
 
