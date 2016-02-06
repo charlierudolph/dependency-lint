@@ -1,12 +1,16 @@
 # Changelog
 
-# Changelog
+### Unreleased
 
+* remove support for configuration files with extensions: cson, coffee, js, json, yaml
+  * please convert to dependency-lint.yml
+
+----
 ### 2.4.0 (2015-12-03)
 
 * add option to ignore webpack loaders in requires
 
-
+---
 ### 2.3.0 (2015-10-22)
 
 * add filename to javascript syntax error messages

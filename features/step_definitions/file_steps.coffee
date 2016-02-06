@@ -2,7 +2,7 @@ async = require 'async'
 fs = require 'fs'
 fsExtra = require 'fs-extra'
 path = require 'path'
-{addToJsonFile} = require '../support/json_helpers'
+{addToJsonFile, addToYmlFile} = require '../support/file_helpers'
 
 
 module.exports = ->
@@ -20,17 +20,17 @@ module.exports = ->
 
 
   @Given /^I have configured "([^"]*)" to contain "([^"]*)"$/, (key, value, done) ->
-    filePath = path.join @tmpDir, 'dependency-lint.json'
+    filePath = path.join @tmpDir, 'dependency-lint.yml'
     content = {}
     content[key] = [value]
-    addToJsonFile filePath, content, done
+    addToYmlFile filePath, content, done
 
 
   @Given /^I have configured "([^"]*)" to be true$/, (key, done) ->
-    filePath = path.join @tmpDir, 'dependency-lint.json'
+    filePath = path.join @tmpDir, 'dependency-lint.yml'
     content = {}
     content[key] = true
-    addToJsonFile filePath, content, done
+    addToYmlFile filePath, content, done
 
 
   @Given /^I have no (.*) listed$/, (key, done) ->

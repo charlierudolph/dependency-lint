@@ -4,20 +4,11 @@ Feature: Generating config
   I want it to be able to easily generate a default config file
 
 
-  Scenario Outline: generate config
-    When I run "dependency-lint --generate-config <EXT>"
-    Then now I have the file "dependency-lint.<EXT>" with the default config
+  Scenario: generate config
+    When I run "dependency-lint --generate-config"
+    Then now I have the file "dependency-lint.yml" with the default config
     When I run "dependency-lint"
     Then I see the output
       """
       ✓ 0 errors
       """
-
-    Examples:
-      | EXT    |
-      | coffee |
-      | cson   |
-      | js     |
-      | json   |
-      | yaml   |
-      | yml    |
