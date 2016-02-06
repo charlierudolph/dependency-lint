@@ -6,14 +6,14 @@ Feature: Required module: npm
 
   Scenario: dependency not listed
     Given I have no dependencies listed
-    And I have a file "server.coffee" which requires "npm"
+    And I have a file "server.js" which requires "npm"
     When I run "dependency-lint"
     Then I see the output
       """
       dependencies:
         ✖ npm (missing)
           used in files:
-            server.coffee
+            server.js
 
       ✖ 1 error
       """
@@ -23,7 +23,7 @@ Feature: Required module: npm
   Scenario: dependency listed
     Given I have "npm" installed
     And I have "npm" listed as a dependency
-    And I have a file "server.coffee" which requires "npm"
+    And I have a file "server.js" which requires "npm"
     When I run "dependency-lint"
     Then I see the output
       """
@@ -36,14 +36,14 @@ Feature: Required module: npm
 
   Scenario: devDependency not listed
     Given I have no devDependencies listed
-    And I have a file "server_spec.coffee" which requires "npm"
+    And I have a file "server_spec.js" which requires "npm"
     When I run "dependency-lint"
     Then I see the output
       """
       devDependencies:
         ✖ npm (missing)
           used in files:
-            server_spec.coffee
+            server_spec.js
 
       ✖ 1 error
       """
@@ -53,7 +53,7 @@ Feature: Required module: npm
   Scenario: devDependency listed
     Given I have "npm" installed
     And I have "npm" listed as a devDependency
-    And I have a file "server_spec.coffee" which requires "npm"
+    And I have a file "server_spec.js" which requires "npm"
     When I run "dependency-lint"
     Then I see the output
       """

@@ -10,7 +10,7 @@ Feature: Resolved module
 
   Scenario: dependency
     Given I have "myModule" listed as a dependency
-    And I have a file "server.coffee" which resolves "myModule"
+    And I have a file "server.js" which resolves "myModule"
     When I run "dependency-lint"
     Then I see the output
       """
@@ -23,7 +23,7 @@ Feature: Resolved module
 
   Scenario: devDependency
     Given I have "myModule" listed as a devDependency
-    And I have a file "server_spec.coffee" which resolves "myModule"
+    And I have a file "server_spec.js" which resolves "myModule"
     When I run "dependency-lint"
     Then I see the output
       """

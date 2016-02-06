@@ -6,14 +6,14 @@ Feature: Required module: missing
 
   Scenario: dependency
     Given I have no dependencies listed
-    And I have a file "server.coffee" which requires "myModule"
+    And I have a file "server.js" which requires "myModule"
     When I run "dependency-lint"
     Then I see the output
       """
       dependencies:
         ✖ myModule (missing)
             used in files:
-              server.coffee
+              server.js
 
       ✖ 1 error
       """
@@ -22,14 +22,14 @@ Feature: Required module: missing
 
   Scenario: devDependency
     Given I have no devDependencies listed
-    And I have a file "server_spec.coffee" which requires "myModule"
+    And I have a file "server_spec.js" which requires "myModule"
     When I run "dependency-lint"
     Then I see the output
       """
       devDependencies:
         ✖ myModule (missing)
             used in files:
-              server_spec.coffee
+              server_spec.js
 
       ✖ 1 error
       """
