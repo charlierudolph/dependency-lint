@@ -10,31 +10,40 @@ examples = [
   description: 'invalid coffeescript'
   expectedError: yes
   filePath: 'server.coffee'
+  filePattern: '**/*.coffee'
+  transpilers: [{extension: '.coffee', module: 'coffee-script'}]
 ,
   content: 'myModule = require "myModule"'
   description: 'coffeescript file requiring a module'
   expectedResult: [name: 'myModule', file: 'server.coffee']
   filePath: 'server.coffee'
+  filePattern: '**/*.coffee'
+  transpilers: [{extension: '.coffee', module: 'coffee-script'}]
 ,
   content: 'myModule = require.resolve "myModule"'
   description: 'coffeescript file resolving a module'
   expectedResult: [name: 'myModule', file: 'server.coffee']
   filePath: 'server.coffee'
+  filePattern: '**/*.coffee'
+  transpilers: [{extension: '.coffee', module: 'coffee-script'}]
 ,
   content: 'var myModule = require("myModule"'
   description: 'invalid javascript'
   expectedError: yes
   filePath: 'server.js'
+  filePattern: '**/*.js'
 ,
   content: 'var myModule = require("myModule");'
   description: 'javascript file requiring a module'
   expectedResult: [name: 'myModule', file: 'server.js']
   filePath: 'server.js'
+  filePattern: '**/*.js'
 ,
   content: 'var myModule = require.resolve("myModule");'
   description: 'javascript file resolving a module'
   expectedResult: [name: 'myModule', file: 'server.js']
   filePath: 'server.js'
+  filePattern: '**/*.js'
 ]
 
 
@@ -43,12 +52,24 @@ describe 'RequiredModuleFinder', ->
     tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
 
   describe 'find', ->
-    examples.forEach ({content, description, expectedError, expectedResult, filePath}) ->
+    examples.forEach (example) ->
+      {
+        content
+        description
+        expectedError
+        expectedResult
+        filePath
+        filePattern
+        transpilers
+      } = example
+
       context description, ->
         beforeEach (done) ->
           async.series [
             (next) => fs.writeFile path.join(@tmpDir, filePath), content, next
-            (next) => new RequiredModuleFinder({}).find @tmpDir, (@err, @result) => next()
+            (next) =>
+              finder = new RequiredModuleFinder {filePattern, transpilers}
+              finder.find @tmpDir, (@err, @result) => next()
           ], done
 
         if expectedError

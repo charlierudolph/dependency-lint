@@ -34,6 +34,7 @@ describe 'ConfigurationLoader', ->
             allowUnused: []
             devFilePatterns: ['test/**/*']
             devScripts: ['lint', 'publish', 'test']
+            filePattern: '**/*.js'
             ignoreFilePatterns: ['node_modules/**/*']
             stripLoaders: no
 

@@ -1,6 +1,5 @@
 _ = require 'lodash'
 async = require 'async'
-coffeeScript = require 'coffee-script'
 detective = require 'detective'
 glob = require 'glob'
 fs = require 'fs'
@@ -10,12 +9,12 @@ path = require 'path'
 
 class RequiredModuleFinder
 
-  constructor: ({@ignoreFilePatterns, @stripLoaders}) ->
+  constructor: ({@filePattern, @ignoreFilePatterns, @stripLoaders, @transpilers}) ->
 
 
   find: (dir, done) ->
     async.waterfall [
-      (next) => glob '**/*.{coffee,js}', {cwd: dir, ignore: @ignoreFilePatterns}, next
+      (next) => glob @filePattern, {cwd: dir, ignore: @ignoreFilePatterns}, next
       (files, next) =>
         iterator = (filePath, cb) => @findInFile {dir, filePath}, cb
         async.concat files, iterator, next
@@ -27,7 +26,7 @@ class RequiredModuleFinder
       (next) ->
         fs.readFile path.join(dir, filePath), encoding: 'utf8', next
       (content, next) =>
-        @compile {content, filePath}, next
+        @compileIfNeeded {content, filePath}, next
       (content, next) =>
         @findInContent {content, filePath}, next
       (moduleNames, next) =>
@@ -35,16 +34,19 @@ class RequiredModuleFinder
     ], done
 
 
-  compile: ({content, filePath}, done) ->
-    if path.extname(filePath) is '.coffee'
-      @compileCoffeescript {content, filePath}, done
+  compileIfNeeded: ({content, filePath}, done) ->
+    ext = path.extname filePath
+    transpiler = _.find @transpilers, 'extension', ext
+    if transpiler
+      compiler = require transpiler.module
+      @compile {compiler, content, filePath}, done
     else
       done null, content
 
 
-  compileCoffeescript: ({content, filePath}, done) ->
+  compile: ({compiler, content, filePath}, done) ->
     try
-      result = coffeeScript.compile content, filename: filePath
+      result = compiler.compile content, {filename: filePath}
     catch err
       return done err
     done null, result

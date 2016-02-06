@@ -19,6 +19,11 @@ devScripts:
   - publish
   - test
 
+# path pattern to match against a filename to determine if it should be parsed.
+# This is the starting point, devFilePatterns and ignoreFilePatterns should be a subsets of this pattern
+#   (see https://github.com/isaacs/minimatch)
+filePattern: '**/*.coffee'
+
 # array of path patterns to match against a filename
 # to determine if it should be ignored
 #   (see https://github.com/isaacs/minimatch)
@@ -32,3 +37,12 @@ ignoreFilePatterns:
 # is equivalent to:
 #   require('baz')
 stripLoaders: false
+
+
+# array of transpilers to use based on extension
+#   each transpiler needs the properties 'extension' and 'module'
+#   the module will be required and then the 'compile' property will be called
+#   with the file contents and the filename
+transpilers:
+  - extension: .coffee
+    module: coffee-script
