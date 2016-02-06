@@ -56,5 +56,5 @@ Any options not set in the configuration file will be given there default value.
   * default: false
 * `transpilers`
   * array of transpilers to use, each transpiler needs the properties 'extension' and 'module', the module will be required and then the 'compile' property will be called with the file contents and the filename
-  * example: `[{extension: '.coffee', module: 'coffee-script'}]` would call `require('coffee-script').compile(code, {filename: pathToFile});` for each file that ends with `.coffee`
+  * example: `[{extension: '.coffee', module: 'coffee-script'}]` would call `require('coffee-script').compile(code, {filename: pathToFile});` for each file with a `.coffee` extension
   * default: `[]`
