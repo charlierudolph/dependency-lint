@@ -9,15 +9,16 @@ devFilePatterns:
   - '{features,spec,test}/**/*'
   - '**/*_{spec,test}.js'
 
-# array of strings or regular expressions to match against a script name in your `package.json`
-# to determine if it is used only for development
+# array of strings or regular expressions to match against a script name
+# in your `package.json` to determine if it is used only for development
 devScripts:
   - lint
   - publish
   - test
 
 # path pattern to match against a filename to determine if it should be parsed.
-# This is the starting point, devFilePatterns and ignoreFilePatterns should be a subsets of this pattern
+# This is the starting point, devFilePatterns and ignoreFilePatterns should be
+# subsets of this pattern
 #   (see https://github.com/isaacs/minimatch)
 filePattern: '**/*.js'
 
@@ -34,8 +35,7 @@ ignoreFilePatterns:
 #   require('baz')
 stripLoaders: false
 
-# array of transpilers to use based on extension
-#   each transpiler needs the properties 'extension' and 'module'
-#   the module will be required and then the 'compile' property will be called
-#   with the file contents and the filename
+# array of transpilers with properties 'extension' and 'module'.
+# The module will be required and then the 'compile' property will be called
+# with the file contents and the filename for each file with that extension
 transpilers: []

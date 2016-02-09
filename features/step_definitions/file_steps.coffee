@@ -34,7 +34,8 @@ module.exports = ->
   @Given /^I have configured "([^"]*)" to contain$/, (key, table, done) ->
     filePath = path.join @tmpDir, 'dependency-lint.yml'
     content = {}
-    content[key] = table.hashes()
+    content[key] = table.hashes().map (obj) ->
+      _.mapKeys obj, (v, k) -> k.toLowerCase()
     addToYmlFile filePath, content, done
 
 

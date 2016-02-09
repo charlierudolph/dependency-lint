@@ -6,7 +6,7 @@ Feature: Coffeescript compilation error
   Background:
     Given I have configured "filePattern" to be "**/*.coffee"
     And I have configured "transpilers" to contain
-      | extension | module        |
+      | EXTENSION | MODULE        |
       | .coffee   | coffee-script |
 
 

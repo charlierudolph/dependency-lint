@@ -55,6 +55,6 @@ Any options not set in the configuration file will be given there default value.
   * boolean whether to ignore anything before a `!` in require statements - allows dependency-lint to be used with webpack
   * default: false
 * `transpilers`
-  * array of transpilers to use, each transpiler needs the properties 'extension' and 'module', the module will be required and then the 'compile' property will be called with the file contents and the filename
+  * array of transpilers with the properties `extension` and `module`. The module will be required and then the `compile` property will be called with the file contents and the filename for each file with that extension
   * example: `[{extension: '.coffee', module: 'coffee-script'}]` would call `require('coffee-script').compile(code, {filename: pathToFile});` for each file with a `.coffee` extension
   * default: `[]`
