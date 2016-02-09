@@ -27,7 +27,7 @@ class DependencyLinter
       @parseUsedModule usedModule, status, result
 
     for key, modules of listedModules
-      for name in modules when not _.any(usedModules, (moduleData) -> moduleData.name is name)
+      for name in modules when not _.some(usedModules, (moduleData) -> moduleData.name is name)
         listedModule = {name}
         if @allowedToBeUnused name
           listedModule.warning = 'unused - allowed'
@@ -41,19 +41,19 @@ class DependencyLinter
 
 
   allowedToBeUnused: (name) ->
-    _.any @allowUnused, (regex) -> name.match regex
+    _.some @allowUnused, (regex) -> name.match regex
 
 
   isDevDependency: ({files, scripts}) ->
-    _.all(files, @isDevFile) and _.all(scripts, @isDevScript)
+    _.every(files, @isDevFile) and _.every(scripts, @isDevScript)
 
 
   isDevFile: (file) =>
-    _.any @devFilePatterns, (pattern) -> minimatch file, pattern
+    _.some @devFilePatterns, (pattern) -> minimatch file, pattern
 
 
   isDevScript: (script) =>
-    _.any @devScripts, (regex) -> script.match regex
+    _.some @devScripts, (regex) -> script.match regex
 
 
   parseUsedModule: (usedModule, status, result) ->
