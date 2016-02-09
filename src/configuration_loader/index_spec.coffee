@@ -34,8 +34,10 @@ describe 'ConfigurationLoader', ->
             allowUnused: []
             devFilePatterns: ['test/**/*']
             devScripts: ['lint', 'publish', 'test']
+            filePattern: '**/*.js'
             ignoreFilePatterns: ['node_modules/**/*']
             stripLoaders: no
+            transpilers: []
 
       context 'invalid', ->
         beforeEach (done) ->
@@ -63,7 +65,9 @@ describe 'ConfigurationLoader', ->
     it 'returns the default configuration', ->
       expect(@config).to.eql
         allowUnused: []
-        devFilePatterns: ['{features,spec,test}/**/*', '**/*_{spec,test}.{coffee,js}']
+        devFilePatterns: ['{features,spec,test}/**/*', '**/*_{spec,test}.js']
         devScripts: ['lint', 'publish', 'test']
+        filePattern: '**/*.js'
         ignoreFilePatterns: ['node_modules/**/*']
         stripLoaders: no
+        transpilers: []

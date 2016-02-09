@@ -7,10 +7,10 @@ UsedModuleFinder = require './used_module_finder'
 
 class Linter
 
-  constructor: ({allowUnused, devFilePatterns, devScripts, ignoreFilePatterns, stripLoaders}) ->
-    @dependencyLinter = new DependencyLinter {allowUnused, devFilePatterns, devScripts}
+  constructor: (config) ->
+    @dependencyLinter = new DependencyLinter config
     @listedModuleFinder = new ListedModuleFinder
-    @usedModuleFinder = new UsedModuleFinder {ignoreFilePatterns, stripLoaders}
+    @usedModuleFinder = new UsedModuleFinder config
 
 
   lint: (dir, done) ->

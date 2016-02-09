@@ -10,7 +10,7 @@ Feature: Required module with a webpack loader
 
 
   Scenario: local dependency with a loader
-    Given I have a file "server.coffee" which requires "my-loader!./other_file"
+    Given I have a file "server.js" which requires "my-loader!./other_file"
     When I run "dependency-lint"
     Then I see the output
       """
@@ -19,14 +19,14 @@ Feature: Required module with a webpack loader
 
 
   Scenario: loading a missing-dependency with a loader
-    Given I have a file "server.coffee" which requires "my-loader!myModule"
+    Given I have a file "server.js" which requires "my-loader!myModule"
     When I run "dependency-lint"
     Then I see the output
       """
       dependencies:
         ✖ myModule (missing)
             used in files:
-              server.coffee
+              server.js
 
       ✖ 1 error
       """

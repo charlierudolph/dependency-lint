@@ -10,14 +10,14 @@ Feature: Required module: mislabled
 
   Scenario: dependency listed under devDependencies
     Given I have "myModule" listed as a devDependency
-    And I have a file "server.coffee" which requires "myModule"
+    And I have a file "server.js" which requires "myModule"
     When I run "dependency-lint"
     Then I see the output
       """
       devDependencies:
         ✖ myModule (should be dependency)
             used in files:
-              server.coffee
+              server.js
 
       ✖ 1 error
       """
@@ -27,7 +27,7 @@ Feature: Required module: mislabled
   Scenario: dependency listed under dependencies and devDependencies
     Given I have "myModule" listed as a dependency
     And I have "myModule" listed as a devDependency
-    And I have a file "server.coffee" which requires "myModule"
+    And I have a file "server.js" which requires "myModule"
     When I run "dependency-lint"
     Then I see the output
       """
@@ -37,7 +37,7 @@ Feature: Required module: mislabled
       devDependencies:
         ✖ myModule (should be dependency)
             used in files:
-              server.coffee
+              server.js
 
       ✖ 1 error
       """
@@ -46,14 +46,14 @@ Feature: Required module: mislabled
 
   Scenario: devDependency listed under dependencies
     Given I have "myModule" listed as a dependency
-    And I have a file "server_spec.coffee" which requires "myModule"
+    And I have a file "server_spec.js" which requires "myModule"
     When I run "dependency-lint"
     Then I see the output
       """
       dependencies:
         ✖ myModule (should be devDependency)
             used in files:
-              server_spec.coffee
+              server_spec.js
 
       ✖ 1 error
       """
@@ -63,14 +63,14 @@ Feature: Required module: mislabled
   Scenario: devDependency listed under dependencies and devDependencies
     Given I have "myModule" listed as a dependency
     And I have "myModule" listed as a devDependency
-    And I have a file "server_spec.coffee" which requires "myModule"
+    And I have a file "server_spec.js" which requires "myModule"
     When I run "dependency-lint"
     Then I see the output
       """
       dependencies:
         ✖ myModule (should be devDependency)
             used in files:
-              server_spec.coffee
+              server_spec.js
 
       devDependencies:
         ✓ myModule

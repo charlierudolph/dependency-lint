@@ -10,7 +10,7 @@ Feature: Required module: scoped
 
   Scenario: dependency
     Given I have "@myOrganization/myModule" listed as a dependency
-    And I have a file "server.coffee" which requires "@myOrganization/myModule"
+    And I have a file "server.js" which requires "@myOrganization/myModule"
     When I run "dependency-lint"
     Then I see the output
       """
@@ -23,7 +23,7 @@ Feature: Required module: scoped
 
   Scenario: devDependency
     Given I have "@myOrganization/myModule" listed as a devDependency
-    And I have a file "server_spec.coffee" which requires "@myOrganization/myModule"
+    And I have a file "server_spec.js" which requires "@myOrganization/myModule"
     When I run "dependency-lint"
     Then I see the output
       """

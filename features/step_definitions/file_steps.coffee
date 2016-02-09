@@ -1,3 +1,4 @@
+_ = require 'lodash'
 async = require 'async'
 fs = require 'fs'
 fsExtra = require 'fs-extra'
@@ -8,11 +9,15 @@ path = require 'path'
 module.exports = ->
 
   @Given /^I have a file "([^"]*)" which requires "([^"]*)"$/, (file, module, done) ->
-    fsExtra.outputFile path.join(@tmpDir, file), "require '#{module}'", done
+    content = if path.extname(file) is '.coffee'
+      "require '#{module}'"
+    else
+      "require('#{module}')"
+    fsExtra.outputFile path.join(@tmpDir, file), content, done
 
 
   @Given /^I have a file "([^"]*)" which resolves "([^"]*)"$/, (file, module, done) ->
-    fsExtra.outputFile path.join(@tmpDir, file), "require.resolve '#{module}'", done
+    fsExtra.outputFile path.join(@tmpDir, file), "require.resolve('#{module}')", done
 
 
   @Given /^I have a file "([^"]*)" with a coffeescript compilation error$/, (file, done) ->
@@ -23,6 +28,21 @@ module.exports = ->
     filePath = path.join @tmpDir, 'dependency-lint.yml'
     content = {}
     content[key] = [value]
+    addToYmlFile filePath, content, done
+
+
+  @Given /^I have configured "([^"]*)" to contain$/, (key, table, done) ->
+    filePath = path.join @tmpDir, 'dependency-lint.yml'
+    content = {}
+    content[key] = table.hashes().map (obj) ->
+      _.mapKeys obj, (v, k) -> k.toLowerCase()
+    addToYmlFile filePath, content, done
+
+
+  @Given /^I have configured "([^"]*)" to be "([^"]*)"$/, (key, value, done) ->
+    filePath = path.join @tmpDir, 'dependency-lint.yml'
+    content = {}
+    content[key] = value
     addToYmlFile filePath, content, done
 
 

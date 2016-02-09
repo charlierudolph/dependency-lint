@@ -3,6 +3,12 @@ Feature: Coffeescript compilation error
   As a developer with an error in my coffeescript file
   I want an appropriate error message
 
+  Background:
+    Given I have configured "filePattern" to be "**/*.coffee"
+    And I have configured "transpilers" to contain
+      | EXTENSION | MODULE        |
+      | .coffee   | coffee-script |
+
 
   Scenario: coffeescript compilation error
     Given I have a file "server.coffee" with a coffeescript compilation error
