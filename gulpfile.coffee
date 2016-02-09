@@ -5,7 +5,7 @@ gulpCoffee = require 'gulp-coffee'
 
 
 src = 'src'
-dest = 'lib'
+dest = 'dist'
 paths =
   js: ["#{src}/**/*.coffee", '!**/*_spec.coffee']
 

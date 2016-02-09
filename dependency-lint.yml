@@ -29,7 +29,7 @@ filePattern: '**/*.coffee'
 # to determine if it should be ignored
 #   (see https://github.com/isaacs/minimatch)
 ignoreFilePatterns:
-  - 'lib/**/*'
+  - 'dist/**/*'
   - 'node_modules/**/*'
 
 # ignore webpack loaders when evaluating requires

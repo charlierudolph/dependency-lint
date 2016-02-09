@@ -1,9 +1,0 @@
-*_spec.coffee
-circle.yml
-coffeelint.json
-dependency-lint.json
-gulpfile.coffee
-features/
-mycha.coffee
-spec/
-src/
