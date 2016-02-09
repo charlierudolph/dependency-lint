@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 3.0.0 (2016-02-09)
 
 * remove support for configuration files with extensions: cson, coffee, js, json, yaml
   * please convert to dependency-lint.yml
