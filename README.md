@@ -27,34 +27,10 @@ dependency-lint
 If you run into an example where `dependency-lint` marks a node module as unused, and you are using it, please create an [issue](https://github.com/charlierudolph/dependency-lint/issues) describing the situation. As a short-term solution, configure `dependency-lint` to allow that node module to be unused.
 
 ## Configuration
-Create a configuration file with
+The default configuration can be found [here](config/default.yml).
+Custom configuration should be placed at `dependency-lint.yml` in your project directory.
+You can create a configuration file by running
 ```
 dependency-lint --generate-config
 ```
-Any options not set in the configuration file will be given there default value.
-
-#### Options
-* `allowUnused`
-  * array of strings or regular expressions to match against a module name to determine if it is allowed to be unused
-  * default: `[]`
-  * Please create an [issue](https://github.com/charlierudolph/dependency-lint/issues) anytime you need to use this
-* `devFilePatterns`
-  * array of path patterns to match againt a filename to determine if it is used only for development (see [minimatch](https://github.com/isaacs/minimatch))
-  * default: `['{features,spec,test}/**/*', '**/*_{spec,test}.js']`
-* `devScripts`
-  * array of strings or regular expressions to match against a script name in your `package.json` to determine if it is used only for development
-  * default: `['lint', 'publish', 'test']`
-* `filePattern`
-  * path pattern to match against a filename to determine if it should be parsed (see https://github.com/isaacs/minimatch)
-  * This is the starting point, devFilePatterns and ignoreFilePatterns should be subsets of this pattern
-  * default: `'**/*.js'`
-* `ignoreFilePatterns`
-  * array of path patterns to match against a filename to determine if it should be ignored (see [minimatch](https://github.com/isaacs/minimatch))
-  * default: `['node_modules/**/*']`
-* `stripLoaders`
-  * boolean whether to ignore anything before a `!` in require statements - allows dependency-lint to be used with webpack
-  * default: false
-* `transpilers`
-  * array of transpilers with the properties `extension` and `module`. The module will be required and then the `compile` property will be called with the file contents and the filename for each file with that extension
-  * example: `[{extension: '.coffee', module: 'coffee-script'}]` would call `require('coffee-script').compile(code, {filename: pathToFile});` for each file with a `.coffee` extension
-  * default: `[]`
+Any options not set in your configuration file will be given there default value.
