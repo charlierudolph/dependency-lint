@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 3.1.0 (2016-02-13)
 
 * check that each module listed in `package.json` is installed with the correct semantic version
 
