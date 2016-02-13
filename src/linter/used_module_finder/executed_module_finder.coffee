@@ -8,34 +8,10 @@ path = require 'path'
 
 class ExecutedModulesFinder
 
-  find: (dir, done) ->
-    {scripts, dependencies, devDependencies} = require path.join(dir, 'package.json')
-    scripts = {} unless scripts
-    callback = ([_, moduleExecutables]) => @findModuleExecutableUsage {moduleExecutables, scripts}
-    async.parallel [
-      (next) =>
-        modulesListed = _.keys(dependencies).concat _.keys(devDependencies)
-        @ensureAllModulesInstalled {dir, modulesListed}, next
-      (next) =>
-        @getModuleExecutables dir, next
-    ], asyncHandlers.transform(callback, done)
-
-
-  ensureAllModulesInstalled: ({dir, modulesListed}, done) ->
-    missing = []
-    iterator = (moduleName, next) ->
-      fs.access path.join(dir, 'node_modules', moduleName), (err) ->
-        if err then missing.push moduleName
-        next()
-    callback = (err) ->
-      if err then return done err
-      if missing.length is 0 then return done()
-      done new Error """
-        The following modules are listed in your `package.json` but are not installed.
-          #{missing.join '\n  '}
-        All modules need to be installed to properly check for the usage of a module's executables.
-        """
-    async.each modulesListed, iterator, callback
+  find: ({dir, packageJson}, done) ->
+    scripts = packageJson.scripts or {}
+    callback = (moduleExecutables) => @findModuleExecutableUsage {moduleExecutables, scripts}
+    @getModuleExecutables dir, asyncHandlers.transform(callback, done)
 
 
   findInScript: (script, moduleExecutables) ->

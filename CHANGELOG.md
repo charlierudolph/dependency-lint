@@ -1,5 +1,10 @@
 # Changelog
 
+### Unreleased
+
+* check that each module listed in `package.json` is installed with the correct semantic version
+
+---
 ### 3.0.0 (2016-02-09)
 
 * remove support for configuration files with extensions: cson, coffee, js, json, yaml

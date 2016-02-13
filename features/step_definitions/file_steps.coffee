@@ -60,18 +60,22 @@ module.exports = ->
     addToJsonFile filePath, content, done
 
 
-  @Given /^I have "([^"]*)" installed$/, (name, done) ->
+  @Given /^I have "([^"]*)" installed$/, (nameAndVersion, done) ->
+    [name, version] = nameAndVersion.split ' @ '
+    version or= '1.0.0'
     filePath = path.join @tmpDir, 'node_modules', name, 'package.json'
-    content = {name}
+    content = {name, version}
     addToJsonFile filePath, content, done
 
 
-  @Given /^I have "([^"]*)" listed as a (.*)$/, (name, type, done) ->
+  @Given /^I have "([^"]*)" listed as a (.*)$/, (nameAndVersion, type, done) ->
     filePath = path.join @tmpDir, 'package.json'
     key = type.replace 'y', 'ies'
+    [name, version] = nameAndVersion.split ' @ '
+    version or= '^1.0.0'
     content = {}
     content[key] = {}
-    content[key][name] = '0.0.1'
+    content[key][name] = version
     addToJsonFile filePath, content, done
 
 

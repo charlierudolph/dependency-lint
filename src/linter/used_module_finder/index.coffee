@@ -12,10 +12,10 @@ class UsedModuleFinder
     @requiredModuleFinder = new RequiredModuleFinder config
 
 
-  find: (dir, done) =>
+  find: ({dir, packageJson}, done) =>
     async.parallel [
       (next) => @requiredModuleFinder.find dir, next
-      (next) => @executedModuleFinder.find dir, next
+      (next) => @executedModuleFinder.find {dir, packageJson}, next
     ], asyncHandlers.transform(@normalizeModules, done)
 
 

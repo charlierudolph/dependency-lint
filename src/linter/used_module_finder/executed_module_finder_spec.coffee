@@ -6,24 +6,6 @@ tmp = require 'tmp'
 
 
 examples = [
-  description: 'dependency not installed'
-  expectedError: Error '''
-    The following modules are listed in your `package.json` but are not installed.
-      myModule
-    All modules need to be installed to properly check for the usage of a module's executables.
-    '''
-  packageJson:
-    dependencies: {myModule: '0.0.1'}
-,
-  description: 'devDependency not installed'
-  expectedError: Error '''
-    The following modules are listed in your `package.json` but are not installed.
-      myModule
-    All modules need to be installed to properly check for the usage of a module's executables.
-    '''
-  packageJson:
-    devDependencies: {myModule: '0.0.1'}
-,
   description: 'no scripts'
   expectedResult: []
   packageJson: {}
@@ -34,9 +16,7 @@ examples = [
     name: 'myModule'
     executable: 'myExecutable'
   packageJson:
-    dependencies: {myModule: '0.0.1'}
     scripts: {test: 'myExecutable --opt arg'}
-
 ,
   description: 'script using scoped module exectuable'
   expectedResult: [name: '@myOrganization/myModule', script: 'test']
@@ -44,7 +24,6 @@ examples = [
     name: '@myOrganization/myModule'
     executable: 'myExecutable'
   packageJson:
-    dependencies: {'@myOrganization/myModule': '0.0.1'}
     scripts: {test: 'myExecutable --opt arg'}
 ]
 
@@ -58,8 +37,6 @@ describe 'ExecutedModuleFinder', ->
       context description, ->
         beforeEach (done) ->
           actions = []
-          packageJsonPath = path.join @tmpDir, 'package.json'
-          actions.push (next) -> fsExtra.outputJson packageJsonPath, packageJson, next
           if nodeModule
             nodeModulesPath = path.join @tmpDir, 'node_modules'
             nodeModulesBinPath = path.join nodeModulesPath, '.bin'
@@ -69,7 +46,9 @@ describe 'ExecutedModuleFinder', ->
               src = path.relative nodeModulesBinPath, executablePath
               dest = path.join nodeModulesBinPath, nodeModule.executable
               fsExtra.ensureSymlink src, dest, next
-          actions.push (next) => new ExecutedModuleFinder().find @tmpDir, (@err, @result) => next()
+          actions.push (next) =>
+            finder = new ExecutedModuleFinder
+            finder.find {dir: @tmpDir, packageJson}, (@err, @result) => next()
           async.series actions, done
 
         if expectedError
