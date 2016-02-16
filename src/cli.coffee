@@ -29,13 +29,11 @@ generateConfig = ->
   async.waterfall [
     (next) -> fs.readFile src, 'utf8', next
     (contents, next) ->
-      link = "https://github.com/charlierudolph/dependency-lint/" +
-        "blob/v#{packageJson.version}/docs/configuration.md"
-      contents = """
-        # See #{link}
+      comment = """
+        # See #{packageJson.homepage}/blob/v#{packageJson.version}/docs/configuration.md
         # for a detailed explanation of the options
-        """ + "\n" + contents
-      fs.writeFile dest, contents, next
+        """
+      fs.writeFile dest, comment + '\n\n' + contents, next
   ], callback
 
 

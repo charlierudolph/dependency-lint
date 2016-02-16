@@ -80,7 +80,7 @@ array of objects with properties `extension` and `module`
 The `module` will be required and then the `compile` property will be called
 with the file contents and the file path for each file with that `extension`
 
-Example:
+example:
 ```js
 require(module).compile(fileContents, {filename: filePath});
 ```
