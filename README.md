@@ -27,7 +27,7 @@ dependency-lint
 If you run into an example where `dependency-lint` marks a node module as unused, and you are using it, please create an [issue](https://github.com/charlierudolph/dependency-lint/issues) describing the situation. As a short-term solution, configure `dependency-lint` to allow that node module to be unused.
 
 ## Configuration
-The default configuration can be found [here](config/default.yml).
+Please see [here](docs/configuration.md) for an explanation of all the options.
 Custom configuration should be placed at `dependency-lint.yml` in your project directory.
 You can create a configuration file by running
 ```

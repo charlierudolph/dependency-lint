@@ -7,6 +7,11 @@ Feature: Generating config
   Scenario: generate config
     When I run "dependency-lint --generate-config"
     Then now I have the file "dependency-lint.yml" with the default config
+    And "dependency-lint.yml" contains
+      """
+      # See https://github.com/charlierudolph/dependency-lint/blob/v{{version}}/docs/configuration.md
+      # for a detailed explanation of the options
+      """
     When I run "dependency-lint"
     Then I see the output
       """

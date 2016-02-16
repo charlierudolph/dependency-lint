@@ -1,48 +1,25 @@
-# array of strings or regular expressions to match against a module name
-# to determine if it is allowed to be unused
 allowUnused: []
 
-# array of path patterns to match againt a filename
-# to determine if it is used only for development
-#   (see https://github.com/isaacs/minimatch)
 devFilePatterns:
   - '{features,spec}/**/*'
   - '**/*_spec.coffee'
   - gulpfile.coffee
   - mycha.coffee
 
-# array of strings or regular expressions to match against a script name
-# in your `package.json` to determine if it is used only for development
 devScripts:
   - build
   - lint
   - publish
   - test
 
-# path pattern to match against a filename to determine if it should be parsed.
-# This is the starting point, devFilePatterns and ignoreFilePatterns should be
-# subsets of this pattern
-#   (see https://github.com/isaacs/minimatch)
 filePattern: '**/*.coffee'
 
-# array of path patterns to match against a filename
-# to determine if it should be ignored
-#   (see https://github.com/isaacs/minimatch)
 ignoreFilePatterns:
   - 'dist/**/*'
   - 'node_modules/**/*'
 
-# ignore webpack loaders when evaluating requires
-# example:
-#   require('foo!bar!baz')
-# is equivalent to:
-#   require('baz')
 stripLoaders: false
 
-
-# array of transpilers with properties 'extension' and 'module'.
-# The module will be required and then the 'compile' property will be called
-# with the file contents and the filename for each file with that extension
 transpilers:
   - extension: .coffee
     module: coffee-script

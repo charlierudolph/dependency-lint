@@ -1,17 +1,23 @@
+async = require 'async'
 asyncHandlers = require 'async-handlers'
 {docopt} = require 'docopt'
 fs = require 'fs-extra'
+packageJson = require '../package.json'
 path = require 'path'
 
 
-options = docopt '''
+usage = '''
   Usage:
     dependency-lint [--generate-config]
 
   Options:
     -h, --help           Show this screen
     --generate-config    Generate a configuration file
+    -v, --version        Show version
   '''
+
+
+options = docopt usage, version: packageJson.version
 
 
 generateConfig = ->
@@ -20,7 +26,17 @@ generateConfig = ->
   callback = (err) ->
     asyncHandlers.exitOnError err
     console.log 'Configuration file generated at "dependency-lint.yml"'
-  fs.copy src, dest, callback
+  async.waterfall [
+    (next) -> fs.readFile src, 'utf8', next
+    (defaultConfig, next) ->
+      fileContents = """
+        # See #{packageJson.homepage}/blob/v#{packageJson.version}/docs/configuration.md
+        # for a detailed explanation of the options
+
+        #{defaultConfig}
+        """
+      fs.writeFile dest, fileContents, next
+  ], callback
 
 
 if options['--generate-config']

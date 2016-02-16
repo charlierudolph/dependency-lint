@@ -4,6 +4,7 @@ fs = require 'fs'
 fsExtra = require 'fs-extra'
 path = require 'path'
 {addToJsonFile, addToYmlFile} = require '../support/file_helpers'
+yaml = require 'js-yaml'
 
 
 module.exports = ->
@@ -102,13 +103,24 @@ module.exports = ->
 
   @Then /^now I have the file "([^"]*)" with the default config$/, (filename, done) ->
     filePaths = [
-      path.join __dirname, '..', '..', 'config', "default#{path.extname filename}"
+      path.join __dirname, '..', '..', 'config', "default.yml"
       path.join @tmpDir, filename
     ]
     iterator = (filePath, next) ->
       fs.readFile filePath, encoding: 'utf8', next
     callback = (err, [defaultConfigContent, fileContent] = []) ->
       if err then return done err
-      expect(fileContent).to.eql defaultConfigContent
+      defaultConfig = yaml.load defaultConfigContent
+      userConfig = yaml.load fileContent
+      expect(userConfig).to.eql defaultConfig
       done()
     async.map filePaths, iterator, callback
+
+
+  @Then /^"([^"]*)" contains$/, (filename, content, done) ->
+    filePath = path.join @tmpDir, filename
+    fs.readFile filePath, encoding: 'utf8', (err, fileContent) ->
+      version = require('../../package.json').version
+      content = content.replace '{{version}}', version
+      expect(fileContent).to.contain content
+      done()
