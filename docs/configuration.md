@@ -86,6 +86,8 @@ with the file contents and the file path for each file with that `extension`
 require(module).compile(fileContents, {filename: filePath});
 ```
 
+If the transpiler you're using doesn't follow this pattern, please open an [issue](https://github.com/charlierudolph/dependency-lint/issues)
+
 Example:
 ```yml
 transpilers:
