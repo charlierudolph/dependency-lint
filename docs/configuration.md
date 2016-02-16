@@ -1,6 +1,4 @@
-# Configuration Options
-
-The default appears at the end of each
+# Configuration
 
 ### allowUnused
 array of strings or regular expressions to match against a module name
