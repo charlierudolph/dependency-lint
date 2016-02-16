@@ -76,12 +76,10 @@ stripLoaders: true
 
 ---
 ### transpilers
-Maps file extension to a compile function.
-Should be an array of objects with properties `extension` and `module`
+Transpiles code to javascript based on its extension.
+Each transpiler should specify an `extension` and a `module`.
 
-The `module` will be required and then the `compile` property will be called
-with the file contents and the file path for each file with that `extension`
-
+For each file with `extension`, the following will be called:
 ```js
 require(module).compile(fileContents, {filename: filePath});
 ```
