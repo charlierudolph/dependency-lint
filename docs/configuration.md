@@ -2,6 +2,7 @@
 
 See the default config [here](../config/default.yml)
 
+---
 ### allowUnused
 List of modules that are allowed to be unused.
 Passed to `string.match`
@@ -12,7 +13,7 @@ anytime you need to use this
 Example:
 ```yml
 allowUnused:
-  - gulp
+  - mocha
 ```
 
 ---
@@ -88,6 +89,6 @@ require(module).compile(fileContents, {filename: filePath});
 Example:
 ```yml
 transpilers:
-  extension: 'coffee'
-  module: 'coffee-script'
+  - extension: .coffee
+    module: coffee-script
 ```
