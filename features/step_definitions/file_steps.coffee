@@ -6,6 +6,7 @@ path = require 'path'
 {addToJsonFile, addToYmlFile} = require '../support/file_helpers'
 yaml = require 'js-yaml'
 
+
 module.exports = ->
 
   @Given /^I have a file "([^"]*)" which requires "([^"]*)"$/, (file, module, done) ->
