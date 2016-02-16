@@ -1,5 +1,10 @@
 # Changelog
 
+### 3.1.2 (2016-02-16)
+
+* move configuration documentation from default configuration file to docs folder
+
+---
 ### 3.1.1 (2016-02-13)
 
 * move configuration documentation from README to default configuration file
