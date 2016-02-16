@@ -1,5 +1,6 @@
 # Configuration Options
 
+The default appears at the end of each
 
 ### allowUnused
 array of strings or regular expressions to match against a module name
@@ -13,6 +14,7 @@ default:
 allowUnused: []
 ```
 
+---
 ### devFilePatterns
 array of path patterns to match against a filename to determine if it is used
 only for development (see [minimatch](https://github.com/isaacs/minimatch))
@@ -24,6 +26,7 @@ devFilePatterns:
   - '**/*_{spec,test}.js'
 ```
 
+---
 ### devScripts
 array of strings or regular expressions to match against a script name
 in your `package.json` to determine if it is used only for development
@@ -36,11 +39,12 @@ devScripts:
   - test
 ```
 
+---
 ### filePattern
 path pattern to match against a filename to determine if it should be parsed
 (see [minimatch](https://github.com/isaacs/minimatch))
 
-This is the starting point, devFilePatterns and ignoreFilePatterns should be
+This is the starting point, `devFilePatterns` and `ignoreFilePatterns` should be
 subsets of this pattern
 
 default:
@@ -48,6 +52,7 @@ default:
 filePattern: '**/*.js'
 ```
 
+---
 ### ignoreFilePatterns
 array of path patterns to match against a filename to determine if it should be
 ignored (see [minimatch](https://github.com/isaacs/minimatch))
@@ -58,6 +63,7 @@ ignoreFilePatterns:
   - 'node_modules/**/*'
 ```
 
+---
 ### stripLoaders
 boolean whether to ignore anything before a `!` in require statements
 
@@ -69,12 +75,14 @@ default:
 stripLoaders: false
 ```
 
+---
 ### transpilers
-array of objects with properties 'extension' and 'module'.
+array of objects with properties `extension` and `module`
 
-The module will be required and then the 'compile' property will be called
-with the file contents and the file path for each file with that extension
+The `module` will be required and then the `compile` property will be called
+with the file contents and the file path for each file with that `extension`
 
+Example:
 ```js
 require(module).compile(fileContents, {filename: filePath});
 ```
