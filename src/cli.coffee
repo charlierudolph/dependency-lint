@@ -2,8 +2,8 @@ async = require 'async'
 asyncHandlers = require 'async-handlers'
 {docopt} = require 'docopt'
 fs = require 'fs-extra'
-path = require 'path'
 packageJson = require '../package.json'
+path = require 'path'
 
 
 usage = '''
@@ -28,12 +28,14 @@ generateConfig = ->
     console.log 'Configuration file generated at "dependency-lint.yml"'
   async.waterfall [
     (next) -> fs.readFile src, 'utf8', next
-    (contents, next) ->
-      comment = """
+    (defaultConfig, next) ->
+      fileContents = """
         # See #{packageJson.homepage}/blob/v#{packageJson.version}/docs/configuration.md
         # for a detailed explanation of the options
+
+        #{defaultConfig}
         """
-      fs.writeFile dest, comment + '\n\n' + contents, next
+      fs.writeFile dest, fileContents, next
   ], callback
 
 

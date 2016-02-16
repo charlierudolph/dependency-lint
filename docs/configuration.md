@@ -1,49 +1,49 @@
 # Configuration
 
+See the default config [here](../config/default.yml)
+
 ### allowUnused
-array of strings or regular expressions to match against a module name
-to determine if it is allowed to be unused
+List of modules that are allowed to be unused.
+Passed to `string.match`
 
 Please create an [issue](https://github.com/charlierudolph/dependency-lint/issues)
 anytime you need to use this
 
-default:
+Example:
 ```yml
-allowUnused: []
+allowUnused:
+  - gulp
 ```
 
 ---
 ### devFilePatterns
-array of path patterns to match against a filename to determine if it is used
-only for development (see [minimatch](https://github.com/isaacs/minimatch))
+Files used only for development.
+Uses [minimatch](https://github.com/isaacs/minimatch)
 
-default:
+Example:
 ```yml
 devFilePatterns:
-  - '{features,spec,test}/**/*'
-  - '**/*_{spec,test}.js'
+  - '**/*_test.js'
 ```
 
 ---
 ### devScripts
-array of strings or regular expressions to match against a script name
-in your `package.json` to determine if it is used only for development
+List of scripts in your `package.json` used only for development.
+Passed to `string.match`
 
-default:
+Example:
 ```yml
 devScripts:
-  - lint
-  - publish
   - test
 ```
 
 ---
 ### filePattern
-path pattern to match against a filename to determine if it should be parsed
-(see [minimatch](https://github.com/isaacs/minimatch))
+All source files.
+Uses [minimatch](https://github.com/isaacs/minimatch)
 
 This is the starting point, `devFilePatterns` and `ignoreFilePatterns` should be
-subsets of this pattern
+subsets of this pattern.
 
 default:
 ```yml
@@ -52,40 +52,42 @@ filePattern: '**/*.js'
 
 ---
 ### ignoreFilePatterns
-array of path patterns to match against a filename to determine if it should be
-ignored (see [minimatch](https://github.com/isaacs/minimatch))
+Files that should be ignored.
+Uses [minimatch](https://github.com/isaacs/minimatch)
 
-default:
+Example:
 ```yml
 ignoreFilePatterns:
-  - 'node_modules/**/*'
+  - 'dist/**/*'
 ```
 
 ---
 ### stripLoaders
-boolean whether to ignore anything before a `!` in require statements
+Whether or not to ignore anything before a `!` in require statements
 
 Useful for [webpack loaders](https://webpack.github.io/docs/loaders.html) and
 [RequireJS loader plugins](http://requirejs.org/docs/plugins.html)
 
-default:
+Example:
 ```yml
-stripLoaders: false
+stripLoaders: true
 ```
 
 ---
 ### transpilers
-array of objects with properties `extension` and `module`
+Maps file extension to a compile function.
+Should be an array of objects with properties `extension` and `module`
 
 The `module` will be required and then the `compile` property will be called
 with the file contents and the file path for each file with that `extension`
 
-example:
 ```js
 require(module).compile(fileContents, {filename: filePath});
 ```
 
-default:
+Example:
 ```yml
-transpilers: []
+transpilers:
+  extension: 'coffee'
+  module: 'coffee-script'
 ```
