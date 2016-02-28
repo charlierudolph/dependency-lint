@@ -31,7 +31,7 @@ describe 'ConfigurationLoader', ->
 
         it 'returns the default configuration merged with the user configuration', ->
           expect(@result).to.eql
-            allowUnused: []
+            allowUnused: ['dependency-lint']
             devFilePatterns: ['test/**/*']
             devScripts: ['lint', 'publish', 'test']
             filePattern: '**/*.js'
@@ -64,7 +64,7 @@ describe 'ConfigurationLoader', ->
 
     it 'returns the default configuration', ->
       expect(@config).to.eql
-        allowUnused: []
+        allowUnused: ['dependency-lint']
         devFilePatterns: ['{features,spec,test}/**/*', '**/*_{spec,test}.js']
         devScripts: ['lint', 'publish', 'test']
         filePattern: '**/*.js'
