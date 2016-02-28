@@ -65,7 +65,7 @@ describe 'ConfigurationLoader', ->
     it 'returns the default configuration', ->
       expect(@config).to.eql
         allowUnused: []
-        devFilePatterns: ['{features,spec,test}/**/*', '**/*_{spec,test}.js']
+        devFilePatterns: ['{features,spec,test}/**/*', '**/*{.,_,-}{spec,test}.js']
         devScripts: ['lint', 'publish', 'test']
         filePattern: '**/*.js'
         ignoreFilePatterns: ['node_modules/**/*']
