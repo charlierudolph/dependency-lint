@@ -8,6 +8,7 @@ devScripts:
   - lint
   - publish
   - test
+  - version
 
 filePattern: '**/*.js'
 
