@@ -1,4 +1,5 @@
-allowUnused: []
+allowUnused:
+  - dependency-lint
 
 devFilePatterns:
   - '{features,spec,test}/**/*'
