@@ -33,7 +33,7 @@ describe 'ConfigurationLoader', ->
           expect(@result).to.eql
             allowUnused: []
             devFilePatterns: ['test/**/*']
-            devScripts: ['lint', 'publish', 'test']
+            devScripts: ['lint', 'publish', 'test', 'version']
             filePattern: '**/*.js'
             ignoreFilePatterns: ['node_modules/**/*']
             stripLoaders: no
@@ -66,7 +66,7 @@ describe 'ConfigurationLoader', ->
       expect(@config).to.eql
         allowUnused: []
         devFilePatterns: ['{features,spec,test}/**/*', '**/*_{spec,test}.js']
-        devScripts: ['lint', 'publish', 'test']
+        devScripts: ['lint', 'publish', 'test', 'version']
         filePattern: '**/*.js'
         ignoreFilePatterns: ['node_modules/**/*']
         stripLoaders: no
