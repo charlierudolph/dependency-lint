@@ -20,11 +20,17 @@ dependency-lint
 ```
 
 ## How it works
-`dependency-lint` compares the node modules listed in your `package.json` and the node modules it determines are used. A node module is used if:
+`dependency-lint` compares the node modules listed in your `package.json` and
+the node modules it determines are used. A node module is used if:
 * it is required in a javascript file (or a file that transpiles to javascript)
 * one of its executables is used in a script in your `package.json`
 
-If you run into an example where `dependency-lint` marks a node module as unused, and you are using it, please create an [issue](https://github.com/charlierudolph/dependency-lint/issues) describing the situation. As a short-term solution, configure `dependency-lint` to allow that node module to be unused.
+Since this does not cover all the possible ways that a node module can be used,
+`dependency-lint` can be [configured](docs/configuration.md#ignoreerrors)
+to ignore specific errors. Please create an
+[issue](https://github.com/charlierudolph/dependency-lint/issues)
+anytime you need to use this, so we can discuss new ways to determine if and
+how a node module is used.
 
 ## Configuration
 Please see [here](docs/configuration.md) for an explanation of all the options.

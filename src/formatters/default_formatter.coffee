@@ -1,11 +1,17 @@
 _ = require 'lodash'
 colors = require 'colors/safe'
+ERRORS = require '../errors'
 
 
 class DefaultFormatter
 
   # stream - writable stream to send output
   constructor: ({@stream}) ->
+    @errorMessages = {}
+    @errorMessages[ERRORS.MISSING] = 'missing'
+    @errorMessages[ERRORS.SHOULD_BE_DEPENDENCY] = 'should be dependency'
+    @errorMessages[ERRORS.SHOULD_BE_DEV_DEPENDENCY] = 'should be devDependency'
+    @errorMessages[ERRORS.UNUSED] = 'unused'
 
 
   # Prints the result to its stream
@@ -20,11 +26,13 @@ class DefaultFormatter
     @write ''
 
 
-  moduleOutput: ({error, files, name, scripts, warning}) ->
+  moduleOutput: ({error, errorIgnored, files, name, scripts}) ->
     if error
-      colors.red("✖ #{name} (#{error})") + colors.gray(@errorSuffix {files, scripts})
-    else if warning
-      colors.yellow "- #{name} (#{warning})"
+      message = @errorMessages[error]
+      if errorIgnored
+        colors.yellow "- #{name} (#{message} - ignored)"
+      else
+        colors.red("✖ #{name} (#{message})") + colors.gray(@errorSuffix {files, scripts})
     else
       "#{colors.green '✓'} #{name}"
 
@@ -41,10 +49,11 @@ class DefaultFormatter
 
 
   errorCount: (results) ->
-    errors = 0
+    count = 0
     for title, modules of results
-      errors += 1 for {error} in modules when error
-    errors
+      for {error, errorIgnored} in modules when error and not errorIgnored
+        count += 1
+    count
 
 
   errorSuffix: (usage) ->

@@ -1,11 +1,15 @@
 _ = require 'lodash'
+ERRORS = require '../errors'
 minimatch = require 'minimatch'
+camelCase = require 'camel-case'
 
 
 class DependencyLinter
 
-  constructor: ({@allowUnused, @devFilePatterns, @devScripts}) ->
-
+  constructor: ({@devFilePatterns, @devScripts, ignoreErrors}) ->
+    @ignoreErrors = {}
+    for key, value of ERRORS
+      @ignoreErrors[value] = ignoreErrors[camelCase key]
 
   # Lints the used and listed modules
   #
@@ -15,7 +19,7 @@ class DependencyLinter
   # Returns {dependencies, devDependencies}
   #         where each is an array of {name, files, scripts, error, warning}
   lint: ({listedModules, usedModules}) =>
-    result =
+    out =
       dependencies: []
       devDependencies: []
 
@@ -24,24 +28,23 @@ class DependencyLinter
         isDependency: not @isDevDependency usedModule
         listedAsDependency: usedModule.name in listedModules.dependencies
         listedAsDevDependency: usedModule.name in listedModules.devDependencies
-      @parseUsedModule usedModule, status, result
+      @parseUsedModule usedModule, status, out
 
     for key, modules of listedModules
       for name in modules when not _.some(usedModules, (moduleData) -> moduleData.name is name)
-        listedModule = {name}
-        if @allowedToBeUnused name
-          listedModule.warning = 'unused - allowed'
-        else
-          listedModule.error = 'unused'
-        result[key].push listedModule
+        listedModule = {name, error: ERRORS.UNUSED}
+        out[key].push listedModule
 
-    result.dependencies = _.sortBy result.dependencies, 'name'
-    result.devDependencies = _.sortBy result.devDependencies, 'name'
-    result
+    for key, results of out
+      results.forEach (result) =>
+        result.errorIgnored = true if result.error and @isErrorIgnored result
+      out[key] = _.sortBy results, 'name'
+
+    out
 
 
-  allowedToBeUnused: (name) ->
-    _.some @allowUnused, (regex) -> name.match regex
+  isErrorIgnored: ({error, name}) ->
+    _.some @ignoreErrors[error], (regex) -> name.match regex
 
 
   isDevDependency: ({files, scripts}) ->
@@ -62,16 +65,16 @@ class DependencyLinter
       if listedAsDependency
         result.dependencies.push usedModule
       if listedAsDevDependency
-        result.devDependencies.push _.assign {}, usedModule, {error: 'should be dependency'}
+        result.devDependencies.push _.assign {}, usedModule, {error: ERRORS.SHOULD_BE_DEPENDENCY}
       unless listedAsDependency or listedAsDevDependency
-        result.dependencies.push _.assign {}, usedModule, {error: 'missing'}
+        result.dependencies.push _.assign {}, usedModule, {error: ERRORS.MISSING}
     else
       if listedAsDependency
-        result.dependencies.push _.assign {}, usedModule, {error: 'should be devDependency'}
+        result.dependencies.push _.assign {}, usedModule, {error: ERRORS.SHOULD_BE_DEV_DEPENDENCY}
       if listedAsDevDependency
         result.devDependencies.push usedModule
       unless listedAsDependency or listedAsDevDependency
-        result.devDependencies.push _.assign {}, usedModule, {error: 'missing'}
+        result.devDependencies.push _.assign {}, usedModule, {error: ERRORS.MISSING}
 
 
 module.exports = DependencyLinter

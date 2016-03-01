@@ -28,7 +28,7 @@ module.exports = ->
   @Given /^I have configured "([^"]*)" to contain "([^"]*)"$/, (key, value, done) ->
     filePath = path.join @tmpDir, 'dependency-lint.yml'
     content = {}
-    content[key] = [value]
+    _.set content, key, value
     addToYmlFile filePath, content, done
 
 

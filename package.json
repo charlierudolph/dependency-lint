@@ -52,6 +52,7 @@
   "dependencies": {
     "async": "^1.0.0",
     "async-handlers": "^1.2.1",
+    "camel-case": "^1.2.2",
     "colors": "^1.0.3",
     "detective": "^4.0.0",
     "docopt": "^0.6.0",

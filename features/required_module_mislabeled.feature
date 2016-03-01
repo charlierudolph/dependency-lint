@@ -24,6 +24,20 @@ Feature: Required module: mislabled
     And it exits with a non-zero status
 
 
+  Scenario: dependency listed under devDependencies (ignored)
+    Given I have "myModule" listed as a devDependency
+    And I have a file "server.js" which requires "myModule"
+    And I have configured "ignoreErrors.shouldBeDependency" to contain "myModule"
+    When I run "dependency-lint"
+    Then I see the output
+      """
+      devDependencies:
+        - myModule (should be dependency - ignored)
+
+      ✓ 0 errors
+      """
+
+
   Scenario: dependency listed under dependencies and devDependencies
     Given I have "myModule" listed as a dependency
     And I have "myModule" listed as a devDependency
@@ -58,6 +72,20 @@ Feature: Required module: mislabled
       ✖ 1 error
       """
     And it exits with a non-zero status
+
+
+  Scenario: devDependency listed under dependencies (ignored)
+    Given I have "myModule" listed as a dependency
+    And I have a file "server_spec.js" which requires "myModule"
+    And I have configured "ignoreErrors.shouldBeDevDependency" to contain "myModule"
+    When I run "dependency-lint"
+    Then I see the output
+      """
+      dependencies:
+        - myModule (should be devDependency - ignored)
+
+      ✓ 0 errors
+      """
 
 
   Scenario: devDependency listed under dependencies and devDependencies

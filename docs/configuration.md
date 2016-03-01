@@ -3,20 +3,6 @@
 See the default config [here](../config/default.yml)
 
 ---
-### allowUnused
-List of modules that are allowed to be unused.
-Passed to `string.match`
-
-Please create an [issue](https://github.com/charlierudolph/dependency-lint/issues)
-anytime you need to use this
-
-Example:
-```yml
-allowUnused:
-  - mocha
-```
-
----
 ### devFilePatterns
 Files used only for development.
 Uses [minimatch](https://github.com/isaacs/minimatch)
@@ -49,6 +35,24 @@ subsets of this pattern.
 default:
 ```yml
 filePattern: '**/*.js'
+```
+
+---
+### ignoreErrors
+Mapping from error to a list of modules that will be ignored.
+Passed to `string.match`
+
+Please create an [issue](https://github.com/charlierudolph/dependency-lint/issues)
+anytime you need to use this
+
+Example:
+```yml
+ignoreErrors:
+  missing: []
+  shouldBeDependency: []
+  shouldBeDevDependency: []
+  unused:
+    - mocha
 ```
 
 ---

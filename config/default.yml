@@ -1,5 +1,3 @@
-allowUnused: []
-
 devFilePatterns:
   - '{features,spec,test}/**/*'
   - '**/*{.,_,-}{spec,test}.js'
@@ -11,6 +9,12 @@ devScripts:
   - version
 
 filePattern: '**/*.js'
+
+ignoreErrors:
+  missing: []
+  shouldBeDependency: []
+  shouldBeDevDependency: []
+  unused: []
 
 ignoreFilePatterns:
   - 'node_modules/**/*'

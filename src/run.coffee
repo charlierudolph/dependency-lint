@@ -8,7 +8,7 @@ DefaultFormatter = require './formatters/default_formatter'
 
 hasError = (results) ->
   _.some results, (modules) ->
-    _.some modules, ({error}) -> error
+    _.some modules, ({error, errorIgnored}) -> error and not errorIgnored
 
 
 dir = process.cwd()
