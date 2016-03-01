@@ -2,7 +2,7 @@ allowUnused: []
 
 devFilePatterns:
   - '{features,spec,test}/**/*'
-  - '**/*_{spec,test}.js'
+  - '**/*{.,_,-}{spec,test}.js'
 
 devScripts:
   - lint
