@@ -1,5 +1,10 @@
 # Changelog
 
+### 4.0.1 (2016-03-27)
+
+* report dependency-lint as used when listed as a devDependency and unused
+
+---
 ### 4.0.0 (2016-03-27)
 
 **BREAKING CHANGES**
