@@ -1,7 +1,8 @@
 _ = require 'lodash'
+camelCase = require 'camel-case'
 ERRORS = require '../errors'
 minimatch = require 'minimatch'
-camelCase = require 'camel-case'
+packageJson = require '../../package.json'
 
 
 class DependencyLinter
@@ -33,7 +34,9 @@ class DependencyLinter
 
     for key, modules of listedModules
       for name in modules when not _.some(usedModules, (moduleData) -> moduleData.name is name)
-        listedModule = {name, error: ERRORS.UNUSED}
+        listedModule = {name}
+        if key isnt 'devDependencies' or name isnt packageJson.name
+          listedModule.error = ERRORS.UNUSED
         out[key].push listedModule
 
     for key, results of out

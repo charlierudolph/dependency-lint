@@ -379,3 +379,12 @@ describe 'DependencyLinter', ->
 
         it 'returns ignored error: should be a dependency', ->
           @expectOutputToMatch()
+
+  describe 'dependency-lint', ->
+    describe 'not used, listed as devDependency', ->
+      beforeEach ->
+        @input.listedModules.devDependencies.push 'dependency-lint'
+        @output.devDependencies.push {name: 'dependency-lint'}
+
+      it 'returns success', ->
+        @expectOutputToMatch()
