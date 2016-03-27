@@ -1,5 +1,26 @@
 # Changelog
 
+### 4.0.0 (2016-03-27)
+
+**BREAKING CHANGES**
+* add `ignoreErrors` configuration option
+  * moved `allowUnused` to `ignoreErrors.unused`
+* update configuration structure, see the configuration documentation for the new structure
+  * `devFilePatterns` -> `requiredModules.files.dev`
+  * `devScripts` -> `executedModules.npmScripts.dev`
+  * `filePattern` -> `requiredModules.files.root`
+  * `ignoreFilePatterns` -> `requiredModules.files.ignore`
+  * `stripLoaders` -> `requiredModules.stripLoaders`
+  * `transpilers` -> `requiredModules.transpilers`
+
+**Updates**
+* add `version` as to default `devScripts`
+* expand `devFilePatterns`
+* when validating the versions of installed modules,
+  ignore modules not installed from an `npm` registry
+* add support for searching for module executables in shell scripts, see the configuration documentation
+
+---
 ### 3.1.2 (2016-02-16)
 
 * move configuration documentation from default configuration file to docs folder
