@@ -31,7 +31,7 @@ executedModules:
 ```
 
 ### executedModules.shellScripts.ignore
-Shell scripts that should be ignored
+Shell scripts that should be ignored.
 Uses [minimatch](https://github.com/isaacs/minimatch)
 
 Example:
