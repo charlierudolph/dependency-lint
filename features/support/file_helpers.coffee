@@ -15,7 +15,8 @@ addToYmlFile = (filePath, toAdd, done) ->
   fs.readFile filePath, encoding: 'utf8', (err, content) ->
     output = {}
     _.assign(output, yaml.safeLoad(content)) unless err
-    _.assign output, toAdd
+    customizer = (objValue, srcValue) -> if _.isArray(objValue) then return srcValue
+    _.mergeWith output, toAdd, customizer
     fs.writeFile filePath, yaml.safeDump(output), done
 
 

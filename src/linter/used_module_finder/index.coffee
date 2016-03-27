@@ -9,7 +9,7 @@ class UsedModuleFinder
 
   constructor: (config) ->
     @executedModuleFinder = new ExecutedModuleFinder
-    @requiredModuleFinder = new RequiredModuleFinder config
+    @requiredModuleFinder = new RequiredModuleFinder config.requiredModules
 
 
   find: ({dir, packageJson}, done) =>

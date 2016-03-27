@@ -1,14 +1,10 @@
-devFilePatterns:
-  - '{features,spec,test}/**/*'
-  - '**/*{.,_,-}{spec,test}.js'
-
-devScripts:
-  - lint
-  - publish
-  - test
-  - version
-
-filePattern: '**/*.js'
+executedModules:
+  npmScripts:
+    dev:
+      - lint
+      - publish
+      - test
+      - version
 
 ignoreErrors:
   missing: []
@@ -16,9 +12,13 @@ ignoreErrors:
   shouldBeDevDependency: []
   unused: []
 
-ignoreFilePatterns:
-  - 'node_modules/**/*'
-
-stripLoaders: false
-
-transpilers: []
+requiredModules:
+  files:
+    dev:
+      - '{features,spec,test}/**/*'
+      - '**/*{.,_,-}{spec,test}.js'
+    ignore:
+      - 'node_modules/**/*'
+    root: '**/*.js'
+  stripLoaders: false
+  transpilers: []

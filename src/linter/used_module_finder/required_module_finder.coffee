@@ -9,12 +9,12 @@ path = require 'path'
 
 class RequiredModuleFinder
 
-  constructor: ({@filePattern, @ignoreFilePatterns, @stripLoaders, @transpilers}) ->
+  constructor: ({@files, @stripLoaders, @transpilers}) ->
 
 
   find: (dir, done) ->
     async.waterfall [
-      (next) => glob @filePattern, {cwd: dir, ignore: @ignoreFilePatterns}, next
+      (next) => glob @files.root, {cwd: dir, ignore: @files.ignore}, next
       (files, next) =>
         iterator = (filePath, cb) => @findInFile {dir, filePath}, cb
         async.concat files, iterator, next

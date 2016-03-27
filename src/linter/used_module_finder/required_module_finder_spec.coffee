@@ -68,7 +68,7 @@ describe 'RequiredModuleFinder', ->
           async.series [
             (next) => fs.writeFile path.join(@tmpDir, filePath), content, next
             (next) =>
-              finder = new RequiredModuleFinder {filePattern, transpilers}
+              finder = new RequiredModuleFinder {files: {root: filePattern}, transpilers}
               finder.find @tmpDir, (@err, @result) => next()
           ], done
 

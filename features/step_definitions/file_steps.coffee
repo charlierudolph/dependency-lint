@@ -34,23 +34,23 @@ module.exports = ->
 
   @Given /^I have configured "([^"]*)" to contain$/, (key, table, done) ->
     filePath = path.join @tmpDir, 'dependency-lint.yml'
+    value = table.hashes().map (obj) -> _.mapKeys obj, (v, k) -> k.toLowerCase()
     content = {}
-    content[key] = table.hashes().map (obj) ->
-      _.mapKeys obj, (v, k) -> k.toLowerCase()
+    _.set content, key, value
     addToYmlFile filePath, content, done
 
 
   @Given /^I have configured "([^"]*)" to be "([^"]*)"$/, (key, value, done) ->
     filePath = path.join @tmpDir, 'dependency-lint.yml'
     content = {}
-    content[key] = value
+    _.set content, key, value
     addToYmlFile filePath, content, done
 
 
   @Given /^I have configured "([^"]*)" to be true$/, (key, done) ->
     filePath = path.join @tmpDir, 'dependency-lint.yml'
     content = {}
-    content[key] = true
+    _.set content, key, true
     addToYmlFile filePath, content, done
 
 

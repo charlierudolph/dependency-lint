@@ -18,8 +18,10 @@ describe 'ConfigurationLoader', ->
       context 'valid', ->
         beforeEach (done) ->
           validContent = '''
-            devFilePatterns:
-            - 'test/**/*'
+            requiredModules:
+              files:
+                dev:
+                  - 'test/**/*'
             '''
           async.series [
             (next) => fs.writeFile @configPath, validContent, next
@@ -31,17 +33,21 @@ describe 'ConfigurationLoader', ->
 
         it 'returns the default configuration merged with the user configuration', ->
           expect(@result).to.eql
-            devFilePatterns: ['test/**/*']
-            devScripts: ['lint', 'publish', 'test', 'version']
-            filePattern: '**/*.js'
+            executedModules:
+              npmScripts:
+                dev: ['lint', 'publish', 'test', 'version']
             ignoreErrors:
               missing: []
               shouldBeDependency: []
               shouldBeDevDependency: []
               unused: []
-            ignoreFilePatterns: ['node_modules/**/*']
-            stripLoaders: no
-            transpilers: []
+            requiredModules:
+              files:
+                dev: ['test/**/*']
+                ignore: ['node_modules/**/*']
+                root: '**/*.js'
+              stripLoaders: no
+              transpilers: []
 
       context 'invalid', ->
         beforeEach (done) ->
@@ -68,14 +74,18 @@ describe 'ConfigurationLoader', ->
 
     it 'returns the default configuration', ->
       expect(@config).to.eql
-        devFilePatterns: ['{features,spec,test}/**/*', '**/*{.,_,-}{spec,test}.js']
-        devScripts: ['lint', 'publish', 'test', 'version']
-        filePattern: '**/*.js'
+        executedModules:
+          npmScripts:
+            dev: ['lint', 'publish', 'test', 'version']
         ignoreErrors:
           missing: []
           shouldBeDependency: []
           shouldBeDevDependency: []
           unused: []
-        ignoreFilePatterns: ['node_modules/**/*']
-        stripLoaders: no
-        transpilers: []
+        requiredModules:
+          files:
+            dev: ['{features,spec,test}/**/*', '**/*{.,_,-}{spec,test}.js']
+            ignore: ['node_modules/**/*']
+            root: '**/*.js'
+          stripLoaders: no
+          transpilers: []

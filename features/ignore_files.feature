@@ -6,7 +6,7 @@ Feature: Unused module
 
   Scenario: dependency
     Given I have no dependencies listed
-    And I have configured "ignoreFilePatterns" to contain "examples/**/*"
+    And I have configured "requiredModules.files.ignore" to contain "examples/**/*"
     And I have a file "examples/server.js" which requires "myModule"
     When I run "dependency-lint"
     Then I see the output
@@ -17,8 +17,8 @@ Feature: Unused module
 
   Scenario: devDependency
     Given I have no devDependencies listed
-    And I have configured "devFilePatterns" to contain "^spec/"
-    And I have configured "ignoreFilePatterns" to contain "spec/fixtures/**/*"
+    And I have configured "requiredModules.files.dev" to contain "spec/**/*.js"
+    And I have configured "requiredModules.files.ignore" to contain "spec/fixtures/**/*.js"
     And I have a file "spec/fixtures/example.js" which requires "myModule"
     When I run "dependency-lint"
     Then I see the output

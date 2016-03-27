@@ -6,10 +6,10 @@ camelCase = require 'camel-case'
 
 class DependencyLinter
 
-  constructor: ({@devFilePatterns, @devScripts, ignoreErrors}) ->
+  constructor: (@config) ->
     @ignoreErrors = {}
     for key, value of ERRORS
-      @ignoreErrors[value] = ignoreErrors[camelCase key]
+      @ignoreErrors[value] = @config.ignoreErrors[camelCase key]
 
   # Lints the used and listed modules
   #
@@ -52,11 +52,11 @@ class DependencyLinter
 
 
   isDevFile: (file) =>
-    _.some @devFilePatterns, (pattern) -> minimatch file, pattern
+    _.some @config.requiredModules.files.dev, (pattern) -> minimatch file, pattern
 
 
   isDevScript: (script) =>
-    _.some @devScripts, (regex) -> script.match regex
+    _.some @config.executedModules.npmScripts.dev, (regex) -> script.match regex
 
 
   parseUsedModule: (usedModule, status, result) ->

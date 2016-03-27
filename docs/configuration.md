@@ -3,38 +3,19 @@
 See the default config [here](../config/default.yml)
 
 ---
-### devFilePatterns
-Files used only for development.
-Uses [minimatch](https://github.com/isaacs/minimatch)
+### executedModules
+Configuration for finding all the instances where modules are executed.
 
-Example:
-```yml
-devFilePatterns:
-  - '**/*_test.js'
-```
-
----
-### devScripts
+### executedModules.npmScripts.dev
 List of scripts in your `package.json` used only for development.
 Passed to `string.match`
 
 Example:
 ```yml
-devScripts:
-  - test
-```
-
----
-### filePattern
-All source files.
-Uses [minimatch](https://github.com/isaacs/minimatch)
-
-This is the starting point, `devFilePatterns` and `ignoreFilePatterns` should be
-subsets of this pattern.
-
-default:
-```yml
-filePattern: '**/*.js'
+executedModules:
+  npmScripts:
+    dev:
+      - test
 ```
 
 ---
@@ -56,18 +37,48 @@ ignoreErrors:
 ```
 
 ---
-### ignoreFilePatterns
+### requiredModules
+Configuration for finding all the instances where modules are required.
+
+### requiredModules.files.dev
+Files used only for development.
+Uses [minimatch](https://github.com/isaacs/minimatch)
+
+Example:
+```yml
+requiredModules:
+  files:
+    dev:
+      - '**/*_test.js'
+```
+
+### requiredModules.files.ignore
 Files that should be ignored.
 Uses [minimatch](https://github.com/isaacs/minimatch)
 
 Example:
 ```yml
-ignoreFilePatterns:
-  - 'dist/**/*'
+requiredModules:
+  files:
+    ignore:
+      - 'dist/**/*'
 ```
 
----
-### stripLoaders
+### requiredModules.files.root
+All source files.
+Uses [minimatch](https://github.com/isaacs/minimatch)
+
+This is the starting point, `requiredModules.files.dev` and `requiredModules.files.ignore` should be
+subsets of this pattern.
+
+default:
+```yml
+requiredModules:
+  files:
+    root: '**/*.js'
+```
+
+### requiredModules.stripLoaders
 Whether or not to ignore anything before a `!` in require statements
 
 Useful for [webpack loaders](https://webpack.github.io/docs/loaders.html) and
@@ -75,11 +86,11 @@ Useful for [webpack loaders](https://webpack.github.io/docs/loaders.html) and
 
 Example:
 ```yml
-stripLoaders: true
+requiredModules:
+  stripLoaders: true
 ```
 
----
-### transpilers
+### requiredModules.transpilers
 Transpiles code to javascript based on its extension.
 Each transpiler should specify an `extension` and a `module`.
 
@@ -92,7 +103,8 @@ If the transpiler you're using doesn't follow this pattern, please open an [issu
 
 Example:
 ```yml
-transpilers:
-  - extension: .coffee
-    module: coffee-script
+requiredModules:
+  transpilers:
+    - extension: .coffee
+      module: coffee-script
 ```

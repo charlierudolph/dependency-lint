@@ -1,16 +1,10 @@
-devFilePatterns:
-  - '{features,spec}/**/*'
-  - '**/*_spec.coffee'
-  - gulpfile.coffee
-  - mycha.coffee
-
-devScripts:
-  - build
-  - lint
-  - publish
-  - test
-
-filePattern: '**/*.coffee'
+executedModules:
+  npmScripts:
+    dev:
+      - build
+      - lint
+      - publish
+      - test
 
 ignoreErrors:
   missing: []
@@ -18,12 +12,16 @@ ignoreErrors:
   shouldBeDevDependency: []
   unused: []
 
-ignoreFilePatterns:
-  - 'dist/**/*'
-  - 'node_modules/**/*'
-
-stripLoaders: false
-
-transpilers:
-  - extension: .coffee
-    module: coffee-script
+requiredModules:
+  files:
+    dev:
+      - '{features,spec}/**/*'
+      - '**/*_spec.coffee'
+      - gulpfile.coffee
+    ignore:
+      - 'node_modules/**/*'
+    root: '**/*.coffee'
+  stripLoaders: false
+  transpilers:
+    - extension: .coffee
+      module: coffee-script

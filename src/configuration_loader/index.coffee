@@ -12,7 +12,8 @@ class ConfigurationLoader
 
 
   load: (dir, done) ->
-    merge = (args) -> _.assign {}, args...
+    customizer = (objValue, srcValue) -> if _.isArray(objValue) then return srcValue
+    merge = (args) -> _.mergeWith args..., customizer
     async.parallel [
       @loadDefaultConfig
       (next) => @loadUserConfig dir, next

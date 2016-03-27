@@ -5,13 +5,17 @@ ERRORS = require '../errors'
 describe 'DependencyLinter', ->
   beforeEach ->
     @options =
-      devFilePatterns: ['**/*_spec.coffee']
-      devScripts: ['test']
+      executedModules:
+        npmScripts:
+          dev: ['test']
       ignoreErrors:
         missing: []
         shouldBeDependency: []
         shouldBeDevDependency: []
         unused: []
+      requiredModules:
+        files:
+          dev: ['**/*_spec.coffee']
 
     @input =
       listedModules: {dependencies: [], devDependencies: []}

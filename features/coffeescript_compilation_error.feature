@@ -4,8 +4,8 @@ Feature: Coffeescript compilation error
   I want an appropriate error message
 
   Background:
-    Given I have configured "filePattern" to be "**/*.coffee"
-    And I have configured "transpilers" to contain
+    Given I have configured "requiredModules.files.root" to be "**/*.coffee"
+    And I have configured "requiredModules.transpilers" to contain
       | EXTENSION | MODULE        |
       | .coffee   | coffee-script |
 

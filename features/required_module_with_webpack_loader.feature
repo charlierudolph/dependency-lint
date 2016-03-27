@@ -6,7 +6,7 @@ Feature: Required module with a webpack loader
 
   Background:
     Given I have no dependencies listed
-    And I have configured "stripLoaders" to be true
+    And I have configured "requiredModules.stripLoaders" to be true
 
 
   Scenario: local dependency with a loader
