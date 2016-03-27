@@ -12,6 +12,7 @@ class InstalledModuleValidater
     modules = _.assign {}, packageJson.dependencies, packageJson.devDependencies
     issues = []
     iterator = (version, name, next) =>
+      if not semver.validRange(version) then return next()
       @validateModule {dir, name, version}, (err, status) ->
         if err then return next err
         if status then issues.push {name, status}

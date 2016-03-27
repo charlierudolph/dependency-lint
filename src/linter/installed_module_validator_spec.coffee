@@ -53,6 +53,24 @@ examples = [
   ]
   packageJson:
     devDependencies: {myModule: '^1.0.0'}
+,
+  description: 'dependency not installed through registry'
+  installedModules: [
+    name: 'myModule'
+    version: '1.0.0'
+  ]
+  packageJson:
+    dependencies:
+      myModule: 'git+ssh://git@host:myOrganization/myModule.git#1.0.0"'
+,
+  description: 'devDependency not installed through registry'
+  installedModules: [
+    name: 'myModule'
+    version: '1.0.0'
+  ]
+  packageJson:
+    devDependencies:
+      myModule: 'git+ssh://git@host:myOrganization/myModule.git#1.0.0"'
 ]
 
 
