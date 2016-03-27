@@ -7,6 +7,7 @@ camelCase = require 'camel-case'
 class DependencyLinter
 
   constructor: (@config) ->
+    @devFiles = _.concat @config.executedModules.shellScripts.dev, @config.requiredModules.files.dev
     @ignoreErrors = {}
     for key, value of ERRORS
       @ignoreErrors[value] = @config.ignoreErrors[camelCase key]
@@ -52,7 +53,7 @@ class DependencyLinter
 
 
   isDevFile: (file) =>
-    _.some @config.requiredModules.files.dev, (pattern) -> minimatch file, pattern
+    _.some @devFiles, (pattern) -> minimatch file, pattern
 
 
   isDevScript: (script) =>

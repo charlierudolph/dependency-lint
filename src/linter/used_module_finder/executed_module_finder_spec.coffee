@@ -6,11 +6,13 @@ tmp = require 'tmp'
 
 
 examples = [
+  config: {shellScripts: {root: ''}}
   description: 'no scripts'
   expectedResult: []
   packageJson: {}
 ,
-  description: 'script using module exectuable'
+  config: {shellScripts: {root: ''}}
+  description: 'package.json script using module exectuable'
   expectedResult: [name: 'myModule', script: 'test']
   nodeModule:
     name: 'myModule'
@@ -18,13 +20,25 @@ examples = [
   packageJson:
     scripts: {test: 'myExecutable --opt arg'}
 ,
-  description: 'script using scoped module exectuable'
+  config: {shellScripts: {root: ''}}
+  description: 'package.json script using scoped module exectuable'
   expectedResult: [name: '@myOrganization/myModule', script: 'test']
   nodeModule:
     name: '@myOrganization/myModule'
     executable: 'myExecutable'
   packageJson:
     scripts: {test: 'myExecutable --opt arg'}
+,
+  config: {shellScripts: {root: 'bin/*'}}
+  description: 'shell script using module exectuable'
+  expectedResult: [name: 'myModule', file: 'bin/test']
+  file:
+    path: 'bin/test'
+    content: 'myExecutable --opt arg'
+  nodeModule:
+    name: 'myModule'
+    executable: 'myExecutable'
+  packageJson: {}
 ]
 
 
@@ -33,7 +47,17 @@ describe 'ExecutedModuleFinder', ->
     tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
 
   describe 'find', ->
-    examples.forEach ({description, expectedError, expectedResult, nodeModule, packageJson}) ->
+    examples.forEach (example) ->
+      {
+        config
+        description,
+        expectedError,
+        expectedResult,
+        file,
+        nodeModule,
+        packageJson
+      } = example
+
       context description, ->
         beforeEach (done) ->
           actions = []
@@ -46,8 +70,11 @@ describe 'ExecutedModuleFinder', ->
               src = path.relative nodeModulesBinPath, executablePath
               dest = path.join nodeModulesBinPath, nodeModule.executable
               fsExtra.ensureSymlink src, dest, next
+          if file
+            actions.push (next) =>
+              fsExtra.outputFile path.join(@tmpDir, file.path), file.content, next
           actions.push (next) =>
-            finder = new ExecutedModuleFinder
+            finder = new ExecutedModuleFinder config
             finder.find {dir: @tmpDir, packageJson}, (@err, @result) => next()
           async.series actions, done
 

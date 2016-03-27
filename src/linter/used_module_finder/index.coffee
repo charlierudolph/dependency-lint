@@ -8,7 +8,7 @@ RequiredModuleFinder = require './required_module_finder'
 class UsedModuleFinder
 
   constructor: (config) ->
-    @executedModuleFinder = new ExecutedModuleFinder
+    @executedModuleFinder = new ExecutedModuleFinder config.executedModules
     @requiredModuleFinder = new RequiredModuleFinder config.requiredModules
 
 

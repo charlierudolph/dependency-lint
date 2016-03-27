@@ -25,10 +25,14 @@ module.exports = ->
     fsExtra.outputFile path.join(@tmpDir, file), "require '", done
 
 
+  @Given /^I have a file "([^"]*)" with the content:$/, (file, content, done) ->
+    fsExtra.outputFile path.join(@tmpDir, file), content, done
+
+
   @Given /^I have configured "([^"]*)" to contain "([^"]*)"$/, (key, value, done) ->
     filePath = path.join @tmpDir, 'dependency-lint.yml'
     content = {}
-    _.set content, key, value
+    _.set content, key, [value]
     addToYmlFile filePath, content, done
 
 

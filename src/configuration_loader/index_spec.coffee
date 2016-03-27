@@ -36,6 +36,10 @@ describe 'ConfigurationLoader', ->
             executedModules:
               npmScripts:
                 dev: ['lint', 'publish', 'test', 'version']
+              shellScripts:
+                dev: []
+                ignore: []
+                root: ''
             ignoreErrors:
               missing: []
               shouldBeDependency: []
@@ -77,6 +81,10 @@ describe 'ConfigurationLoader', ->
         executedModules:
           npmScripts:
             dev: ['lint', 'publish', 'test', 'version']
+          shellScripts:
+            dev: []
+            ignore: []
+            root: ''
         ignoreErrors:
           missing: []
           shouldBeDependency: []

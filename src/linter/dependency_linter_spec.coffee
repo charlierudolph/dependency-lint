@@ -8,6 +8,8 @@ describe 'DependencyLinter', ->
       executedModules:
         npmScripts:
           dev: ['test']
+        shellScripts:
+          dev: []
       ignoreErrors:
         missing: []
         shouldBeDependency: []

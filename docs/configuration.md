@@ -18,6 +18,44 @@ executedModules:
       - test
 ```
 
+### executedModules.shellScripts.dev
+Shell scripts used only for development.
+Uses [minimatch](https://github.com/isaacs/minimatch)
+
+Example:
+```yml
+executedModules:
+  shellScripts:
+    dev:
+      - bin/test
+```
+
+### executedModules.shellScripts.ignore
+Shell scripts that should be ignored
+Uses [minimatch](https://github.com/isaacs/minimatch)
+
+Example:
+```yml
+executedModules:
+  shellScripts:
+    ignore:
+      - node_modules/**/*
+```
+
+### executedModules.shellScripts.root
+All shell scripts.
+Uses [minimatch](https://github.com/isaacs/minimatch)
+
+This is the starting point, `executedModules.shellScripts.dev` and `executedModules.shellScripts.ignore` should be
+subsets of this pattern.
+
+Example:
+```yml
+executedModules:
+  shellScripts:
+    root: 'bin/*'
+```
+
 ---
 ### ignoreErrors
 Mapping from error to a list of modules that will be ignored.

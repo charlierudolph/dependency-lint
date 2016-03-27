@@ -5,6 +5,10 @@ executedModules:
       - publish
       - test
       - version
+  shellScripts:
+    dev: []
+    ignore: []
+    root: ''
 
 ignoreErrors:
   missing: []
