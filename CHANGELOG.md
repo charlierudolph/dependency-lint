@@ -1,5 +1,11 @@
 # Changelog
 
+### 4.0.2 (2016-06-24)
+
+* update dependencies
+
+---
+
 ### 4.0.1 (2016-03-27)
 
 * report dependency-lint as used when listed as a devDependency and unused
