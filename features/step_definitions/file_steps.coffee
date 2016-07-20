@@ -92,17 +92,9 @@ module.exports = ->
 
 
   @Given /^the "([^"]*)" module exposes the executable "([^"]*)"$/, (name, executable, done) ->
-    nodeModulesPath = path.join @tmpDir, 'node_modules'
-    nodeModulesBinPath = path.join nodeModulesPath, '.bin'
-    executablePath = path.join nodeModulesPath, name, 'path', 'to', 'executable'
-    async.series [
-      (next) ->
-        fsExtra.outputFile executablePath, '', next
-      (next) ->
-        src = path.relative nodeModulesBinPath, executablePath
-        dest = path.join nodeModulesBinPath, executable
-        fsExtra.ensureSymlink src, dest, next
-    ], done
+    filePath = path.join @tmpDir, 'node_modules', name, 'package.json'
+    content = {name, bin: {"#{executable}": 'path/to/executable'}}
+    addToJsonFile filePath, content, done
 
 
   @Then /^now I have the file "([^"]*)" with the default config$/, (filename, done) ->

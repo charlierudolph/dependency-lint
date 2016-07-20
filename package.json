@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "gulp",
-    "cucumber-test": "cucumber-js --format progress",
+    "cucumber-test": "cucumber-js",
     "lint-coffeescript": "coffeelint src",
     "feature-test": "npm run cucumber-test && npm run self-test",
     "prefeature-test": "npm run build",

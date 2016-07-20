@@ -2,6 +2,7 @@ _ = require 'lodash'
 async = require 'async'
 asyncHandlers = require 'async-handlers'
 fs = require 'fs'
+fsExtra = require 'fs-extra'
 glob = require 'glob'
 ModuleNameParser = require './module_name_parser'
 path = require 'path'
@@ -43,27 +44,20 @@ class ExecutedModulesFinder
 
 
   getModuleExecutables: (dir, done) ->
-    binPath = path.join dir, 'node_modules', '.bin'
-    async.auto {
-      executables: (next) ->
-        fs.access binPath, (err) ->
-          if err then return done null, []
-          fs.readdir binPath, next
-
-      links: ['executables', (next, {executables}) ->
-        files = executables.map (file) -> path.join binPath, file
-        async.map files, fs.readlink, next
-      ]
-    }, asyncHandlers.transform(@parseModuleExecutables, done)
-
-
-  parseModuleExecutables: ({executables, links}) ->
-    result = {}
-    links.forEach (link, index) ->
-      name = ModuleNameParser.stripSubpath path.relative('..', link)
-      result[name] = [] unless result[name]
-      result[name].push path.basename executables[index]
-    result
+    nodeModulesPath = path.join dir, 'node_modules'
+    glob "#{nodeModulesPath}/{*,*/*}/package.json", (err, files) ->
+      if err then return done err
+      iterator = (file, cb) ->
+        fsExtra.readJson file, (err, packageJson) ->
+          if err then return cb err
+          executables = if _.isString packageJson.bin
+            [packageJson.name]
+          else if _.isObject packageJson.bin
+            _.keys packageJson.bin
+          else
+            []
+          cb null, [packageJson.name, executables]
+      async.map files, iterator, asyncHandlers.transform(_.fromPairs, done)
 
 
   readShellScripts: (dir, done) ->

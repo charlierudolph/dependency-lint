@@ -1,3 +1,3 @@
 module.exports = {
-  'default': '--compiler coffee:coffee-script/register --strict'
+  'default': '--compiler coffee:coffee-script/register --format progress --strict'
 }
