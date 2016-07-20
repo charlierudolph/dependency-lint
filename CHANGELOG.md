@@ -1,5 +1,14 @@
 # Changelog
 
+### 4.1.0 (2016-07-20)
+
+* find module executables by parsing `package.json` files
+  * previously found them by reading the symbolic links in `node_modules/.bin`
+  * adds support for other package managers like [ied](https://github.com/alexanderGugel/ied)
+    and [pnpm](https://github.com/rstacruz/pnpm)
+
+----
+
 ### 4.0.2 (2016-06-24)
 
 * update dependencies
