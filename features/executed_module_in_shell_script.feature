@@ -42,6 +42,7 @@ Feature: Executed module
       ✓ 0 errors
       """
 
+
   Scenario: respects word boundaries
     Given I have a file "bin/run" with the content:
       """
