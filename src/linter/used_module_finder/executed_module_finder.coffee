@@ -28,7 +28,7 @@ class ExecutedModulesFinder
     for moduleName, executables of moduleExecutables
       for executable in executables
         continue if ModuleNameParser.isGlobalExecutable executable
-        result.push moduleName if script.match(executable) and moduleName not in result
+        result.push moduleName if script.match("\\b#{executable}\\b") and moduleName not in result
     result
 
 

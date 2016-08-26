@@ -41,3 +41,14 @@ Feature: Executed module
 
       ✓ 0 errors
       """
+
+  Scenario: respects word boundaries
+    Given I have a file "bin/run" with the content:
+      """
+      othermyExecutable --opt arg
+      """
+    When I run "dependency-lint"
+    Then I see the output
+      """
+      ✓ 0 errors
+      """
