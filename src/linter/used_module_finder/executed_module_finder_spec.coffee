@@ -38,6 +38,15 @@ examples = [
   packageJson:
     scripts: {test: 'myExecutable --opt arg'}
 ,
+  config: {shellScripts: {root: ''}}
+  description: 'package.json script containing module executable in another word'
+  expectedResult: []
+  modulePackageJson:
+    name: 'myModule'
+    bin: myExecutable: 'path/to/executable'
+  packageJson:
+    scripts: {test: 'othermyExecutable --opt arg'}
+,
   config: {shellScripts: {root: 'bin/*'}}
   description: 'shell script using module exectuable'
   expectedResult: [name: 'myModule', file: 'bin/test']
