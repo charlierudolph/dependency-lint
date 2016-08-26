@@ -1,5 +1,11 @@
 # Changelog
 
+### 4.1.1 (2016-08-25)
+
+* respect word boundaries when searching scripts for use of a module's executables
+
+----
+
 ### 4.1.0 (2016-07-20)
 
 * find module executables by parsing `package.json` files
