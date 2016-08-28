@@ -1,5 +1,11 @@
 # Changelog
 
+### 4.1.3 (2016-08-27)
+
+* update dependencies
+
+----
+
 ### 4.1.2 (2016-08-27)
 
 * Add CLI option `--auto-correct` to automatically remove unused dependencies and move mislabeled dependencies.
