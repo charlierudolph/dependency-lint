@@ -1,5 +1,11 @@
 # Changelog
 
+### 4.1.2 (2016-08-27)
+
+* Add CLI option `--auto-correct` to automatically remove unused dependencies and move mislabeled dependencies.
+
+----
+
 ### 4.1.1 (2016-08-25)
 
 * respect word boundaries when searching scripts for use of a module's executables
