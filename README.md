@@ -9,6 +9,9 @@ Lints your NPM `dependencies` and `devDependencies` reporting which node modules
 * **mislabeled** and should be moved from `dependencies` to `devDependencies` or vice versa
 
 ## Installation
+
+Supported on [Node.js](https://nodejs.org/en) versions 4, 5, and 6
+
 ```
 npm install dependency-lint
 ```
