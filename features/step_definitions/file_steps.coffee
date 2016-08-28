@@ -1,79 +1,84 @@
 _ = require 'lodash'
-async = require 'async'
-fs = require 'fs'
-fsExtra = require 'fs-extra'
-path = require 'path'
 {addToJsonFile, addToYmlFile} = require '../support/file_helpers'
+fs = require('fs')
+fsExtra = require('fs-extra')
+path = require 'path'
+Promise = require 'bluebird'
 yaml = require 'js-yaml'
+
+
+ensureSymlink = Promise.promisify fsExtra.ensureSymlink
+readFile = Promise.promisify fs.readFile
+outputFile = Promise.promisify fsExtra.outputFile
 
 
 module.exports = ->
 
-  @Given /^I have a file "([^"]*)" which requires "([^"]*)"$/, (file, module, done) ->
+  @Given /^I have a file "([^"]*)" which requires "([^"]*)"$/, (file, module) ->
     content = if path.extname(file) is '.coffee'
       "require '#{module}'"
     else
       "require('#{module}')"
-    fsExtra.outputFile path.join(@tmpDir, file), content, done
+    yield outputFile path.join(@tmpDir, file), content
 
 
-  @Given /^I have a file "([^"]*)" which resolves "([^"]*)"$/, (file, module, done) ->
-    fsExtra.outputFile path.join(@tmpDir, file), "require.resolve('#{module}')", done
+  @Given /^I have a file "([^"]*)" which resolves "([^"]*)"$/, (file, module) ->
+    yield outputFile path.join(@tmpDir, file), "require.resolve('#{module}')"
 
 
-  @Given /^I have a file "([^"]*)" with a coffeescript compilation error$/, (file, done) ->
-    fsExtra.outputFile path.join(@tmpDir, file), "require '", done
+  @Given /^I have a file "([^"]*)" with a coffeescript compilation error$/, (file) ->
+    yield outputFile path.join(@tmpDir, file), "require '"
 
 
-  @Given /^I have a file "([^"]*)" with the content:$/, (file, content, done) ->
-    fsExtra.outputFile path.join(@tmpDir, file), content, done
+  @Given /^I have a file "([^"]*)" with the content:$/, (file, content) ->
+    yield outputFile path.join(@tmpDir, file), content
 
 
-  @Given /^I have configured "([^"]*)" to contain "([^"]*)"$/, (key, value, done) ->
+  @Given /^I have configured "([^"]*)" to contain "([^"]*)"$/, (key, value) ->
     filePath = path.join @tmpDir, 'dependency-lint.yml'
     content = {}
     _.set content, key, [value]
-    addToYmlFile filePath, content, done
+    yield addToYmlFile filePath, content
 
 
-  @Given /^I have configured "([^"]*)" to contain$/, (key, table, done) ->
+  @Given /^I have configured "([^"]*)" to contain$/, (key, table) ->
     filePath = path.join @tmpDir, 'dependency-lint.yml'
     value = table.hashes().map (obj) -> _.mapKeys obj, (v, k) -> k.toLowerCase()
     content = {}
     _.set content, key, value
-    addToYmlFile filePath, content, done
+    yield addToYmlFile filePath, content
 
 
-  @Given /^I have configured "([^"]*)" to be "([^"]*)"$/, (key, value, done) ->
+  @Given /^I have configured "([^"]*)" to be "([^"]*)"$/, (key, value) ->
     filePath = path.join @tmpDir, 'dependency-lint.yml'
     content = {}
     _.set content, key, value
-    addToYmlFile filePath, content, done
+    yield addToYmlFile filePath, content
 
 
-  @Given /^I have configured "([^"]*)" to be true$/, (key, done) ->
+  @Given /^I have configured "([^"]*)" to be true$/, (key) ->
     filePath = path.join @tmpDir, 'dependency-lint.yml'
     content = {}
     _.set content, key, true
-    addToYmlFile filePath, content, done
+    yield addToYmlFile filePath, content
 
 
-  @Given /^I have no (.*) listed$/, (key, done) ->
+  @Given /^I have no (.*) listed$/, (key) ->
     filePath = path.join @tmpDir, 'package.json'
     content = {}
     content[key] = []
-    addToJsonFile filePath, content, done
+    yield addToJsonFile filePath, content
 
 
-  @Given /^I have "([^"]*)" installed$/, (nameAndVersion, done) ->
+  @Given /^I have "([^"]*)" installed$/, (nameAndVersion) ->
     [name, version] = nameAndVersion.split ' @ '
     version or= '1.0.0'
     filePath = path.join @tmpDir, 'node_modules', name, 'package.json'
     content = {name, version}
-    addToJsonFile filePath, content, done
+    yield addToJsonFile filePath, content
 
 
-  @Given /^I have "([^"]*)" listed as a (.*)$/, (nameAndVersion, type, done) ->
+  @Given /^I have "([^"]*)" listed as a (.*)$/, (nameAndVersion, type) ->
     filePath = path.join @tmpDir, 'package.json'
     key = type.replace 'y', 'ies'
     [name, version] = nameAndVersion.split ' @ '
@@ -81,42 +86,37 @@ module.exports = ->
     content = {}
     content[key] = {}
     content[key][name] = version
-    addToJsonFile filePath, content, done
+    yield addToJsonFile filePath, content
 
 
-  @Given /^I have a script named "([^"]*)" defined as "([^"]*)"$/, (name, command, done) ->
+  @Given /^I have a script named "([^"]*)" defined as "([^"]*)"$/, (name, command) ->
     filePath = path.join @tmpDir, 'package.json'
     content = scripts: {}
     content.scripts[name] = command
-    addToJsonFile filePath, content, done
+    yield addToJsonFile filePath, content
 
 
-  @Given /^the "([^"]*)" module exposes the executable "([^"]*)"$/, (name, executable, done) ->
+  @Given /^the "([^"]*)" module exposes the executable "([^"]*)"$/, (name, executable) ->
     filePath = path.join @tmpDir, 'node_modules', name, 'package.json'
     content = {name, bin: {"#{executable}": 'path/to/executable'}}
-    addToJsonFile filePath, content, done
+    yield addToJsonFile filePath, content
 
 
-  @Then /^now I have the file "([^"]*)" with the default config$/, (filename, done) ->
+  @Then /^now I have the file "([^"]*)" with the default config$/, (filename) ->
     filePaths = [
       path.join __dirname, '..', '..', 'config', "default.yml"
       path.join @tmpDir, filename
     ]
-    iterator = (filePath, next) ->
-      fs.readFile filePath, encoding: 'utf8', next
-    callback = (err, [defaultConfigContent, fileContent] = []) ->
-      if err then return done err
-      defaultConfig = yaml.load defaultConfigContent
-      userConfig = yaml.load fileContent
-      expect(userConfig).to.eql defaultConfig
-      done()
-    async.map filePaths, iterator, callback
+    generators = filePaths.map (filePath) -> yield readFile filePath, 'utf8'
+    [defaultConfigContent, userConfigContent] = yield generators
+    defaultConfig = yaml.load defaultConfigContent
+    userConfig = yaml.load userConfigContent
+    expect(defaultConfig).to.eql userConfig
 
 
-  @Then /^"([^"]*)" contains$/, (filename, content, done) ->
+  @Then /^"([^"]*)" contains$/, (filename, content) ->
     filePath = path.join @tmpDir, filename
-    fs.readFile filePath, encoding: 'utf8', (err, fileContent) ->
-      version = require('../../package.json').version
-      content = content.replace '{{version}}', version
-      expect(fileContent).to.contain content
-      done()
+    fileContent = yield readFile filePath, 'utf8'
+    version = require('../../package.json').version
+    content = content.replace '{{version}}', version
+    expect(fileContent).to.contain content

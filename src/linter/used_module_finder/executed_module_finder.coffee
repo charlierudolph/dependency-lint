@@ -1,11 +1,14 @@
 _ = require 'lodash'
-async = require 'async'
-asyncHandlers = require 'async-handlers'
-fs = require 'fs'
 fsExtra = require 'fs-extra'
-glob = require 'glob'
 ModuleNameParser = require './module_name_parser'
 path = require 'path'
+Promise = require 'bluebird'
+
+
+{coroutine} = Promise
+glob = Promise.promisify require('glob')
+readFile = Promise.promisify fsExtra.readFile
+readJson = Promise.promisify fsExtra.readJson
 
 
 class ExecutedModulesFinder
@@ -13,22 +16,21 @@ class ExecutedModulesFinder
   constructor: ({@shellScripts}) ->
 
 
-  find: ({dir, packageJson}, done) ->
+  find: coroutine ({dir, packageJson}) ->
+    [moduleExecutables, shellScripts] = yield Promise.all [
+      @getModuleExecutables(dir)
+      @readShellScripts(dir)
+    ]
     packageJsonScripts = packageJson.scripts or {}
-    getUsage = ([moduleExecutables, shellScripts]) =>
-      @findModuleExecutableUsage {moduleExecutables, packageJsonScripts, shellScripts}
-    async.parallel [
-      (cb) => @getModuleExecutables dir, cb
-      (cb) => @readShellScripts dir, cb
-    ], asyncHandlers.transform(getUsage, done)
+    @findModuleExecutableUsage {moduleExecutables, packageJsonScripts, shellScripts}
 
 
   findInScript: (script, moduleExecutables) ->
     result = []
-    for moduleName, executables of moduleExecutables
+    for name, executables of moduleExecutables
       for executable in executables
         continue if ModuleNameParser.isGlobalExecutable executable
-        result.push moduleName if script.match("\\b#{executable}\\b") and moduleName not in result
+        result.push name if script.match("\\b#{executable}\\b") and name not in result
     result
 
 
@@ -43,30 +45,29 @@ class ExecutedModulesFinder
     result
 
 
-  getModuleExecutables: (dir, done) ->
+  getModuleExecutables: coroutine (dir) ->
     nodeModulesPath = path.join dir, 'node_modules'
-    glob "#{nodeModulesPath}/{*,*/*}/package.json", (err, files) ->
-      if err then return done err
-      iterator = (file, cb) ->
-        fsExtra.readJson file, (err, packageJson) ->
-          if err then return cb err
-          executables = if _.isString packageJson.bin
-            [packageJson.name]
-          else if _.isObject packageJson.bin
-            _.keys packageJson.bin
-          else
-            []
-          cb null, [packageJson.name, executables]
-      async.map files, iterator, asyncHandlers.transform(_.fromPairs, done)
+    files = yield glob "#{nodeModulesPath}/{*,*/*}/package.json"
+    _.fromPairs yield Promise.map files, @getModuleExecutablesPair
 
 
-  readShellScripts: (dir, done) ->
-    glob @shellScripts.root, {cwd: dir, ignore: @shellScripts.ignore}, (err, filePaths) ->
-      if err then return done err
-      iterator = (filePath, next) ->
-        fs.readFile path.join(dir, filePath), encoding: 'utf8', next
-      zip = (fileContents) -> _.zipObject filePaths, fileContents
-      async.map filePaths, iterator, asyncHandlers.transform(zip, done)
+  getModuleExecutablesPair: coroutine (packageJsonPath) ->
+    packageJson = yield readJson packageJsonPath
+    executables = if _.isString packageJson.bin
+      [packageJson.name]
+    else if _.isObject packageJson.bin
+      _.keys packageJson.bin
+    else
+      []
+    [packageJson.name, executables]
+
+
+  readShellScripts: coroutine (dir, done) ->
+    filePaths = yield glob @shellScripts.root, {cwd: dir, ignore: @shellScripts.ignore}
+    fileMapping = _.fromPairs filePaths.map (filePath) ->
+      fileContentPromise = readFile path.join(dir, filePath), 'utf8'
+      [filePath, fileContentPromise]
+    yield Promise.props fileMapping
 
 
 module.exports = ExecutedModulesFinder

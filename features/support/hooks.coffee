@@ -1,20 +1,13 @@
-async = require 'async'
-{expect} = require 'chai'
-fsExtra = require 'fs-extra'
+{addToJsonFile} = require '../support/file_helpers'
 path = require 'path'
-tmp = require 'tmp'
+getTmpDir = require '../../spec/support/get_tmp_dir'
 
 
 module.exports = ->
 
-  @Before (scenario, done) ->
-    async.series [
-      (next) =>
-        tmp.dir {unsafeCleanup: yes}, (err, @tmpDir) => next err
-      (next) =>
-        fsExtra.writeJson path.join(@tmpDir, 'package.json'), {}, next
-    ], done
-
+  @Before ->
+    @tmpDir = yield getTmpDir()
+    yield addToJsonFile path.join(@tmpDir, 'package.json'), {}
 
   @After ->
     unless @errorExpected

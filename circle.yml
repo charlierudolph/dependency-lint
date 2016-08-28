@@ -1,3 +1,8 @@
+dependencies:
+  post:
+    - npm prune
+
+
 machine:
   node:
-    version: 5
+    version: 6

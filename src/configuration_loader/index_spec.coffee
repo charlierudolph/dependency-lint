@@ -1,14 +1,18 @@
-async = require 'async'
 ConfigurationLoader = require './'
 fs = require 'fs'
+getTmpDir = require '../../spec/support/get_tmp_dir'
 path = require 'path'
-tmp = require 'tmp'
+Promise = require 'bluebird'
+
+
+{coroutine} = Promise
+writeFile = Promise.promisify fs.writeFile
 
 
 describe 'ConfigurationLoader', ->
-  beforeEach (done) ->
+  beforeEach coroutine ->
     @configurationLoader = new ConfigurationLoader
-    tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
+    @tmpDir = yield getTmpDir()
 
   context 'load', ->
     context 'with a user configuration', ->
@@ -16,22 +20,18 @@ describe 'ConfigurationLoader', ->
         @configPath = path.join @tmpDir, 'dependency-lint.yml'
 
       context 'valid', ->
-        beforeEach (done) ->
+        beforeEach coroutine ->
           validContent = '''
             requiredModules:
               files:
                 dev:
                   - 'test/**/*'
             '''
-          async.series [
-            (next) => fs.writeFile @configPath, validContent, next
-            (next) => @configurationLoader.load @tmpDir, (@err, @result) => next()
-          ], done
+          yield writeFile @configPath, validContent
+          @result = yield @configurationLoader.load @tmpDir
 
-        it 'does not return an error', ->
-          expect(@err).to.not.exist
 
-        it 'returns the default configuration merged with the user configuration', ->
+        it 'returns the user configuration merged into the default configuration', ->
           expect(@result).to.eql
             executedModules:
               npmScripts:
@@ -54,46 +54,40 @@ describe 'ConfigurationLoader', ->
               transpilers: []
 
       context 'invalid', ->
-        beforeEach (done) ->
+        beforeEach coroutine ->
           invalidContent = 'invalid: {'
-          async.series [
-            (next) => fs.writeFile @configPath, invalidContent, next
-            (next) => @configurationLoader.load @tmpDir, (@err, @result) => next()
-          ], done
+          yield writeFile @configPath, invalidContent
+          try
+            yield @configurationLoader.load @tmpDir
+          catch error
+            @error = error
 
-        it 'returns an error', ->
-          expect(@err).to.exist
-          expect(@err.message).to.include @configPath
-
-        it 'does not return a result', ->
-          expect(@result).to.not.exist
+        it 'errors with a message that includes the path to the config', ->
+          expect(@error.message).to.include @configPath
 
 
-  context 'without a user configuration', ->
-    beforeEach (done) ->
-      @configurationLoader.load @tmpDir, (@err, @config) => done()
+    context 'without a user configuration', ->
+      beforeEach coroutine ->
+        @result = yield @configurationLoader.load @tmpDir
 
-    it 'does not return an error', ->
-      expect(@err).to.not.exist
-
-    it 'returns the default configuration', ->
-      expect(@config).to.eql
-        executedModules:
-          npmScripts:
-            dev: ['lint', 'publish', 'test', 'version']
-          shellScripts:
-            dev: []
-            ignore: []
-            root: ''
-        ignoreErrors:
-          missing: []
-          shouldBeDependency: []
-          shouldBeDevDependency: []
-          unused: []
-        requiredModules:
-          files:
-            dev: ['{features,spec,test}/**/*', '**/*{.,_,-}{spec,test}.js']
-            ignore: ['node_modules/**/*']
-            root: '**/*.js'
-          stripLoaders: no
-          transpilers: []
+      it 'returns the default configuration', ->
+        expect(@result).to.eql
+          executedModules:
+            npmScripts:
+              dev: ['lint', 'publish', 'test', 'version']
+            shellScripts:
+              dev: []
+              ignore: []
+              root: ''
+          ignoreErrors:
+            missing: []
+            shouldBeDependency: []
+            shouldBeDevDependency: []
+            unused: []
+          requiredModules:
+            files:
+              dev: ['{features,spec,test}/**/*', '**/*{.,_,-}{spec,test}.js']
+              ignore: ['node_modules/**/*']
+              root: '**/*.js'
+            stripLoaders: no
+            transpilers: []

@@ -1,23 +1,33 @@
 _ = require 'lodash'
-fs = require 'fs-extra'
+fs = require 'fs'
+fsExtra = require 'fs-extra'
 yaml = require 'js-yaml'
+Promise = require 'bluebird'
 
 
-addToJsonFile = (filePath, toAdd, done) ->
-  fs.readFile filePath, encoding: 'utf8', (err, content) ->
-    output = {}
-    _.assign(output, JSON.parse(content)) unless err
-    _.assign output, toAdd
-    fs.outputJson filePath, output, done
+access = Promise.promisify fsExtra.access
+readFile = Promise.promisify fs.readFile
+outputFile = Promise.promisify fsExtra.outputFile
 
 
-addToYmlFile = (filePath, toAdd, done) ->
-  fs.readFile filePath, encoding: 'utf8', (err, content) ->
-    output = {}
-    _.assign(output, yaml.safeLoad(content)) unless err
-    customizer = (objValue, srcValue) -> if _.isArray(objValue) then return srcValue
-    _.mergeWith output, toAdd, customizer
-    fs.writeFile filePath, yaml.safeDump(output), done
+addToJsonFile = (filePath, toAdd) ->
+  try
+    content = yield readFile filePath, 'utf8'
+  catch
+    content = '{}'
+  obj = JSON.parse content
+  _.assign obj, toAdd
+  yield outputFile filePath, JSON.stringify(obj, null, 2)
+
+
+addToYmlFile = (filePath, toAdd) ->
+  try
+    content = yield readFile filePath, 'utf8'
+  catch
+    content = '{}'
+  obj = yaml.safeLoad content
+  _.mergeWith obj, toAdd, (objValue, srcValue) -> srcValue if _.isArray(srcValue)
+  yield outputFile filePath, yaml.safeDump(obj)
 
 
 module.exports = {addToJsonFile, addToYmlFile}

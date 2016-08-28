@@ -1,8 +1,12 @@
-async = require 'async'
 fs = require 'fs'
+getTmpDir = require '../../../spec/support/get_tmp_dir'
 path = require 'path'
+Promise = require 'bluebird'
 RequiredModuleFinder = require './required_module_finder'
-tmp = require 'tmp'
+
+
+{coroutine} = Promise
+writeFile = Promise.promisify fs.writeFile
 
 
 examples = [
@@ -48,8 +52,8 @@ examples = [
 
 
 describe 'RequiredModuleFinder', ->
-  beforeEach (done) ->
-    tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
+  beforeEach coroutine ->
+    @tmpDir = yield getTmpDir()
 
   describe 'find', ->
     examples.forEach (example) ->
@@ -64,22 +68,17 @@ describe 'RequiredModuleFinder', ->
       } = example
 
       context description, ->
-        beforeEach (done) ->
-          async.series [
-            (next) => fs.writeFile path.join(@tmpDir, filePath), content, next
-            (next) =>
-              finder = new RequiredModuleFinder {files: {root: filePattern}, transpilers}
-              finder.find @tmpDir, (@err, @result) => next()
-          ], done
+        beforeEach coroutine ->
+          finder = new RequiredModuleFinder {files: {root: filePattern}, transpilers}
+          yield writeFile path.join(@tmpDir, filePath), content
+          try
+            @result = yield finder.find @tmpDir
+          catch error
+            @error = error
 
         if expectedError
-          it 'returns an error', ->
-            expect(@err).to.exist
-            expect(@err.stack).to.include filePath
-
+          it 'errors with a message that includes the file path', ->
+            expect(@error.message).to.include filePath
         else
-          it 'does not return an error', ->
-            expect(@err).to.not.exist
-
-          it 'returns the required module', ->
+          it 'returns with the required modules', ->
             expect(@result).to.eql expectedResult

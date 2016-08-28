@@ -1,8 +1,10 @@
 _ = require 'lodash'
-async = require 'async'
-asyncHandlers = require 'async-handlers'
 ExecutedModuleFinder = require './executed_module_finder'
+Promise = require 'bluebird'
 RequiredModuleFinder = require './required_module_finder'
+
+
+{coroutine} = Promise
 
 
 class UsedModuleFinder
@@ -12,11 +14,11 @@ class UsedModuleFinder
     @requiredModuleFinder = new RequiredModuleFinder config.requiredModules
 
 
-  find: ({dir, packageJson}, done) =>
-    async.parallel [
-      (next) => @requiredModuleFinder.find dir, next
-      (next) => @executedModuleFinder.find {dir, packageJson}, next
-    ], asyncHandlers.transform(@normalizeModules, done)
+  find: coroutine ({dir, packageJson}) ->
+    @normalizeModules yield Promise.all [
+      @executedModuleFinder.find {dir, packageJson}
+      @requiredModuleFinder.find dir
+    ]
 
 
   normalizeModules: (modules...) ->

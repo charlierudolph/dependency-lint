@@ -38,6 +38,7 @@
   "homepage": "https://github.com/charlierudolph/dependency-lint",
   "devDependencies": {
     "chai": "^3.0.0",
+    "chai-as-promised": "^5.1.0",
     "coffee-script": "^1.9.0",
     "coffeelint": "^1.8.1",
     "cucumber": "^1.2.0",
@@ -50,8 +51,7 @@
     "tmp": "0.0.28"
   },
   "dependencies": {
-    "async": "^1.0.0",
-    "async-handlers": "^1.2.1",
+    "bluebird": "^3.4.3",
     "camel-case": "^3.0.0",
     "colors": "^1.0.3",
     "detective": "^4.0.0",

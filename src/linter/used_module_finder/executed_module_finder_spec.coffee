@@ -1,8 +1,14 @@
-async = require 'async'
 ExecutedModuleFinder = require './executed_module_finder'
 fsExtra = require 'fs-extra'
+getTmpDir = require '../../../spec/support/get_tmp_dir'
 path = require 'path'
-tmp = require 'tmp'
+Promise = require 'bluebird'
+
+
+{coroutine} = Promise
+ensureSymlink = Promise.promisify fsExtra.ensureSymlink
+outputJson = Promise.promisify fsExtra.outputJson
+outputFile = Promise.promisify fsExtra.outputFile
 
 
 examples = [
@@ -61,8 +67,8 @@ examples = [
 
 
 describe 'ExecutedModuleFinder', ->
-  beforeEach (done) ->
-    tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
+  beforeEach coroutine ->
+    @tmpDir = yield getTmpDir()
 
   describe 'find', ->
     examples.forEach (example) ->
@@ -76,22 +82,16 @@ describe 'ExecutedModuleFinder', ->
       } = example
 
       context description, ->
-        beforeEach (done) ->
-          actions = []
+        beforeEach coroutine ->
+          promises = []
           if modulePackageJson
-            actions.push (next) =>
-              filePath = path.join @tmpDir, 'node_modules', modulePackageJson.name, 'package.json'
-              fsExtra.outputJson filePath, modulePackageJson, next
+            filePath = path.join @tmpDir, 'node_modules', modulePackageJson.name, 'package.json'
+            promises.push outputJson(filePath, modulePackageJson)
           if file
-            actions.push (next) =>
-              fsExtra.outputFile path.join(@tmpDir, file.path), file.content, next
-          actions.push (next) =>
-            finder = new ExecutedModuleFinder config
-            finder.find {dir: @tmpDir, packageJson}, (@err, @result) => next()
-          async.series actions, done
+            promises.push outputFile(path.join(@tmpDir, file.path), file.content)
+          yield Promise.all promises
+          finder = new ExecutedModuleFinder config
+          @result = yield finder.find {dir: @tmpDir, packageJson}
 
-        it 'does not yield an error', ->
-          expect(@err).to.not.exist
-
-        it 'returns the expected result', ->
+        it 'returns the executed modules', ->
           expect(@result).to.eql expectedResult

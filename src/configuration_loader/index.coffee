@@ -1,9 +1,13 @@
 _ = require 'lodash'
-async = require 'async'
-asyncHandlers = require 'async-handlers'
 fs = require 'fs'
 path = require 'path'
+Promise = require 'bluebird'
 yaml = require 'js-yaml'
+
+
+{coroutine} = Promise
+access = Promise.promisify fs.access
+readFile = Promise.promisify fs.readFile
 
 
 class ConfigurationLoader
@@ -11,41 +15,28 @@ class ConfigurationLoader
   defaultConfigPath: path.join __dirname, '..', '..', 'config', 'default.yml'
 
 
-  load: (dir, done) ->
-    customizer = (objValue, srcValue) -> if _.isArray(objValue) then return srcValue
-    merge = (args) -> _.mergeWith args..., customizer
-    async.parallel [
-      @loadDefaultConfig
-      (next) => @loadUserConfig dir, next
-    ], asyncHandlers.transform(merge, done)
+  load: coroutine (dir) ->
+    [defaultConfig, userConfig] = yield Promise.all [@loadDefaultConfig(), @loadUserConfig dir]
+    customizer = (objValue, srcValue) -> srcValue if _.isArray(srcValue)
+    _.mergeWith {}, defaultConfig, userConfig, customizer
 
 
-  loadConfig: (filePath, done) =>
-    return done() unless filePath
-    handler = asyncHandlers.prependToError filePath, done
-    async.waterfall [
-      (next) -> fs.readFile filePath, 'utf8', next
-      (content, next) => @toAsync (-> yaml.safeLoad content), next
-    ], handler
+  loadConfig: coroutine (filePath) ->
+    content = yield readFile filePath, 'utf8'
+    yaml.safeLoad content, filename: filePath
 
 
-  loadDefaultConfig: (done) =>
-    @loadConfig @defaultConfigPath, done
+  loadDefaultConfig: ->
+    @loadConfig @defaultConfigPath
 
 
-  loadUserConfig: (dir, done) =>
+  loadUserConfig: coroutine (dir) ->
     userConfigPath = path.join dir, 'dependency-lint.yml'
-    fs.exists userConfigPath, (exists) =>
-      unless exists then return done null, {}
-      @loadConfig userConfigPath, done
-
-
-  toAsync: (fn, done) ->
     try
-      result = fn()
-    catch err
-      done err
-    done null, result
+      yield access userConfigPath
+    catch
+      return {}
+    yield @loadConfig userConfigPath
 
 
 module.exports = ConfigurationLoader

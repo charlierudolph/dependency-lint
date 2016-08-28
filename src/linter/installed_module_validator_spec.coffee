@@ -1,8 +1,13 @@
-async = require 'async'
 fsExtra = require 'fs-extra'
+getTmpDir = require '../../spec/support/get_tmp_dir'
 InstalledModuleValidator = require './installed_module_validator'
 path = require 'path'
-tmp = require 'tmp'
+Promise = require 'bluebird'
+
+
+{coroutine} = Promise
+outputJson = Promise.promisify fsExtra.outputJson
+writeJson = Promise.promisify fsExtra.writeJson
 
 
 examples = [
@@ -79,30 +84,30 @@ describe 'InstalledModuleValidator', ->
     @installedModuleValidator = new InstalledModuleValidator
 
   describe 'validate', ->
-    beforeEach (done) ->
-      tmp.dir {unsafeCleanup: true}, (err, @tmpDir) => done err
+    beforeEach coroutine ->
+      @tmpDir = yield getTmpDir()
 
     examples.forEach ({description, expectedErrorMessage, packageJson, installedModules}) ->
       context description, ->
-        beforeEach (done) ->
-          actions = []
-          actions.push (next) =>
-            packageJsonPath = path.join @tmpDir, 'package.json'
-            fsExtra.writeJson packageJsonPath, packageJson, next
+        beforeEach coroutine ->
+          promises = []
+          packageJsonPath = path.join @tmpDir, 'package.json'
+          promises.push writeJson packageJsonPath, packageJson
           if installedModules
-            actions.push (next) =>
-              iterator = ({name, version}, cb) =>
-                packageJsonPath = path.join @tmpDir, 'node_modules', name, 'package.json'
-                fsExtra.outputJson packageJsonPath, {name, version}, cb
-              async.each installedModules, iterator, next
-          actions.push (next) =>
-            @installedModuleValidator.validate {dir: @tmpDir, packageJson}, (@err) => next()
-          async.series actions, done
+            installedModules.forEach ({name, version}) =>
+              packageJsonPath = path.join @tmpDir, 'node_modules', name, 'package.json'
+              promises.push outputJson packageJsonPath, {name, version}
+          yield Promise.all promises
+
+          try
+            yield @installedModuleValidator.validate {dir: @tmpDir, packageJson}
+          catch error
+            @error = error
 
         if expectedErrorMessage
           it 'returns the expected error', ->
-            expect(@err.message).to.eql expectedErrorMessage
+            expect(@error.message).to.eql expectedErrorMessage
 
         else
           it 'does not yield an error', ->
-            expect(@err).to.not.exist
+            expect(@error).to.not.exist

@@ -1,9 +1,8 @@
 _ = require 'lodash'
-async = require 'async'
-asyncHandlers = require 'async-handlers'
+{coroutine} = require 'bluebird'
 ConfigurationLoader = require './configuration_loader'
-Linter = require './linter'
 DefaultFormatter = require './formatters/default_formatter'
+Linter = require './linter'
 
 
 hasError = (results) ->
@@ -11,15 +10,12 @@ hasError = (results) ->
     _.some modules, ({error, errorIgnored}) -> error and not errorIgnored
 
 
-dir = process.cwd()
+run = coroutine ->
+  dir = process.cwd()
+  config = yield new ConfigurationLoader().load dir
+  results = yield new Linter(config).lint dir
+  new DefaultFormatter({stream: process.stdout}).print results
+  process.exit 1 if hasError results
 
 
-async.waterfall [
-  (next) ->
-    new ConfigurationLoader().load dir, next
-  (config, next) ->
-    new Linter(config).lint dir, next
-  (results, next) ->
-    new DefaultFormatter({stream: process.stdout}).print results
-    process.exit 1 if hasError results
-], asyncHandlers.exitOnError
+module.exports = run

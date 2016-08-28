@@ -1,9 +1,7 @@
-async = require 'async'
-asyncHandlers = require 'async-handlers'
+{coroutine} = require 'bluebird'
 {docopt} = require 'docopt'
-fs = require 'fs-extra'
+exitWithError = require './util/exit_with_error'
 packageJson = require '../package.json'
-path = require 'path'
 
 
 usage = '''
@@ -20,26 +18,10 @@ usage = '''
 options = docopt usage, version: packageJson.version
 
 
-generateConfig = ->
-  src = path.join __dirname, '..', 'config', 'default.yml'
-  dest = path.join process.cwd(), 'dependency-lint.yml'
-  callback = (err) ->
-    asyncHandlers.exitOnError err
-    console.log 'Configuration file generated at "dependency-lint.yml"'
-  async.waterfall [
-    (next) -> fs.readFile src, 'utf8', next
-    (defaultConfig, next) ->
-      fileContents = """
-        # See #{packageJson.homepage}/blob/v#{packageJson.version}/docs/configuration.md
-        # for a detailed explanation of the options
-
-        #{defaultConfig}
-        """
-      fs.writeFile dest, fileContents, next
-  ], callback
-
-
-if options['--generate-config']
-  generateConfig()
-else
-  require './run'
+file = if options['--generate-config'] then 'generate_config' else 'run'
+fn = require "./#{file}"
+do coroutine ->
+  try
+    yield fn()
+  catch error
+    exitWithError error

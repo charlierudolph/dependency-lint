@@ -1,38 +1,39 @@
 _ = require 'lodash'
-async = require 'async'
 fs = require 'fs'
 fsExtra = require 'fs-extra'
 path = require 'path'
+Promise = require 'bluebird'
 semver = require 'semver'
+
+
+{coroutine} = Promise
+access = Promise.promisify fs.access
+readJson = Promise.promisify fsExtra.readJson
 
 
 class InstalledModuleValidater
 
-  validate: ({dir, packageJson}, done) ->
+  validate: coroutine ({dir, packageJson}) ->
     modules = _.assign {}, packageJson.dependencies, packageJson.devDependencies
     issues = []
-    iterator = (version, name, next) =>
-      if not semver.validRange(version) then return next()
-      @validateModule {dir, name, version}, (err, status) ->
-        if err then return next err
-        if status then issues.push {name, status}
-        next()
-    async.forEachOf modules, iterator, (err) =>
-      if err then return done err
-      if issues.length is 0 then return done()
-      done new Error @buildErrorMessage(issues)
+    yield Promise.all _.map modules, coroutine (version, name) =>
+      return unless semver.validRange version
+      status = yield @getModuleStatus {dir, name, version}
+      return unless status
+      issues.push {name, status}
+    return unless issues.length
+    throw new Error @buildErrorMessage(issues)
 
 
-  validateModule: ({dir, name, version}, done) ->
+  getModuleStatus: coroutine ({dir, name, version}) ->
     modulePackageJsonPath = path.join dir, 'node_modules', name, 'package.json'
-    fs.access modulePackageJsonPath, (err) ->
-      if err then return done null, 'not installed'
-      fsExtra.readJson modulePackageJsonPath, (err, modulePackageJson) ->
-        if err then return done err
-        if semver.satisfies modulePackageJson.version, version
-          done()
-        else
-          done null, "installed: #{modulePackageJson.version}, listed: #{version}"
+    try
+      yield access modulePackageJsonPath
+    catch
+      return 'not installed'
+    modulePackageJson = yield readJson modulePackageJsonPath
+    return if semver.satisfies modulePackageJson.version, version
+    "installed: #{modulePackageJson.version}, listed: #{version}"
 
 
   buildErrorMessage: (issues) ->
