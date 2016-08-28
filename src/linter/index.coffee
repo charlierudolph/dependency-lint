@@ -19,8 +19,7 @@ class Linter
     @usedModuleFinder = new UsedModuleFinder config
 
 
-  lint: coroutine (dir) ->
-    packageJson = yield readJson path.join(dir, 'package.json')
+  lint: coroutine ({dir, packageJson}) ->
     yield @installedModuleValidater.validate {dir, packageJson}
     usedModules = yield @usedModuleFinder.find {dir, packageJson}
     listedModules = @getListedModules packageJson

@@ -6,9 +6,10 @@ packageJson = require '../package.json'
 
 usage = '''
   Usage:
-    dependency-lint [--generate-config]
+    dependency-lint [--auto-correct] [--generate-config]
 
   Options:
+    --auto-correct       Moves mislabeled modules and removes unused modules
     -h, --help           Show this screen
     --generate-config    Generate a configuration file
     -v, --version        Show version
@@ -18,10 +19,11 @@ usage = '''
 options = docopt usage, version: packageJson.version
 
 
-file = if options['--generate-config'] then 'generate_config' else 'run'
-fn = require "./#{file}"
 do coroutine ->
   try
-    yield fn()
+    file = if options['--generate-config'] then 'generate_config' else 'run'
+    fn = require "./#{file}"
+    fnOptions = autoCorrect: options['--auto-correct']
+    yield fn fnOptions
   catch error
     exitWithError error

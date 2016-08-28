@@ -9,6 +9,7 @@ yaml = require 'js-yaml'
 
 ensureSymlink = Promise.promisify fsExtra.ensureSymlink
 readFile = Promise.promisify fs.readFile
+readJson = Promise.promisify fsExtra.readJson
 outputFile = Promise.promisify fsExtra.outputFile
 
 
@@ -112,6 +113,17 @@ module.exports = ->
     defaultConfig = yaml.load defaultConfigContent
     userConfig = yaml.load userConfigContent
     expect(defaultConfig).to.eql userConfig
+
+
+  @Then /^now I( no longer)? have "([^"]*)" listed as a (.*)$/, (negate, name, type) ->
+    filePath = path.join @tmpDir, 'package.json'
+    content = yield readJson filePath
+    key = type.replace 'y', 'ies'
+    value = content[key][name]
+    if negate
+      expect(value).to.not.exist
+    else
+      expect(value).to.exist
 
 
   @Then /^"([^"]*)" contains$/, (filename, content) ->

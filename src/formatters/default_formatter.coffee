@@ -15,24 +15,29 @@ class DefaultFormatter
 
 
   # Prints the result to its stream
-  print: (results) ->
-    for title, modules of results when modules.length isnt 0
+  print: ({fixes = {}, results}) ->
+    for type, modules of results when modules.length isnt 0
       @write ''
-      @write "#{title}:", 1
+      @write "#{type}:", 1
       for module in modules
-        @write @moduleOutput(module), 2
+        fixed = _.includes fixes[type], module.name
+        @write @moduleOutput(module, fixed), 2
     @write ''
     @write @summaryOutput(results), 1
     @write ''
 
 
-  moduleOutput: ({error, errorIgnored, files, name, scripts}) ->
+  moduleOutput: ({error, errorIgnored, files, name, scripts}, fixed) ->
     if error
       message = @errorMessages[error]
       if errorIgnored
         colors.yellow "- #{name} (#{message} - ignored)"
       else
-        colors.red("✖ #{name} (#{message})") + colors.gray(@errorSuffix {files, scripts})
+        header = if fixed
+          colors.magenta("✖ #{name} (#{message} - fixed)")
+        else
+          colors.red("✖ #{name} (#{message})")
+        header + colors.gray(@errorSuffix {files, scripts})
     else
       "#{colors.green '✓'} #{name}"
 

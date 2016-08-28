@@ -13,13 +13,18 @@ Lints your NPM `dependencies` and `devDependencies` reporting which node modules
 Supported on [Node.js](https://nodejs.org/en) versions 4, 5, and 6
 
 ```
-npm install dependency-lint
+$ npm install dependency-lint
 ```
 
 ## Usage
-On the command line:
+
 ```
-dependency-lint
+$ dependency-lint
+```
+
+To automatically remove unused dependencies and move mislabeled dependencies:
+```
+$ dependency-lint --auto-correct
 ```
 
 ## How it works

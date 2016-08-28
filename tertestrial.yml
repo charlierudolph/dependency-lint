@@ -2,12 +2,12 @@ actions:
 
   - match:
       filename: '\.feature$'
-    command: 'cucumber-js {{filename}}'
+    command: 'npm run build; cucumber-js {{filename}}'
 
   - match:
       filename: '\.feature$'
       line: '\d+'
-    command: 'cucumber-js {{filename}}:{{line}}'
+    command: 'npm run build; cucumber-js {{filename}}:{{line}}'
 
   - match:
       filename: '\_spec.coffee$'
