@@ -1,5 +1,11 @@
 # Changelog
 
+### 4.1.5 (2016-10-11)
+
+* fix `--auto-correct` indentation of `package.json`
+
+----
+
 ### 4.1.4 (2016-10-11)
 
 * fix missing built in modules by using npm package: `builtin-modules`
