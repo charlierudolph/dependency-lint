@@ -1,13 +1,5 @@
-builtIns = [
-  'assert', 'buffer', 'child_process', 'cluster', 'crypto', 'dgram', 'dns', 'domain', 'events',
-  'fs', 'http', 'https', 'net', 'os', 'path', 'punycode', 'querystring', 'readline', 'reply',
-  'stream', 'string_decoder', 'tls', 'tty', 'url', 'util', 'vm', 'zlib'
-]
-
-
-globalExecutables = [
-  'npm'
-]
+builtIns = require 'builtin-modules'
+globalExecutables = ['npm']
 
 
 ModuleNameParser =
