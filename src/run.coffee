@@ -27,7 +27,7 @@ run = coroutine ({autoCorrect}) ->
   results = yield new Linter(config).lint {dir, packageJson}
   if autoCorrect
     {fixes, updatedPackageJson} = new AutoCorrector().correct {packageJson, results}
-    yield writeJson packageJsonPath, updatedPackageJson
+    yield writeJson packageJsonPath, updatedPackageJson, spaces: 2
   new DefaultFormatter({stream: process.stdout}).print {fixes, results}
   process.exit 1 if hasError results
 
