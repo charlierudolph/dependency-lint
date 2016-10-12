@@ -1,5 +1,11 @@
 # Changelog
 
+### 4.1.4 (2016-10-11)
+
+* fix missing built in modules by using npm package: `builtin-modules`
+
+----
+
 ### 4.1.3 (2016-08-27)
 
 * update dependencies
