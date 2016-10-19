@@ -130,19 +130,30 @@ requiredModules:
 
 ### requiredModules.transpilers
 Transpiles code to javascript based on its extension.
-Each transpiler should specify an `extension` and a `module`.
+Each transpiler should specify an `extension` and a `module` and optionally a `fnName` (which defaults to `compile`) and a `resultKey`.
 
 For each file with `extension`, the following will be called:
 ```js
-require(module).compile(fileContents, {filename: filePath});
+var result = require(module)[fnName](fileContents, {filename: filePath});
+if (resultKey) {
+  result = result[resultKey]
+}
 ```
 
-If the transpiler you're using doesn't follow this pattern, please open an [issue](https://github.com/charlierudolph/dependency-lint/issues)
+If the transpiler you're using doesn't fit into this pattern, please open an [issue](https://github.com/charlierudolph/dependency-lint/issues)
 
 Example:
 ```yml
 requiredModules:
   transpilers:
     - extension: .coffee
-      module: coffee-script
+      module: coffee-script # 1.9.0
+
+    - extension: .js
+      fnName: transform
+      module: babel-core # 6.17.0
+      resultKey: code
+
+    - extension: .ls
+      module: livescript # 1.5.0
 ```

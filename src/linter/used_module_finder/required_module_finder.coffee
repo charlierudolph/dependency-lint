@@ -5,6 +5,7 @@ path = require 'path'
 prependToError = require '../../util/prepend_to_error'
 Promise = require 'bluebird'
 
+
 {coroutine} = Promise
 glob = Promise.promisify require('glob')
 readFile = Promise.promisify require('fs').readFile
@@ -24,19 +25,22 @@ class RequiredModuleFinder
   findInFile: coroutine ({dir, filePath}) ->
     content = yield readFile path.join(dir, filePath), 'utf8'
     try
-      content = @compileIfNeeded {content, filePath}
+      content = @compileIfNeeded {content, dir, filePath}
       moduleNames = detective content, {@isRequire}
     catch err
       throw prependToError(err, filePath)
     moduleNames = @normalizeModuleNames {filePath, moduleNames}
 
 
-  compileIfNeeded: ({content, filePath}) ->
+  compileIfNeeded: ({content, dir, filePath}) ->
     ext = path.extname filePath
     transpiler = _.find @transpilers, 'extension', ext
     if transpiler
       compiler = require transpiler.module
-      compiler.compile content, {filename: filePath}
+      fnName = transpiler.fnName or 'compile'
+      result = compiler[fnName] content, {filename: path.join(dir, filePath)}
+      result = result[transpiler.resultKey] if transpiler.resultKey
+      result
     else
       content
 

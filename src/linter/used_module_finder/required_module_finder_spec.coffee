@@ -1,3 +1,4 @@
+_ = require 'lodash'
 fs = require 'fs'
 getTmpDir = require '../../../spec/support/get_tmp_dir'
 path = require 'path'
@@ -7,53 +8,79 @@ RequiredModuleFinder = require './required_module_finder'
 
 {coroutine} = Promise
 writeFile = Promise.promisify fs.writeFile
+symlink = Promise.promisify fs.symlink
+
+
+baseBabelExample =
+  filePath: 'server.js'
+  filePattern: '**/*.js'
+  setup: (tmpDir) ->
+    filePath = path.join tmpDir, '.babelrc'
+    fileContent = '{"plugins": ["transform-es2015-modules-commonjs"]}'
+    writeFile filePath, fileContent
+  transpilers: [{
+    extension: '.js'
+    fnName: 'transform'
+    module: 'babel-core'
+    resultKey: 'code'
+  }]
+baseCoffeeScriptExample =
+  filePath: 'server.coffee'
+  filePattern: '**/*.coffee'
+  transpilers: [{extension: '.coffee', module: 'coffee-script'}]
+baseJavaScriptExample =
+  filePath: 'server.js'
+  filePattern: '**/*.js'
 
 
 examples = [
-  content: 'myModule = require "myModule'
-  description: 'invalid coffeescript'
-  expectedError: yes
-  filePath: 'server.coffee'
-  filePattern: '**/*.coffee'
-  transpilers: [{extension: '.coffee', module: 'coffee-script'}]
+  _.assign {}, baseBabelExample,
+    content: 'import myModule from "myModule'
+    description: 'invalid babel'
+    expectedError: yes
 ,
-  content: 'myModule = require "myModule"'
-  description: 'coffeescript file requiring a module'
-  expectedResult: [name: 'myModule', file: 'server.coffee']
-  filePath: 'server.coffee'
-  filePattern: '**/*.coffee'
-  transpilers: [{extension: '.coffee', module: 'coffee-script'}]
+  _.assign {}, baseBabelExample,
+    content: 'import myModule from "myModule"'
+    description: 'babel file requiring a module'
+    expectedResult: [name: 'myModule', file: 'server.js']
 ,
-  content: 'myModule = require.resolve "myModule"'
-  description: 'coffeescript file resolving a module'
-  expectedResult: [name: 'myModule', file: 'server.coffee']
-  filePath: 'server.coffee'
-  filePattern: '**/*.coffee'
-  transpilers: [{extension: '.coffee', module: 'coffee-script'}]
+  _.assign {}, baseCoffeeScriptExample,
+    content: 'myModule = require "myModule'
+    description: 'invalid coffeescript'
+    expectedError: yes
 ,
-  content: 'var myModule = require("myModule"'
-  description: 'invalid javascript'
-  expectedError: yes
-  filePath: 'server.js'
-  filePattern: '**/*.js'
+  _.assign {}, baseCoffeeScriptExample,
+    content: 'myModule = require "myModule"'
+    description: 'coffeescript file requiring a module'
+    expectedResult: [name: 'myModule', file: 'server.coffee']
 ,
-  content: 'var myModule = require("myModule");'
-  description: 'javascript file requiring a module'
-  expectedResult: [name: 'myModule', file: 'server.js']
-  filePath: 'server.js'
-  filePattern: '**/*.js'
+  _.assign {}, baseCoffeeScriptExample,
+    content: 'myModule = require.resolve "myModule"'
+    description: 'coffeescript file resolving a module'
+    expectedResult: [name: 'myModule', file: 'server.coffee']
 ,
-  content: 'var myModule = require.resolve("myModule");'
-  description: 'javascript file resolving a module'
-  expectedResult: [name: 'myModule', file: 'server.js']
-  filePath: 'server.js'
-  filePattern: '**/*.js'
+  _.assign {}, baseJavaScriptExample,
+    content: 'var myModule = require("myModule"'
+    description: 'invalid javascript'
+    expectedError: yes
+,
+  _.assign {}, baseJavaScriptExample,
+    content: 'var myModule = require("myModule");'
+    description: 'javascript file requiring a module'
+    expectedResult: [name: 'myModule', file: 'server.js']
+,
+  _.assign {}, baseJavaScriptExample,
+    content: 'var myModule = require.resolve("myModule");'
+    description: 'javascript file resolving a module'
+    expectedResult: [name: 'myModule', file: 'server.js']
 ]
 
 
 describe 'RequiredModuleFinder', ->
   beforeEach coroutine ->
     @tmpDir = yield getTmpDir()
+    nodeModulesPath = path.join __dirname, '..', '..', '..', 'node_modules'
+    yield symlink nodeModulesPath, path.join(@tmpDir, 'node_modules')
 
   describe 'find', ->
     examples.forEach (example) ->
@@ -64,6 +91,7 @@ describe 'RequiredModuleFinder', ->
         expectedResult
         filePath
         filePattern
+        setup
         transpilers
       } = example
 
@@ -71,9 +99,11 @@ describe 'RequiredModuleFinder', ->
         beforeEach coroutine ->
           finder = new RequiredModuleFinder {files: {root: filePattern}, transpilers}
           yield writeFile path.join(@tmpDir, filePath), content
+          yield setup(@tmpDir) if setup
           try
             @result = yield finder.find @tmpDir
           catch error
+            throw error unless expectedError
             @error = error
 
         if expectedError

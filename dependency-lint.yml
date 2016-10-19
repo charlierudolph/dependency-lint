@@ -10,7 +10,10 @@ ignoreErrors:
   missing: []
   shouldBeDependency: []
   shouldBeDevDependency: []
-  unused: []
+  unused:
+    # Used in RequiredModuleFinder spec
+    - babel-core
+    - babel-plugin-transform-es2015-modules-commonjs
 
 requiredModules:
   files:
