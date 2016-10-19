@@ -1,5 +1,10 @@
 # Changelog
 
+### 4.2.0 (2016-10-18)
+
+* extend transpiler configuration to support [babel](http://babeljs.io/)
+
+----
 ### 4.1.5 (2016-10-11)
 
 * fix `--auto-correct` indentation of `package.json`
