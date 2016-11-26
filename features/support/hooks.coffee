@@ -1,6 +1,8 @@
 {addToJsonFile} = require '../support/file_helpers'
-path = require 'path'
+{coroutine} = require 'bluebird'
 getTmpDir = require '../../spec/support/get_tmp_dir'
+isGenerator = require 'is-generator'
+path = require 'path'
 
 
 module.exports = ->
@@ -13,3 +15,9 @@ module.exports = ->
     unless @errorExpected
       expect(@error).to.not.exist
       expect(@stderr).to.be.empty
+
+  @setDefinitionFunctionWrapper (fn) ->
+    if isGenerator.fn(fn)
+      coroutine fn
+    else
+      fn

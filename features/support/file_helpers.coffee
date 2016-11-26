@@ -2,7 +2,7 @@ _ = require 'lodash'
 fs = require 'fs'
 fsExtra = require 'fs-extra'
 yaml = require 'js-yaml'
-Promise = require 'bluebird'
+{coroutine} = Promise = require 'bluebird'
 
 
 access = Promise.promisify fsExtra.access
@@ -10,7 +10,7 @@ readFile = Promise.promisify fs.readFile
 outputFile = Promise.promisify fsExtra.outputFile
 
 
-addToJsonFile = (filePath, toAdd) ->
+addToJsonFile = coroutine (filePath, toAdd) ->
   try
     content = yield readFile filePath, 'utf8'
   catch
@@ -20,7 +20,7 @@ addToJsonFile = (filePath, toAdd) ->
   yield outputFile filePath, JSON.stringify(obj, null, 2)
 
 
-addToYmlFile = (filePath, toAdd) ->
+addToYmlFile = coroutine (filePath, toAdd) ->
   try
     content = yield readFile filePath, 'utf8'
   catch

@@ -108,8 +108,8 @@ module.exports = ->
       path.join __dirname, '..', '..', 'config', "default.yml"
       path.join @tmpDir, filename
     ]
-    generators = filePaths.map (filePath) -> yield readFile filePath, 'utf8'
-    [defaultConfigContent, userConfigContent] = yield generators
+    promises = filePaths.map (filePath) -> yield readFile filePath, 'utf8'
+    [defaultConfigContent, userConfigContent] = yield Promise.all promises
     defaultConfig = yaml.load defaultConfigContent
     userConfig = yaml.load userConfigContent
     expect(defaultConfig).to.eql userConfig
