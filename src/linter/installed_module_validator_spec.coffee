@@ -76,6 +76,17 @@ examples = [
   packageJson:
     devDependencies:
       myModule: 'git+ssh://git@host:myOrganization/myModule.git#1.0.0"'
+,
+  description: 'validate the version specified in dependencies'
+  installedModules: [
+    name: 'myModule'
+    version: '0.9.1'
+  ]
+  packageJson:
+    dependencies:
+      myModule: '0.9.1'
+    devDependencies:
+      myModule: '1.0.0'
 ]
 
 
