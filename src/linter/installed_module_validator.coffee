@@ -14,7 +14,7 @@ readJson = Promise.promisify fsExtra.readJson
 class InstalledModuleValidater
 
   validate: coroutine ({dir, packageJson}) ->
-    modules = _.assign {}, packageJson.dependencies, packageJson.devDependencies
+    modules = _.assign {}, packageJson.devDependencies, packageJson.dependencies
     issues = []
     yield Promise.all _.map modules, coroutine (version, name) =>
       return unless semver.validRange version
