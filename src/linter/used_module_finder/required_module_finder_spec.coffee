@@ -73,6 +73,12 @@ examples = [
     content: 'var myModule = require.resolve("myModule");'
     description: 'javascript file resolving a module'
     expectedResult: [name: 'myModule', file: 'server.js']
+,
+    _.assign {}, baseJavaScriptExample,
+      content: 'var myModule = require("myModule");'
+      description: 'javascript file with a coffee-script transpiler'
+      expectedResult: [name: 'myModule', file: 'server.js']
+      transpilers: [{extension: '.coffee', module: 'coffee-script'}]
 ]
 
 
