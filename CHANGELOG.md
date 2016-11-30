@@ -1,5 +1,12 @@
 # Changelog
 
+### 4.3.0 (2016-11-30)
+
+* fix transpiler support to only use on files matching the extension
+* fix installed module validation when module is listed as dependency and devDependency
+
+----
+
 ### 4.2.0 (2016-10-18)
 
 * extend transpiler configuration to support [babel](http://babeljs.io/)
