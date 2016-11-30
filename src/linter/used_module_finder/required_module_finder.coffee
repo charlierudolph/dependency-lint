@@ -34,7 +34,7 @@ class RequiredModuleFinder
 
   compileIfNeeded: ({content, dir, filePath}) ->
     ext = path.extname filePath
-    transpiler = _.find @transpilers, 'extension', ext
+    transpiler = _.find @transpilers, ['extension', ext]
     if transpiler
       compiler = require transpiler.module
       fnName = transpiler.fnName or 'compile'
