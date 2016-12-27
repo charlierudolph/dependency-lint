@@ -1,5 +1,10 @@
 # Changelog
 
+### 4.3.1 (2016-12-27)
+
+* do not auto correct ignored errors
+
+----
 ### 4.3.0 (2016-11-30)
 
 * fix transpiler support to only use on files matching the extension
