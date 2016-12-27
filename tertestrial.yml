@@ -11,4 +11,4 @@ actions:
 
   - match:
       filename: '\_spec.coffee$'
-    command: 'mycha {{filename}}'
+    command: 'mycha --reporter spec {{filename}}'

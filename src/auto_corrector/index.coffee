@@ -30,6 +30,7 @@ class AutoCorrector
 
 
   getChange: ({module, type}) ->
+    return if module.errorIgnored
     switch module.error
       when ERRORS.SHOULD_BE_DEPENDENCY, ERRORS.SHOULD_BE_DEV_DEPENDENCY
         (packageJson) ->

@@ -70,3 +70,17 @@ Feature: auto-correct
       """
     And it exits with a non-zero status
     And now I no longer have "myModule" listed as a devDependency
+
+
+  Scenario: unused dependency - ignored
+    Given I have "myModule" listed as a dependency
+    And I have configured "ignoreErrors.unused" to contain "myModule"
+    When I run "dependency-lint --auto-correct"
+    Then I see the output
+      """
+      dependencies:
+        - myModule (unused - ignored)
+
+      ✓ 0 errors
+      """
+    And I still have "myModule" listed as a dependency

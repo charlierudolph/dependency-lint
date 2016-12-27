@@ -115,7 +115,7 @@ module.exports = ->
     expect(defaultConfig).to.eql userConfig
 
 
-  @Then /^now I( no longer)? have "([^"]*)" listed as a (.*)$/, (negate, name, type) ->
+  @Then /^(?:now I|I still)( no longer)? have "([^"]*)" listed as a (.*)$/, (negate, name, type) ->
     filePath = path.join @tmpDir, 'package.json'
     content = yield readJson filePath
     key = type.replace 'y', 'ies'

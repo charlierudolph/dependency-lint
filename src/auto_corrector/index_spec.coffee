@@ -1,6 +1,85 @@
 AutoCorrector = require './'
 ERRORS = require '../errors'
 
+examples = [
+  description: 'no errors'
+  inputResults:
+    dependencies: [{name: 'a'}]
+    devDependencies: [{name: 'b'}]
+  output:
+    fixes:
+      dependencies: []
+      devDependencies: []
+    updatedPackageJson:
+      dependencies: {a: '0.0.1'}
+      devDependencies: {b: '0.0.1'}
+      name: 'test'
+,
+  description: 'dependency unused'
+  inputResults:
+    dependencies: [{name: 'a', error: ERRORS.UNUSED}]
+    devDependencies: [{name: 'b'}]
+  output:
+    fixes:
+      dependencies: ['a']
+      devDependencies: []
+    updatedPackageJson:
+      dependencies: {}
+      devDependencies: {b: '0.0.1'}
+      name: 'test'
+,
+  description: 'dependency unused - ignored'
+  inputResults:
+    dependencies: [{name: 'a', error: ERRORS.UNUSED, errorIgnored: true}]
+    devDependencies: [{name: 'b'}]
+  output:
+    fixes:
+      dependencies: []
+      devDependencies: []
+    updatedPackageJson:
+      dependencies: {a: '0.0.1'}
+      devDependencies: {b: '0.0.1'}
+      name: 'test'
+,
+  description: 'devDependency unused'
+  inputResults:
+    dependencies: [{name: 'a'}]
+    devDependencies: [{name: 'b', error: ERRORS.UNUSED}]
+  output:
+    fixes:
+      dependencies: []
+      devDependencies: ['b']
+    updatedPackageJson:
+      dependencies: {a: '0.0.1'}
+      devDependencies: {}
+      name: 'test'
+,
+  description: 'dependency should be devDependency'
+  inputResults:
+    dependencies: [{name: 'a', error: ERRORS.SHOULD_BE_DEV_DEPENDENCY}]
+    devDependencies: [{name: 'b'}]
+  output:
+    fixes:
+      dependencies: ['a']
+      devDependencies: []
+    updatedPackageJson:
+      dependencies: {}
+      devDependencies: {a: '0.0.1', b: '0.0.1'}
+      name: 'test'
+,
+  description: 'devDependency should be dependency'
+  inputResults:
+    dependencies: [{name: 'a'}]
+    devDependencies: [{name: 'b', error: ERRORS.SHOULD_BE_DEPENDENCY}]
+  output:
+    fixes:
+      dependencies: []
+      devDependencies: ['b']
+    updatedPackageJson:
+      dependencies: {a: '0.0.1', b: '0.0.1'}
+      devDependencies: {}
+      name: 'test'
+]
 
 describe 'AutoCorrector', ->
   beforeEach ->
@@ -9,94 +88,15 @@ describe 'AutoCorrector', ->
   describe 'correct', ->
     beforeEach ->
       @results =
-        dependencies: []
+        dependencies: ['a']
         devDependencies: []
       @packageJson =
         dependencies: {a: '0.0.1'}
         devDependencies: {b: '0.0.1'}
         name: 'test'
 
-    describe 'no errors', ->
-      beforeEach ->
-        @results.dependencies.push name: 'a'
-        @results.devDependencies.push name: 'b'
-        {@fixes, @updatedPackageJson} = @autoCorrector.correct {@packageJson, @results}
-
-      it 'returns no fixes', ->
-        expect(@fixes).to.eql
-          dependencies: []
-          devDependencies: []
-
-      it 'returns an unchanged package.json', ->
-        expect(@updatedPackageJson).to.eql
-          dependencies: {a: '0.0.1'}
-          devDependencies: {b: '0.0.1'}
-          name: 'test'
-
-    describe 'dependency unused', ->
-      beforeEach ->
-        @results.dependencies.push name: 'a', error: ERRORS.UNUSED
-        @results.devDependencies.push name: 'b'
-        {@fixes, @updatedPackageJson} = @autoCorrector.correct {@packageJson, @results}
-
-      it 'returns the modules that were fixed', ->
-        expect(@fixes).to.eql
-          dependencies: ['a']
-          devDependencies: []
-
-      it 'returns an updated package.json', ->
-        expect(@updatedPackageJson).to.eql
-          dependencies: {}
-          devDependencies: {b: '0.0.1'}
-          name: 'test'
-
-    describe 'devDependency unused', ->
-      beforeEach ->
-        @results.dependencies.push name: 'a'
-        @results.devDependencies.push name: 'b', error: ERRORS.UNUSED
-        {@fixes, @updatedPackageJson} = @autoCorrector.correct {@packageJson, @results}
-
-      it 'returns the modules that were fixed', ->
-        expect(@fixes).to.eql
-          dependencies: []
-          devDependencies: ['b']
-
-      it 'returns an updated package.json', ->
-        expect(@updatedPackageJson).to.eql
-          dependencies: {a: '0.0.1'}
-          devDependencies: {}
-          name: 'test'
-
-    describe 'dependency should be devDependency', ->
-      beforeEach ->
-        @results.dependencies.push name: 'a', error: ERRORS.SHOULD_BE_DEV_DEPENDENCY
-        @results.devDependencies.push name: 'b'
-        {@fixes, @updatedPackageJson} = @autoCorrector.correct {@packageJson, @results}
-
-      it 'returns the modules that were fixed', ->
-        expect(@fixes).to.eql
-          dependencies: ['a']
-          devDependencies: []
-
-      it 'returns an updated package.json', ->
-        expect(@updatedPackageJson).to.eql
-          dependencies: {}
-          devDependencies: {a: '0.0.1', b: '0.0.1'}
-          name: 'test'
-
-    describe 'devDependency should be dependency', ->
-      beforeEach ->
-        @results.dependencies.push name: 'a'
-        @results.devDependencies.push name: 'b', error: ERRORS.SHOULD_BE_DEPENDENCY
-        {@fixes, @updatedPackageJson} = @autoCorrector.correct {@packageJson, @results}
-
-      it 'returns the modules that were fixed', ->
-        expect(@fixes).to.eql
-          dependencies: []
-          devDependencies: ['b']
-
-      it 'returns an updated package.json', ->
-        expect(@updatedPackageJson).to.eql
-          dependencies: {a: '0.0.1', b: '0.0.1'}
-          devDependencies: {}
-          name: 'test'
+    examples.forEach ({inputResults, description, output}) ->
+      it description, ->
+        input = {@packageJson, results: inputResults}
+        result = @autoCorrector.correct input
+        expect(result).to.eql output
