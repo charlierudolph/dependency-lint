@@ -78,6 +78,18 @@ ignoreErrors:
 ### requiredModules
 Configuration for finding all the instances where modules are required.
 
+### requiredModules.acornParseProps
+Options passed to [detective](https://github.com/substack/node-detective) which is passes
+onto [acorn](https://www.npmjs.com/package/acorn)
+
+default:
+```yml
+requiredModules:
+  acornParseProps:
+    ecmaVersion: 6
+```
+
+
 ### requiredModules.files.dev
 Files used only for development.
 Uses [minimatch](https://github.com/isaacs/minimatch)

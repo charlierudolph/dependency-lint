@@ -16,7 +16,7 @@ baseBabelExample =
   filePattern: '**/*.js'
   setup: (tmpDir) ->
     filePath = path.join tmpDir, '.babelrc'
-    fileContent = '{"plugins": ["transform-es2015-modules-commonjs"]}'
+    fileContent = '{"plugins": ["transform-es2015-modules-commonjs", "syntax-dynamic-import"]}'
     writeFile filePath, fileContent
   transpilers: [{
     extension: '.js'
@@ -43,6 +43,12 @@ examples = [
     content: 'import myModule from "myModule"'
     description: 'babel file requiring a module'
     expectedResult: [name: 'myModule', file: 'server.js']
+,
+  _.assign {}, baseBabelExample,
+    acornParseProps: {ecmaVersion: 6}
+    content: 'import("myModule")'
+    description: 'babel file with a dynamic import does not error'
+    expectedResult: []
 ,
   _.assign {}, baseCoffeeScriptExample,
     content: 'myModule = require "myModule'
@@ -91,6 +97,7 @@ describe 'RequiredModuleFinder', ->
   describe 'find', ->
     examples.forEach (example) ->
       {
+        acornParseProps
         content
         description
         expectedError
@@ -103,7 +110,11 @@ describe 'RequiredModuleFinder', ->
 
       context description, ->
         beforeEach coroutine ->
-          finder = new RequiredModuleFinder {files: {root: filePattern}, transpilers}
+          finder = new RequiredModuleFinder {
+            acornParseProps,
+            files: {root: filePattern}
+            transpilers
+          }
           yield writeFile path.join(@tmpDir, filePath), content
           yield setup(@tmpDir) if setup
           try

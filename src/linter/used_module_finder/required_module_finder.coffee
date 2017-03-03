@@ -13,7 +13,7 @@ readFile = Promise.promisify require('fs').readFile
 
 class RequiredModuleFinder
 
-  constructor: ({@files, @stripLoaders, @transpilers}) ->
+  constructor: ({@acornParseProps, @files, @stripLoaders, @transpilers}) ->
 
 
   find: coroutine (dir) ->
@@ -26,7 +26,7 @@ class RequiredModuleFinder
     content = yield readFile path.join(dir, filePath), 'utf8'
     try
       content = @compileIfNeeded {content, dir, filePath}
-      moduleNames = detective content, {@isRequire}
+      moduleNames = detective content, {parse: @acornParseProps, @isRequire}
     catch err
       throw prependToError(err, filePath)
     moduleNames = @normalizeModuleNames {filePath, moduleNames}

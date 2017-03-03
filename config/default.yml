@@ -17,6 +17,7 @@ ignoreErrors:
   unused: []
 
 requiredModules:
+  acornParseProps: {}
   files:
     dev:
       - '{features,spec,test}/**/*'
