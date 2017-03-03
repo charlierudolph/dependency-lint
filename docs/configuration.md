@@ -80,7 +80,7 @@ Configuration for finding all the instances where modules are required.
 
 ### requiredModules.acornParseProps
 Options to be passed to [detective](https://github.com/substack/node-detective) which is passes
-onto `[acorn](https://www.npmjs.com/package/acorn).parse`
+onto [acorn](https://www.npmjs.com/package/acorn)
 
 default:
 ```yml
