@@ -13,6 +13,7 @@ ignoreErrors:
   unused:
     # Used in RequiredModuleFinder spec
     - babel-core
+    - babel-plugin-syntax-dynamic-import
     - babel-plugin-transform-es2015-modules-commonjs
 
 requiredModules:
