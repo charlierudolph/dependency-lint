@@ -23,6 +23,8 @@ describe 'ConfigurationLoader', ->
         beforeEach coroutine ->
           validContent = '''
             requiredModules:
+              acornParseProps:
+                ecmaVersion: 6
               files:
                 dev:
                   - 'test/**/*'
@@ -46,6 +48,7 @@ describe 'ConfigurationLoader', ->
               shouldBeDevDependency: []
               unused: []
             requiredModules:
+              acornParseProps: {ecmaVersion: 6}
               files:
                 dev: ['test/**/*']
                 ignore: ['node_modules/**/*']
@@ -85,6 +88,7 @@ describe 'ConfigurationLoader', ->
             shouldBeDevDependency: []
             unused: []
           requiredModules:
+            acornParseProps: {}
             files:
               dev: ['{features,spec,test}/**/*', '**/*{.,_,-}{spec,test}.js']
               ignore: ['node_modules/**/*']
