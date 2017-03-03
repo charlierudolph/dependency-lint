@@ -110,7 +110,11 @@ describe 'RequiredModuleFinder', ->
 
       context description, ->
         beforeEach coroutine ->
-          finder = new RequiredModuleFinder {acornParseProps, files: {root: filePattern}, transpilers}
+          finder = new RequiredModuleFinder {
+            acornParseProps,
+            files: {root: filePattern}
+            transpilers
+          }
           yield writeFile path.join(@tmpDir, filePath), content
           yield setup(@tmpDir) if setup
           try
