@@ -11,7 +11,7 @@ Feature: Required module with a webpack loader
 
   Scenario: local dependency with a loader
     Given I have a file "server.js" which requires "my-loader!./other_file"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       ✓ 0 errors

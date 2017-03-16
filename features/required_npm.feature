@@ -24,7 +24,7 @@ Feature: Required module: npm
     Given I have "npm" installed
     And I have "npm" listed as a dependency
     And I have a file "server.js" which requires "npm"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       dependencies:
@@ -54,7 +54,7 @@ Feature: Required module: npm
     Given I have "npm" installed
     And I have "npm" listed as a devDependency
     And I have a file "server_spec.js" which requires "npm"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       devDependencies:

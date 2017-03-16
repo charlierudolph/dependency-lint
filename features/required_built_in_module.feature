@@ -7,7 +7,7 @@ Feature: Required module: built in
   Scenario: dependency
     Given I have no dependencies listed
     And I have a file "server.js" which requires "http"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       ✓ 0 errors
@@ -17,7 +17,7 @@ Feature: Required module: built in
   Scenario: devDependency
     Given I have no devDependencies listed
     And I have a file "server_spec.js" which requires "fs"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       ✓ 0 errors

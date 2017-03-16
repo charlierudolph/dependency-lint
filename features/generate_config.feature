@@ -12,7 +12,7 @@ Feature: Generating config
       # See https://github.com/charlierudolph/dependency-lint/blob/v{{version}}/docs/configuration.md
       # for a detailed explanation of the options
       """
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       ✓ 0 errors

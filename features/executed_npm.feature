@@ -12,7 +12,7 @@ Feature: Executed module: npm
   Scenario: dependency not listed
     Given I have no dependencies listed
     And I have a script named "install" defined as "npm run build"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       ✓ 0 errors
@@ -36,7 +36,7 @@ Feature: Executed module: npm
   Scenario: devDependency
     Given I have no devDependencies listed
     And I have a script named "pretest" defined as "npm run lint"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       ✓ 0 errors

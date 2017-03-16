@@ -24,7 +24,7 @@ Feature: Unused module
   Scenario: dependency (ignored)
     Given I have "myModule" listed as a dependency
     And I have configured "ignoreErrors.unused" to contain "myModule"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       dependencies:
@@ -50,7 +50,7 @@ Feature: Unused module
   Scenario: devDependency (ignored)
     Given I have "myModule" listed as a devDependency
     And I have configured "ignoreErrors.unused" to contain "myModule"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       devDependencies:

@@ -75,7 +75,7 @@ Feature: auto-correct
   Scenario: unused dependency - ignored
     Given I have "myModule" listed as a dependency
     And I have configured "ignoreErrors.unused" to contain "myModule"
-    When I run "dependency-lint --auto-correct"
+    When I run "dependency-lint --auto-correct --verbose"
     Then I see the output
       """
       dependencies:
