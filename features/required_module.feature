@@ -11,7 +11,7 @@ Feature: Required module
   Scenario: dependency
     Given I have "myModule" listed as a dependency
     And I have a file "server.js" which requires "myModule"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       dependencies:
@@ -24,7 +24,7 @@ Feature: Required module
   Scenario: devDependency
     Given I have "myModule" listed as a devDependency
     And I have a file "server_spec.js" which requires "myModule"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       devDependencies:

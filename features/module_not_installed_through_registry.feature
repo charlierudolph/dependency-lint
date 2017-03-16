@@ -11,7 +11,7 @@ Feature: Module not installed through registry
   Scenario: dependency
     Given I have "myModule @ git+ssh://git@host:myOrganization/myModule.git#1.0.0" listed as a dependency
     And I have a script named "install" defined as "myExecutable --opt arg"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       dependencies:
@@ -24,7 +24,7 @@ Feature: Module not installed through registry
   Scenario: devDependency
     Given I have "myModule @ git+ssh://git@host:myOrganization/myModule.git#1.0.0" listed as a devDependency
     And I have a script named "test" defined as "myExecutable --opt arg"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       devDependencies:

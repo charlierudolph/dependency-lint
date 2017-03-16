@@ -8,7 +8,7 @@ Feature: Self-reporting
   Scenario: devDependency
     Given I have "dependency-lint" installed
     And I have "dependency-lint" listed as a devDependency
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       devDependencies:

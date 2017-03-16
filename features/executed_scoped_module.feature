@@ -12,7 +12,7 @@ Feature: Executed scoped module
   Scenario: dependency
     Given I have "@myOrganization/myModule" listed as a dependency
     And I have a script named "install" defined as "myExecutable --opt arg"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       dependencies:
@@ -25,7 +25,7 @@ Feature: Executed scoped module
   Scenario: devDependency
     Given I have "@myOrganization/myModule" listed as a devDependency
     And I have a script named "test" defined as "myExecutable --opt arg"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       devDependencies:

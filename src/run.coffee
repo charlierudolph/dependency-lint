@@ -19,7 +19,7 @@ hasError = (results) ->
       error and not (errorFixed or errorIgnored)
 
 
-run = coroutine ({autoCorrect}) ->
+run = coroutine ({autoCorrect, verbose}) ->
   dir = process.cwd()
   packageJsonPath = path.join(dir, 'package.json')
   packageJson = yield readJson packageJsonPath
@@ -28,8 +28,10 @@ run = coroutine ({autoCorrect}) ->
   if autoCorrect
     {fixes, updatedPackageJson} = new AutoCorrector().correct {packageJson, results}
     yield writeJson packageJsonPath, updatedPackageJson, spaces: 2
-  new DefaultFormatter({stream: process.stdout}).print {fixes, results}
-  process.exit 1 if hasError results
+  errored = hasError results
+  if verbose or errored
+    new DefaultFormatter({stream: process.stdout}).print {fixes, results}
+  process.exit 1 if errored
 
 
 module.exports = run

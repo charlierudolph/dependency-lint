@@ -28,7 +28,7 @@ Feature: Required module: mislabled
     Given I have "myModule" listed as a devDependency
     And I have a file "server.js" which requires "myModule"
     And I have configured "ignoreErrors.shouldBeDependency" to contain "myModule"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       devDependencies:
@@ -78,7 +78,7 @@ Feature: Required module: mislabled
     Given I have "myModule" listed as a dependency
     And I have a file "server_spec.js" which requires "myModule"
     And I have configured "ignoreErrors.shouldBeDevDependency" to contain "myModule"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       dependencies:

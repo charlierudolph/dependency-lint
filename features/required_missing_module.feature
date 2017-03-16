@@ -24,7 +24,7 @@ Feature: Required module: missing
     Given I have no dependencies listed
     And I have a file "server.js" which requires "myModule"
     And I have configured "ignoreErrors.missing" to contain "myModule"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       dependencies:
@@ -54,7 +54,7 @@ Feature: Required module: missing
     Given I have no devDependencies listed
     And I have a file "server_spec.js" which requires "myModule"
     And I have configured "ignoreErrors.missing" to contain "myModule"
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       devDependencies:

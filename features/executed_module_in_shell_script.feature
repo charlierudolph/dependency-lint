@@ -16,7 +16,7 @@ Feature: Executed module
       """
       myExecutable --opt arg
       """
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       dependencies:
@@ -33,7 +33,7 @@ Feature: Executed module
       """
       myExecutable --opt arg
       """
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       devDependencies:
@@ -48,7 +48,7 @@ Feature: Executed module
       """
       othermyExecutable --opt arg
       """
-    When I run "dependency-lint"
+    When I run "dependency-lint --verbose"
     Then I see the output
       """
       ✓ 0 errors
