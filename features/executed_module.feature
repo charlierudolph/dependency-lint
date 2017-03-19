@@ -12,24 +12,16 @@ Feature: Executed module
   Scenario: dependency
     Given I have "myModule" listed as a dependency
     And I have a script named "install" defined as "myExecutable --opt arg"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      dependencies:
-        ✓ myModule
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "dependencies":
+      | NAME     | ERROR  | SCRIPTS |
+      | myModule | <none> | install |
 
 
   Scenario: devDependency
     And I have "myModule" listed as a devDependency
     And I have a script named "test" defined as "myExecutable --opt arg"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      devDependencies:
-        ✓ myModule
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "devDependencies":
+      | NAME     | ERROR  | SCRIPTS |
+      | myModule | <none> | test    |

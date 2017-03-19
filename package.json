@@ -9,7 +9,7 @@
   "scripts": {
     "build": "gulp",
     "cucumber-test": "cucumber-js",
-    "lint-coffeescript": "coffeelint src",
+    "lint-coffeescript": "coffeelint src -q",
     "feature-test": "yarn run cucumber-test && yarn run self-test",
     "prefeature-test": "yarn run build",
     "prepublish": "yarn run build",

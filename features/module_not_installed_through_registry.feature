@@ -11,24 +11,16 @@ Feature: Module not installed through registry
   Scenario: dependency
     Given I have "myModule @ git+ssh://git@host:myOrganization/myModule.git#1.0.0" listed as a dependency
     And I have a script named "install" defined as "myExecutable --opt arg"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      dependencies:
-        ✓ myModule
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "dependencies":
+      | NAME     | ERROR  | SCRIPTS |
+      | myModule | <none> | install |
 
 
   Scenario: devDependency
     Given I have "myModule @ git+ssh://git@host:myOrganization/myModule.git#1.0.0" listed as a devDependency
     And I have a script named "test" defined as "myExecutable --opt arg"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      devDependencies:
-        ✓ myModule
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "devDependencies":
+      | NAME     | ERROR  | SCRIPTS |
+      | myModule | <none> | test    |

@@ -49,3 +49,18 @@ You can create a configuration file by running
 dependency-lint --generate-config
 ```
 Any options not set in your configuration file will be given there default value.
+
+## Formatters
+Three formatters are available and can be switched between with the `--format` option
+```
+dependency-lint --format <format>
+```
+
+* `minimal` (default) - prints only the modules with errors
+* `summary` - prints all modules
+* `json` - prints JSON of the form `{dependencies, devDependencies}` where each is array of objects with the keys
+  * `name` - name of the module
+  * `files` - list of the files that require the module or execute the module
+  * `scripts` - list of scripts in your `package.json` that execute the module
+  * `error` - null or one of the following strings: "missing", "should be dependency", "should be dev dependency", "unused"
+  * `errorIgnored` - if dependency lint has been configured to ignore this error.

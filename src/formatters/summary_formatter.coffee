@@ -1,35 +1,31 @@
 _ = require 'lodash'
 colors = require 'colors/safe'
-ERRORS = require '../errors'
+errorMessages = require './error_messages'
 
 
-class DefaultFormatter
+class SummaryFormatter
 
   # stream - writable stream to send output
-  constructor: ({@stream}) ->
-    @errorMessages = {}
-    @errorMessages[ERRORS.MISSING] = 'missing'
-    @errorMessages[ERRORS.SHOULD_BE_DEPENDENCY] = 'should be dependency'
-    @errorMessages[ERRORS.SHOULD_BE_DEV_DEPENDENCY] = 'should be devDependency'
-    @errorMessages[ERRORS.UNUSED] = 'unused'
+  constructor: ({@minimal, @stream}) ->
 
 
   # Prints the result to its stream
   print: ({fixes = {}, results}) ->
-    for type, modules of results when modules.length isnt 0
-      @write ''
-      @write "#{type}:", 1
+    for type, modules of results
+      if @minimal
+        modules = _.filter modules, ({error, errorIgnored}) -> error and not errorIgnored
+      continue if modules.length is 0
+      @write "#{type}:"
       for module in modules
         fixed = _.includes fixes[type], module.name
-        @write @moduleOutput(module, fixed), 2
-    @write ''
-    @write @summaryOutput(results), 1
-    @write ''
+        @write @moduleOutput(module, fixed), 1
+      @write ''
+    @write @summaryOutput(results) unless @minimal and @errorCount(results) is 0
 
 
   moduleOutput: ({error, errorIgnored, files, name, scripts}, fixed) ->
     if error
-      message = @errorMessages[error]
+      message = errorMessages[error]
       if errorIgnored
         colors.yellow "- #{name} (#{message} - ignored)"
       else
@@ -44,7 +40,7 @@ class DefaultFormatter
 
   indent: (str, count) ->
     prefix = ''
-    prefix += '  ' for [1..count]
+    prefix += '  ' for [1..count] if count > 0
     prefix + str
 
 
@@ -78,4 +74,4 @@ class DefaultFormatter
     msg
 
 
-module.exports = DefaultFormatter
+module.exports = SummaryFormatter

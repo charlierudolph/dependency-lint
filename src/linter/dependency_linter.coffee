@@ -34,7 +34,7 @@ class DependencyLinter
 
     for key, modules of listedModules
       for name in modules when not _.some(usedModules, (moduleData) -> moduleData.name is name)
-        listedModule = {name}
+        listedModule = {name, files: [], scripts: []}
         if key isnt 'devDependencies' or name isnt packageJson.name
           listedModule.error = ERRORS.UNUSED
         out[key].push listedModule

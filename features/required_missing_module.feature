@@ -7,16 +7,10 @@ Feature: Required module: missing
   Scenario: dependency
     Given I have no dependencies listed
     And I have a file "server.js" which requires "myModule"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      dependencies:
-        ✖ myModule (missing)
-            used in files:
-              server.js
-
-      ✖ 1 error
-      """
+    When I run it
+    Then it reports the "dependencies":
+      | NAME     | ERROR   | FILES     |
+      | myModule | missing | server.js |
     And it exits with a non-zero status
 
 
@@ -24,29 +18,19 @@ Feature: Required module: missing
     Given I have no dependencies listed
     And I have a file "server.js" which requires "myModule"
     And I have configured "ignoreErrors.missing" to contain "myModule"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      dependencies:
-        - myModule (missing - ignored)
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "dependencies":
+      | NAME     | ERROR   | ERROR IGNORED | FILES     |
+      | myModule | missing | true          | server.js |
 
 
   Scenario: devDependency
     Given I have no devDependencies listed
     And I have a file "server_spec.js" which requires "myModule"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      devDependencies:
-        ✖ myModule (missing)
-            used in files:
-              server_spec.js
-
-      ✖ 1 error
-      """
+    When I run it
+    Then it reports the "devDependencies":
+      | NAME     | ERROR   | FILES          |
+      | myModule | missing | server_spec.js |
     And it exits with a non-zero status
 
 
@@ -54,11 +38,7 @@ Feature: Required module: missing
     Given I have no devDependencies listed
     And I have a file "server_spec.js" which requires "myModule"
     And I have configured "ignoreErrors.missing" to contain "myModule"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      devDependencies:
-        - myModule (missing - ignored)
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "devDependencies":
+      | NAME     | ERROR   | ERROR IGNORED | FILES          |
+      | myModule | missing | true          | server_spec.js |

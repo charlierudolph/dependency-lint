@@ -48,7 +48,7 @@ describe 'DependencyLinter', ->
 
       describe 'not ignored', ->
         beforeEach ->
-          @output.dependencies.push {name: 'myModule', error: ERRORS.UNUSED}
+          @output.dependencies.push {name: 'myModule', error: ERRORS.UNUSED, files: [], scripts: []}
 
         it 'returns error: unused', ->
           @expectOutputToMatch()
@@ -56,7 +56,12 @@ describe 'DependencyLinter', ->
       describe 'ignored', ->
         beforeEach ->
           @options.ignoreErrors.unused.push 'myModule'
-          @output.dependencies.push {name: 'myModule', error: ERRORS.UNUSED, errorIgnored: true}
+          @output.dependencies.push
+            name: 'myModule'
+            error: ERRORS.UNUSED
+            errorIgnored: true
+            files: []
+            scripts: []
 
         it 'returns ignored error: unused', ->
           @expectOutputToMatch()
@@ -67,7 +72,11 @@ describe 'DependencyLinter', ->
 
       describe 'not ignored', ->
         beforeEach ->
-          @output.devDependencies.push {name: 'myModule', error: ERRORS.UNUSED}
+          @output.devDependencies.push
+            name: 'myModule'
+            error: ERRORS.UNUSED
+            files: []
+            scripts: []
 
         it 'returns error: unused', ->
           @expectOutputToMatch()
@@ -75,7 +84,12 @@ describe 'DependencyLinter', ->
       describe 'on allowed unused list', ->
         beforeEach ->
           @options.ignoreErrors.unused.push 'myModule'
-          @output.devDependencies.push {name: 'myModule', error: ERRORS.UNUSED, errorIgnored: true}
+          @output.devDependencies.push
+            name: 'myModule'
+            error: ERRORS.UNUSED
+            errorIgnored: true
+            files: []
+            scripts: []
 
         it 'returns ignored error: unused', ->
           @expectOutputToMatch()
@@ -384,7 +398,7 @@ describe 'DependencyLinter', ->
     describe 'not used, listed as devDependency', ->
       beforeEach ->
         @input.listedModules.devDependencies.push 'dependency-lint'
-        @output.devDependencies.push {name: 'dependency-lint'}
+        @output.devDependencies.push {name: 'dependency-lint', files: [], scripts: []}
 
       it 'returns success', ->
         @expectOutputToMatch()

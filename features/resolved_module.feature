@@ -11,24 +11,16 @@ Feature: Resolved module
   Scenario: dependency
     Given I have "myModule" listed as a dependency
     And I have a file "server.js" which resolves "myModule"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      dependencies:
-        ✓ myModule
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "dependencies":
+      | NAME     | ERROR  | FILES     |
+      | myModule | <none> | server.js |
 
 
   Scenario: devDependency
     Given I have "myModule" listed as a devDependency
     And I have a file "server_spec.js" which resolves "myModule"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      devDependencies:
-        ✓ myModule
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "devDependencies":
+      | NAME     | ERROR  | FILES          |
+      | myModule | <none> | server_spec.js |

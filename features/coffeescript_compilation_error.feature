@@ -12,7 +12,7 @@ Feature: Coffeescript compilation error
 
   Scenario: coffeescript compilation error
     Given I have a file "server.coffee" with a coffeescript compilation error
-    When I run "dependency-lint"
+    When I run it
     Then I see the error
       """
       server.coffee

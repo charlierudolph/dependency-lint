@@ -16,14 +16,10 @@ Feature: Executed module
       """
       myExecutable --opt arg
       """
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      dependencies:
-        ✓ myModule
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "dependencies":
+      | NAME     | ERROR  | FILES   |
+      | myModule | <none> | bin/run |
 
 
   Scenario: devDependency
@@ -33,14 +29,10 @@ Feature: Executed module
       """
       myExecutable --opt arg
       """
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      devDependencies:
-        ✓ myModule
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "devDependencies":
+      | NAME     | ERROR  | FILES    |
+      | myModule | <none> | bin/test |
 
 
   Scenario: respects word boundaries
@@ -48,8 +40,5 @@ Feature: Executed module
       """
       othermyExecutable --opt arg
       """
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports no "dependencies"

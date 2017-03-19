@@ -8,7 +8,7 @@ Feature: Module wrong version installed
 
   Scenario: dependency
     Given I have "myModule @ ^2.0.0" listed as a dependency
-    When I run "dependency-lint"
+    When I run it
     Then I see the error
       """
       The following modules listed in your `package.json` have issues:
@@ -21,7 +21,7 @@ Feature: Module wrong version installed
 
   Scenario: devDependency
     Given I have "myModule @ ^2.0.0" listed as a devDependency
-    When I run "dependency-lint"
+    When I run it
     Then I see the error
       """
       The following modules listed in your `package.json` have issues:

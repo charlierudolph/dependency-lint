@@ -8,11 +8,8 @@ Feature: Unused module
     Given I have no dependencies listed
     And I have configured "requiredModules.files.ignore" to contain "examples/**/*"
     And I have a file "examples/server.js" which requires "myModule"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports no "dependencies"
 
 
   Scenario: devDependency
@@ -20,8 +17,5 @@ Feature: Unused module
     And I have configured "requiredModules.files.dev" to contain "spec/**/*.js"
     And I have configured "requiredModules.files.ignore" to contain "spec/fixtures/**/*.js"
     And I have a file "spec/fixtures/example.js" which requires "myModule"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports no "devDependencies"

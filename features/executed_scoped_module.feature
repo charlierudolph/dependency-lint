@@ -12,24 +12,16 @@ Feature: Executed scoped module
   Scenario: dependency
     Given I have "@myOrganization/myModule" listed as a dependency
     And I have a script named "install" defined as "myExecutable --opt arg"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      dependencies:
-        ✓ @myOrganization/myModule
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "dependencies":
+      | NAME                     | ERROR  | SCRIPTS |
+      | @myOrganization/myModule | <none> | install |
 
 
   Scenario: devDependency
     Given I have "@myOrganization/myModule" listed as a devDependency
     And I have a script named "test" defined as "myExecutable --opt arg"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      devDependencies:
-        ✓ @myOrganization/myModule
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "devDependencies":
+      | NAME                     | ERROR  | SCRIPTS |
+      | @myOrganization/myModule | <none> | test    |

@@ -1,5 +1,9 @@
 trimLines = (str) ->
-  str.split('\n').map((line) -> line.trim()).join('\n')
+  str
+    .trim()
+    .split '\n'
+    .map (line) -> line.trim()
+    .join '\n'
 
 
 module.exports = {trimLines}

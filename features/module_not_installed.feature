@@ -6,7 +6,7 @@ Feature: Module not installed
 
   Scenario: dependency
     Given I have "myModule" listed as a dependency
-    When I run "dependency-lint"
+    When I run it
     Then I see the error
       """
       The following modules listed in your `package.json` have issues:
@@ -19,7 +19,7 @@ Feature: Module not installed
 
   Scenario: devDependency
     Given I have "myModule" listed as a devDependency
-    When I run "dependency-lint"
+    When I run it
     Then I see the error
       """
       The following modules listed in your `package.json` have issues:

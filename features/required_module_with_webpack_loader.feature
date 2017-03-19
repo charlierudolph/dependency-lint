@@ -11,23 +11,14 @@ Feature: Required module with a webpack loader
 
   Scenario: local dependency with a loader
     Given I have a file "server.js" which requires "my-loader!./other_file"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports no "dependencies"
 
 
   Scenario: loading a missing-dependency with a loader
     Given I have a file "server.js" which requires "my-loader!myModule"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      dependencies:
-        ✖ myModule (missing)
-            used in files:
-              server.js
-
-      ✖ 1 error
-      """
+    When I run it
+    Then it reports the "dependencies":
+      | NAME     | ERROR   | FILES     |
+      | myModule | missing | server.js |
     And it exits with a non-zero status

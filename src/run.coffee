@@ -1,16 +1,25 @@
 _ = require 'lodash'
 AutoCorrector = require './auto_corrector'
 ConfigurationLoader = require './configuration_loader'
-DefaultFormatter = require './formatters/default_formatter'
 fsExtra = require 'fs-extra'
+JsonFormatter = require './formatters/json_formatter'
 Linter = require './linter'
 path = require 'path'
 Promise = require 'bluebird'
+SummaryFormatter = require './formatters/summary_formatter'
 
 
 {coroutine} = Promise
 readJson = Promise.promisify fsExtra.readJson
 writeJson = Promise.promisify fsExtra.writeJson
+
+
+getFormatter = (format) ->
+  options = stream: process.stdout
+  switch format
+    when 'minimal' then new SummaryFormatter _.assign {minimal: true}, options
+    when 'summary' then new SummaryFormatter options
+    when 'json' then new JsonFormatter options
 
 
 hasError = (results) ->
@@ -19,7 +28,7 @@ hasError = (results) ->
       error and not (errorFixed or errorIgnored)
 
 
-run = coroutine ({autoCorrect}) ->
+run = coroutine ({autoCorrect, format}) ->
   dir = process.cwd()
   packageJsonPath = path.join(dir, 'package.json')
   packageJson = yield readJson packageJsonPath
@@ -28,7 +37,7 @@ run = coroutine ({autoCorrect}) ->
   if autoCorrect
     {fixes, updatedPackageJson} = new AutoCorrector().correct {packageJson, results}
     yield writeJson packageJsonPath, updatedPackageJson, spaces: 2
-  new DefaultFormatter({stream: process.stdout}).print {fixes, results}
+  getFormatter(format).print {fixes, results}
   process.exit 1 if hasError results
 
 

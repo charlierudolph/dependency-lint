@@ -7,16 +7,10 @@ Feature: Required module: npm
   Scenario: dependency not listed
     Given I have no dependencies listed
     And I have a file "server.js" which requires "npm"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      dependencies:
-        ✖ npm (missing)
-          used in files:
-            server.js
-
-      ✖ 1 error
-      """
+    When I run it
+    Then it reports the "dependencies":
+      | NAME | ERROR   | FILES     |
+      | npm  | missing | server.js |
     And it exits with a non-zero status
 
 
@@ -24,29 +18,19 @@ Feature: Required module: npm
     Given I have "npm" installed
     And I have "npm" listed as a dependency
     And I have a file "server.js" which requires "npm"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      dependencies:
-        ✓ npm
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "dependencies":
+      | NAME | ERROR  | FILES     |
+      | npm  | <none> | server.js |
 
 
   Scenario: devDependency not listed
     Given I have no devDependencies listed
     And I have a file "server_spec.js" which requires "npm"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      devDependencies:
-        ✖ npm (missing)
-          used in files:
-            server_spec.js
-
-      ✖ 1 error
-      """
+    When I run it
+    Then it reports the "devDependencies":
+      | NAME | ERROR   | FILES          |
+      | npm  | missing | server_spec.js |
     And it exits with a non-zero status
 
 
@@ -54,11 +38,7 @@ Feature: Required module: npm
     Given I have "npm" installed
     And I have "npm" listed as a devDependency
     And I have a file "server_spec.js" which requires "npm"
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      devDependencies:
-        ✓ npm
-
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports the "devDependencies":
+      | NAME | ERROR  | FILES          |
+      | npm  | <none> | server_spec.js |

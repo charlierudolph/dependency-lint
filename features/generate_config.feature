@@ -5,15 +5,12 @@ Feature: Generating config
 
 
   Scenario: generate config
-    When I run "dependency-lint --generate-config"
+    When I run it with --generate-config
     Then now I have the file "dependency-lint.yml" with the default config
     And "dependency-lint.yml" contains
       """
       # See https://github.com/charlierudolph/dependency-lint/blob/v{{version}}/docs/configuration.md
       # for a detailed explanation of the options
       """
-    When I run "dependency-lint"
-    Then I see the output
-      """
-      ✓ 0 errors
-      """
+    When I run it
+    Then it reports no "dependencies"
