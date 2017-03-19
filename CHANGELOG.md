@@ -1,5 +1,11 @@
 # Changelog
 
+### 5.0.0 (2017-03-18)
+
+* add formatters: minimal (the new default), json, summary (the previous default)
+
+---
+
 ### 4.3.1 (2016-12-27)
 
 * do not auto correct ignored errors
