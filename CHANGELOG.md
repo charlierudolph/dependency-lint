@@ -1,5 +1,11 @@
 # Changelog
 
+### 5.0.1 (2017-03-20)
+
+* fix published package
+
+---
+
 ### 5.0.0 (2017-03-18)
 
 * add formatters: minimal (the new default), json, summary (the previous default)
