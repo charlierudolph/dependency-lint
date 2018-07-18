@@ -158,6 +158,11 @@ Example:
 ```yml
 requiredModules:
   transpilers:
+  
+    - extension: .ts
+      fnName: transpileModule
+      module: typescript
+      
     - extension: .coffee
       module: coffee-script # 1.9.0
 
@@ -165,7 +170,4 @@ requiredModules:
       fnName: transform
       module: babel-core # 6.17.0
       resultKey: code
-
-    - extension: .ls
-      module: livescript # 1.5.0
 ```
