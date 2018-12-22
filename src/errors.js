@@ -1,0 +1,6 @@
+export default {
+  MISSING: 1,
+  SHOULD_BE_DEPENDENCY: 2,
+  SHOULD_BE_DEV_DEPENDENCY: 3,
+  UNUSED: 4,
+};

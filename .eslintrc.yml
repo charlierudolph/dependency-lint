@@ -1,0 +1,19 @@
+env:
+  browser: true
+  es6: true
+  node: true
+extends:
+  - standard
+  - prettier
+parser: babel-eslint
+parserOptions:
+  sourceType: module
+plugins:
+  - babel
+  - prettier
+rules:
+  prettier/prettier:
+    - error
+    - trailingComma: es5
+      singleQuote: true
+      semi: true

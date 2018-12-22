@@ -11,21 +11,35 @@ ignoreErrors:
   shouldBeDependency: []
   shouldBeDevDependency: []
   unused:
-    # Used in RequiredModuleFinder spec
-    - babel-core
-    - babel-plugin-syntax-dynamic-import
-    - babel-plugin-transform-es2015-modules-commonjs
+    - '@babel/core' # babel requirement
+    - '@babel/plugin-proposal-function-bind' # .babelrc
+    - '@babel/plugin-syntax-dynamic-import' # src/linter/used_module_finder/required_module_finder_spec.js
+    - '@babel/polyfill' # babel requirement
+    - '@babel/preset-env' # .babelrc
+    - '@babel/register' # cucumber.js, test/mocha.opts
+    - babel-eslint # .eslintrc.yml
+    - coffee-script # src/linter/used_module_finder/required_module_finder_spec.js
+    - eslint-config-prettier # .eslintrc.yml
+    - eslint-config-standard # .eslintrc.yml
+    - eslint-plugin-babel # .eslintrc.yml
+    - eslint-plugin-import # peer dependency of eslint-config-standard
+    - eslint-plugin-node # peer dependency of eslint-config-standard
+    - eslint-plugin-prettier # .eslintrc.yml
+    - eslint-plugin-promise # peer dependency of eslint-config-standard
+    - eslint-plugin-standard # peer dependency of eslint-config-standard
+    - prettier # peer dependency of eslint-plugin-prettier
 
 requiredModules:
   files:
     dev:
-      - '{features,spec}/**/*'
-      - '**/*_spec.coffee'
-      - gulpfile.coffee
+      - '{features,test}/**/*'
+      - '**/*_spec.js'
     ignore:
       - 'node_modules/**/*'
-    root: '**/*.coffee'
+    root: '**/*.js'
   stripLoaders: false
   transpilers:
-    - extension: .coffee
-      module: coffee-script
+    - extension: .js
+      fnName: transform
+      module: '@babel/core' # 7.2.3
+      resultKey: code

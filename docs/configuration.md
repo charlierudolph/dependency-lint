@@ -162,8 +162,8 @@ requiredModules:
       module: coffee-script # 1.9.0
 
     - extension: .js
-      fnName: transform
-      module: babel-core # 6.17.0
+      fnName: transformSync
+      module: @babel/core # 7.2.2
       resultKey: code
 
     - extension: .ls
