@@ -1,5 +1,11 @@
 # Changelog
 
+### 6.0.0 (2019-04-13)
+
+* Drop support for Node 6
+
+---
+
 ### 5.0.1 (2017-03-20)
 
 * fix published package
