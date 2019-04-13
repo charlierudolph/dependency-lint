@@ -10,7 +10,7 @@ Lints your NPM `dependencies` and `devDependencies` reporting which node modules
 
 ## Installation
 
-Supported on [Node.js](https://nodejs.org/en) versions 4, 5, and 6
+Supported on [Node.js](https://nodejs.org/en) versions 8 and 10
 
 ```
 $ npm install dependency-lint
