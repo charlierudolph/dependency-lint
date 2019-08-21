@@ -17,7 +17,7 @@ export default {
   },
 
   stripLoaders(name) {
-    let array = name.split('!');
+    const array = name.split('!');
     return _.last(array);
   },
 

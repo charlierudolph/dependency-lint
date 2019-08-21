@@ -14,11 +14,10 @@ ignoreErrors:
     - '@babel/core' # babel requirement
     - '@babel/plugin-proposal-function-bind' # .babelrc
     - '@babel/plugin-syntax-dynamic-import' # src/linter/used_module_finder/required_module_finder_spec.js
-    - '@babel/polyfill' # babel requirement
     - '@babel/preset-env' # .babelrc
     - '@babel/register' # cucumber.js, test/mocha.opts
     - babel-eslint # .eslintrc.yml
-    - coffee-script # src/linter/used_module_finder/required_module_finder_spec.js
+    - coffeescript # src/linter/used_module_finder/required_module_finder_spec.js
     - eslint-config-prettier # .eslintrc.yml
     - eslint-config-standard # .eslintrc.yml
     - eslint-plugin-babel # .eslintrc.yml

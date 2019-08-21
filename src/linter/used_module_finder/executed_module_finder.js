@@ -27,9 +27,9 @@ export default class ExecutedModulesFinder {
 
   findInScript(script, moduleExecutables) {
     const result = [];
-    for (let name in moduleExecutables) {
+    for (const name in moduleExecutables) {
       const executables = moduleExecutables[name];
-      for (let executable of Array.from(executables)) {
+      for (const executable of Array.from(executables)) {
         if (ModuleNameParser.isGlobalExecutable(executable)) {
           continue;
         }
@@ -51,7 +51,7 @@ export default class ExecutedModulesFinder {
   }) {
     let moduleName;
     const result = [];
-    for (let scriptName in packageJsonScripts) {
+    for (const scriptName in packageJsonScripts) {
       const script = packageJsonScripts[scriptName];
       for (moduleName of Array.from(
         this.findInScript(script, moduleExecutables)
@@ -59,7 +59,7 @@ export default class ExecutedModulesFinder {
         result.push({ name: moduleName, script: scriptName });
       }
     }
-    for (let filePath in shellScripts) {
+    for (const filePath in shellScripts) {
       const fileContent = shellScripts[filePath];
       for (moduleName of Array.from(
         this.findInScript(fileContent, moduleExecutables)

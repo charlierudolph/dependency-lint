@@ -14,7 +14,7 @@ export default class SummaryFormatter {
     if (!fixes) {
       fixes = {};
     }
-    for (let type in results) {
+    for (const type in results) {
       let modules = results[type];
       if (this.minimal) {
         modules = _.filter(
@@ -26,7 +26,7 @@ export default class SummaryFormatter {
         continue;
       }
       this.write(`${type}:`);
-      for (let module of modules) {
+      for (const module of modules) {
         const fixed = _.includes(fixes[type], module.name);
         this.write(this.moduleOutput(module, fixed), 1);
       }
@@ -73,9 +73,9 @@ export default class SummaryFormatter {
 
   errorCount(results) {
     let count = 0;
-    for (let title in results) {
+    for (const title in results) {
       const modules = results[title];
-      for (let { error, errorIgnored } of modules) {
+      for (const { error, errorIgnored } of modules) {
         if (error && !errorIgnored) {
           count += 1;
         }
@@ -86,11 +86,11 @@ export default class SummaryFormatter {
 
   errorSuffix(usage) {
     let suffix = '';
-    for (let type in usage) {
+    for (const type in usage) {
       const list = usage[type];
       if (list && list.length > 0) {
         suffix += `\n${this.indent(`used in ${type}:`, 2)}`;
-        for (let item of list) {
+        for (const item of list) {
           suffix += `\n${this.indent(item, 3)}`;
         }
       }

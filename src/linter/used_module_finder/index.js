@@ -24,7 +24,7 @@ export default class UsedModuleFinder {
 
   normalizeModules(...modules) {
     const result = {};
-    for (let { name, file, script } of _.flattenDeep(modules)) {
+    for (const { name, file, script } of _.flattenDeep(modules)) {
       if (!result[name]) {
         result[name] = { name, files: [], scripts: [] };
       }

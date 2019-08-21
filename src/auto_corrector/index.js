@@ -12,9 +12,9 @@ export default class AutoCorrector {
   getChanges(results) {
     const changes = [];
     const fixes = { dependencies: [], devDependencies: [] };
-    for (let type in results) {
+    for (const type in results) {
       const modules = results[type];
-      for (let module of modules) {
+      for (const module of modules) {
         const change = this.getChange({ module, type });
         if (change) {
           changes.push(change);
@@ -50,7 +50,7 @@ export default class AutoCorrector {
 
   applyChanges({ changes, packageJson }) {
     const updatedPackageJson = _.cloneDeep(packageJson);
-    for (let change of changes) {
+    for (const change of changes) {
       change(updatedPackageJson);
     }
     return updatedPackageJson;

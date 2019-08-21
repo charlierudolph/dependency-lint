@@ -12,7 +12,7 @@ export default class DependencyLinter {
       this.config.requiredModules.files.dev
     );
     this.ignoreErrors = {};
-    for (let key in ERRORS) {
+    for (const key in ERRORS) {
       const value = ERRORS[key];
       this.ignoreErrors[value] = this.config.ignoreErrors[camelCase(key)];
     }
@@ -32,7 +32,7 @@ export default class DependencyLinter {
       devDependencies: [],
     };
 
-    for (let usedModule of usedModules) {
+    for (const usedModule of usedModules) {
       const status = {
         isDependency: !this.isDevDependency(usedModule),
         listedAsDependency: Array.from(listedModules.dependencies).includes(

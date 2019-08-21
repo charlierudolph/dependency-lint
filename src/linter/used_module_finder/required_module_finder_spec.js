@@ -27,7 +27,7 @@ const baseBabelExample = {
 const baseCoffeeScriptExample = {
   filePath: 'server.coffee',
   filePattern: '**/*.coffee',
-  transpilers: [{ extension: '.coffee', module: 'coffee-script' }],
+  transpilers: [{ extension: '.coffee', module: 'coffeescript' }],
 };
 const baseJavaScriptExample = {
   filePath: 'server.js',
