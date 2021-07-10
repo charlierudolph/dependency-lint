@@ -1,8 +1,8 @@
 import ExecutedModuleFinder from './executed_module_finder';
-import { outputFile, outputJson } from 'fs-extra';
+import { outputFile } from 'fs-extra';
 import getTmpDir from '../../../test/support/get_tmp_dir';
 import path from 'path';
-import Promise from 'bluebird';
+import { mkdir, symlink } from 'fs/promises';
 import { beforeEach, describe, it } from 'mocha';
 import { expect } from 'chai';
 
@@ -17,9 +17,9 @@ const examples = [
     config: { shellScripts: { root: '' } },
     description: 'package.json script using module exectuable',
     expectedResult: [{ name: 'myModule', script: 'test' }],
-    modulePackageJson: {
+    moduleConfig: {
       name: 'myModule',
-      bin: 'path/to/executable',
+      executableName: 'myModule',
     },
     packageJson: {
       scripts: { test: 'myModule --opt arg' },
@@ -29,9 +29,9 @@ const examples = [
     config: { shellScripts: { root: '' } },
     description: 'package.json script using module named exectuable',
     expectedResult: [{ name: 'myModule', script: 'test' }],
-    modulePackageJson: {
+    moduleConfig: {
       name: 'myModule',
-      bin: { myExecutable: 'path/to/executable' },
+      executableName: 'myExecutable',
     },
     packageJson: {
       scripts: { test: 'myExecutable --opt arg' },
@@ -41,9 +41,9 @@ const examples = [
     config: { shellScripts: { root: '' } },
     description: 'package.json script using scoped module exectuable',
     expectedResult: [{ name: '@myOrganization/myModule', script: 'test' }],
-    modulePackageJson: {
+    moduleConfig: {
       name: '@myOrganization/myModule',
-      bin: { myExecutable: 'path/to/executable' },
+      executableName: 'myExecutable',
     },
     packageJson: {
       scripts: { test: 'myExecutable --opt arg' },
@@ -54,9 +54,9 @@ const examples = [
     description:
       'package.json script containing module executable in another word',
     expectedResult: [],
-    modulePackageJson: {
+    moduleConfig: {
       name: 'myModule',
-      bin: { myExecutable: 'path/to/executable' },
+      executableName: 'myExecutable',
     },
     packageJson: {
       scripts: { test: 'othermyExecutable --opt arg' },
@@ -70,9 +70,9 @@ const examples = [
       path: 'bin/test',
       content: 'myExecutable --opt arg',
     },
-    modulePackageJson: {
+    moduleConfig: {
       name: 'myModule',
-      bin: { myExecutable: 'path/to/executable' },
+      executableName: 'myExecutable',
     },
     packageJson: {},
   },
@@ -90,28 +90,31 @@ describe('ExecutedModuleFinder', function() {
         description,
         expectedResult,
         file,
-        modulePackageJson,
+        moduleConfig,
         packageJson,
       } = example;
 
       describe(description, function() {
         beforeEach(async function() {
-          const promises = [];
-          if (modulePackageJson) {
-            const filePath = path.join(
+          if (moduleConfig) {
+            const binPath = path.join(
               this.tmpDir,
               'node_modules',
-              modulePackageJson.name,
-              'package.json'
+              '.bin',
+              moduleConfig.executableName
             );
-            promises.push(outputJson(filePath, modulePackageJson));
+            const linkPath = path.join(
+              '..',
+              moduleConfig.name,
+              'path/to/executable'
+            );
+            await mkdir(path.dirname(binPath), { recursive: true });
+            await symlink(linkPath, binPath);
           }
           if (file) {
-            promises.push(
-              outputFile(path.join(this.tmpDir, file.path), file.content)
-            );
+            const fullPath = path.join(this.tmpDir, file.path);
+            await outputFile(fullPath, file.content);
           }
-          await Promise.all(promises);
           const finder = new ExecutedModuleFinder(config);
           this.result = await finder.find({ dir: this.tmpDir, packageJson });
         });

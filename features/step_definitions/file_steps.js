@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import { addToJsonFile, addToYmlFile } from '../support/file_helpers';
-import { readFile, readJson, outputFile } from 'fs-extra';
+import { readJson, outputFile } from 'fs-extra';
 import path from 'path';
+import { mkdir, readFile, symlink } from 'fs/promises';
 import Promise from 'bluebird';
 import yaml from 'js-yaml';
 import { Given, Then } from 'cucumber';
@@ -127,9 +128,10 @@ Given(/^the "([^"]*)" module exposes the executable "([^"]*)"$/, async function(
   name,
   executable
 ) {
-  const filePath = path.join(this.tmpDir, 'node_modules', name, 'package.json');
-  const content = { name, bin: { [executable]: 'path/to/executable' } };
-  await addToJsonFile(filePath, content);
+  const binPath = path.join(this.tmpDir, 'node_modules', '.bin', executable);
+  const linkPath = path.join('..', name, 'path/to/executable');
+  await mkdir(path.dirname(binPath), { recursive: true });
+  await symlink(linkPath, binPath);
 });
 
 Then(/^now I have the file "([^"]*)" with the default config$/, async function(

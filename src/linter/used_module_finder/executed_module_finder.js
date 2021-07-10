@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { readFile, readJson } from 'fs-extra';
+import { readFile, readlink } from 'fs-extra';
 import ModuleNameParser from './module_name_parser';
 import path from 'path';
 import Promise from 'bluebird';
@@ -71,20 +71,28 @@ export default class ExecutedModulesFinder {
   }
 
   async getModuleExecutables(dir) {
-    const nodeModulesPath = path.join(dir, 'node_modules');
-    const files = await glob(`${nodeModulesPath}/{*,*/*}/package.json`);
-    return _.fromPairs(await Promise.map(files, this.getModuleExecutablesPair));
+    const nodeModulesBinPath = path.join(dir, 'node_modules', '.bin');
+    const files = await glob(`${nodeModulesBinPath}/*`);
+    const pairs = await Promise.map(files, this.getModuleExecutablesPair);
+    const result = {};
+    pairs.forEach(pair => {
+      if (result[pair[0]] == null) {
+        result[pair[0]] = [];
+      }
+      result[pair[0]].push(pair[1]);
+    });
+    return result;
   }
 
-  async getModuleExecutablesPair(packageJsonPath) {
-    const packageJson = await readJson(packageJsonPath);
-    let executables = [];
-    if (_.isString(packageJson.bin)) {
-      executables = [packageJson.name];
-    } else if (_.isObject(packageJson.bin)) {
-      executables = _.keys(packageJson.bin);
+  async getModuleExecutablesPair(binPath) {
+    const linkPath = await readlink(binPath);
+    const binName = path.basename(binPath);
+    const moduleNameParts = linkPath.split(path.sep);
+    let moduleName = moduleNameParts[1];
+    if (moduleName[0] === '@') {
+      moduleName += `/${moduleNameParts[2]}`;
     }
-    return [packageJson.name, executables];
+    return [moduleName, binName];
   }
 
   async readShellScripts(dir, done) {

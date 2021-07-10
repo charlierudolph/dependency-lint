@@ -79,9 +79,9 @@ export default class RequiredModuleFinder {
   normalizeModuleNames({ filePath, moduleNames }) {
     return _.chain(moduleNames)
       .map(this.stripLoaders ? ModuleNameParser.stripLoaders : undefined)
-      .reject(ModuleNameParser.isBuiltIn)
       .reject(ModuleNameParser.isRelative)
       .map(ModuleNameParser.stripSubpath)
+      .reject(ModuleNameParser.isBuiltIn)
       .map(name => ({ name, file: filePath }))
       .value();
   }
