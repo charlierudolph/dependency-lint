@@ -2,9 +2,11 @@ import ExecutedModuleFinder from './executed_module_finder';
 import { outputFile } from 'fs-extra';
 import getTmpDir from '../../../test/support/get_tmp_dir';
 import path from 'path';
-import { mkdir, symlink } from 'fs/promises';
+import fs from 'fs';
 import { beforeEach, describe, it } from 'mocha';
 import { expect } from 'chai';
+
+const { mkdir, symlink } = fs.promises;
 
 const examples = [
   {

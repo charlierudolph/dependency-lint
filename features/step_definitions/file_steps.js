@@ -2,12 +2,14 @@ import _ from 'lodash';
 import { addToJsonFile, addToYmlFile } from '../support/file_helpers';
 import { readJson, outputFile } from 'fs-extra';
 import path from 'path';
-import { mkdir, readFile, symlink } from 'fs/promises';
+import fs from 'fs';
 import Promise from 'bluebird';
 import yaml from 'js-yaml';
 import { Given, Then } from 'cucumber';
 import { version } from '../../package.json';
 import { expect } from 'chai';
+
+const { mkdir, readFile, symlink } = fs.promises;
 
 Given(/^I have a file "([^"]*)" which requires "([^"]*)"$/, async function(
   file,
