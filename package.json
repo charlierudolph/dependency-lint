@@ -4,7 +4,7 @@
   "description": "Lints package.json dependencies and devDependencies",
   "main": "index.js",
   "bin": {
-    "dependency-lint": "./bin/dependency-lint.js"
+    "dependency-lint": "./bin/dependency-lint"
   },
   "scripts": {
     "build": "babel src -d dist --ignore '**/*_spec.js'",
@@ -13,7 +13,7 @@
     "prefeature-test": "yarn build",
     "prepublishOnly": "yarn build",
     "feature-test": "yarn run cucumber-test && yarn run self-test",
-    "self-test": "./bin/dependency-lint.js",
+    "self-test": "./bin/dependency-lint",
     "test": "yarn run lint && yarn run unit-test && yarn run feature-test",
     "unit-test": "mocha src"
   },

@@ -8,7 +8,7 @@ import { expect } from 'chai';
 When(
   /^I run it(?: with (--auto-correct|--generate-config))?(?: (?:with|and) the "([^"]*)" format)?$/,
   function(option, format, done) {
-    const file = path.join(__dirname, '..', '..', 'bin', 'dependency-lint.js');
+    const file = path.join(__dirname, '..', '..', 'bin', 'dependency-lint');
     const args = ['--format', format || 'json'];
     if (option) {
       args.push(option);
