@@ -9,12 +9,12 @@ When(
   /^I run it(?: with (--auto-correct|--generate-config))?(?: (?:with|and) the "([^"]*)" format)?$/,
   function(option, format, done) {
     const file = path.join(__dirname, '..', '..', 'bin', 'dependency-lint');
-    const args = ['--format', format || 'json'];
+    const args = [file, '--format', format || 'json'];
     if (option) {
       args.push(option);
     }
     const options = { cwd: this.tmpDir };
-    execFile(file, args, options, (error, stdout, stderr) => {
+    execFile('node', args, options, (error, stdout, stderr) => {
       this.error = error;
       this.stdout = stdout;
       this.stderr = stderr;
