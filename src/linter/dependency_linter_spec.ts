@@ -1,17 +1,22 @@
-import DependencyLinter from './dependency_linter';
-import ERRORS from '../errors';
+import DependencyLinter, { DependencyType, LintInput } from './dependency_linter';
+import { ErrorType } from '../errors';
 import { beforeEach, describe, it } from 'mocha';
 import { expect } from 'chai';
+import { DependencyLintConfig } from '../types';
 
 describe('DependencyLinter', function() {
+  let options: DependencyLintConfig;
+
   beforeEach(function() {
-    this.options = {
+    options = {
       executedModules: {
         npmScripts: {
           dev: ['test'],
         },
         shellScripts: {
           dev: [],
+          ignore: [],
+          root: ''
         },
       },
       ignoreErrors: {
@@ -21,75 +26,83 @@ describe('DependencyLinter', function() {
         unused: [],
       },
       requiredModules: {
+        acornParseProps: {},
         files: {
           dev: ['**/*_spec.js'],
+          ignore: [],
+          root: ''
         },
+        stripLoaders: false,
+        transpilers: [],
       },
-    };
-
-    this.input = {
-      listedModules: { dependencies: [], devDependencies: [] },
-      usedModules: [],
-    };
-
-    this.output = {
-      dependencies: [],
-      devDependencies: [],
-    };
-
-    this.expectOutputToMatch = function() {
-      const dependencyLinter = new DependencyLinter(this.options);
-      this.result = dependencyLinter.lint(this.input);
-      expect(this.result).to.eql(this.output);
     };
   });
 
   describe('not used', function() {
     describe('not listed', function() {
-      beforeEach(function() {
-        const dependencyLinter = new DependencyLinter(this.options);
-        this.result = dependencyLinter.lint(this.input);
-      });
-
       it('returns nothing', function() {
-        this.expectOutputToMatch();
+        // Arrange
+        const dependencyLinter = new DependencyLinter(options);
+        const input: LintInput = {
+          listedModules: [],
+          usedModules: []
+        }
+
+        // Act
+        const result = dependencyLinter.lint(input)
+
+        // Assert
+        expect(result).to.eql([])
       });
     });
 
     describe('listed as dependency', function() {
-      beforeEach(function() {
-        this.input.listedModules.dependencies.push('myModule');
-      });
-
       describe('not ignored', function() {
-        beforeEach(function() {
-          this.output.dependencies.push({
-            name: 'myModule',
-            error: ERRORS.UNUSED,
-            files: [],
-            scripts: [],
-          });
-        });
-
         it('returns error: unused', function() {
-          this.expectOutputToMatch();
+          // Arrange
+          const dependencyLinter = new DependencyLinter(options);
+          const input: LintInput = {
+            listedModules: [{ name: 'myModule', dependencyType: DependencyType.DEPENDENCY }],
+            usedModules: []
+          }
+
+          // Act
+          const result = dependencyLinter.lint(input)
+
+          // Assert
+          expect(result).to.eql([{
+            name: 'myModule',
+            listedDependencyType: DependencyType.DEPENDENCY,
+            fiiles: [],
+            scripts: [],
+            error: ErrorType.UNUSED,
+            errorIgnored: false
+          }])
         });
       });
 
       describe('ignored', function() {
-        beforeEach(function() {
-          this.options.ignoreErrors.unused.push('myModule');
-          this.output.dependencies.push({
-            name: 'myModule',
-            error: ERRORS.UNUSED,
-            errorIgnored: true,
-            files: [],
-            scripts: [],
-          });
-        });
-
         it('returns ignored error: unused', function() {
-          this.expectOutputToMatch();
+          // Arrange
+          options.ignoreErrors.unused.push('myModule');
+          const dependencyLinter = new DependencyLinter(options);
+          const input: LintInput = {
+            listedModules: [{ name: 'myModule', dependencyType: DependencyType.DEPENDENCY }],
+            usedModules: []
+          }
+
+          // Act
+          const result = dependencyLinter.lint(input)
+
+          // Assert
+          expect(result).to.eql([{
+            name: 'myModule',
+            listedDependencyType: DependencyType.DEPENDENCY,
+            fiiles: [],
+            scripts: [],
+            error: ErrorType.UNUSED,
+            errorIgnored: true
+          }])
         });
       });
     });
@@ -103,7 +116,7 @@ describe('DependencyLinter', function() {
         beforeEach(function() {
           this.output.devDependencies.push({
             name: 'myModule',
-            error: ERRORS.UNUSED,
+            error: ErrorType.UNUSED,
             files: [],
             scripts: [],
           });
@@ -116,10 +129,10 @@ describe('DependencyLinter', function() {
 
       describe('on allowed unused list', function() {
         beforeEach(function() {
-          this.options.ignoreErrors.unused.push('myModule');
+          this.options.ignoreErrorType.unused.push('myModule');
           this.output.devDependencies.push({
             name: 'myModule',
-            error: ERRORS.UNUSED,
+            error: ErrorType.UNUSED,
             errorIgnored: true,
             files: [],
             scripts: [],
@@ -149,7 +162,7 @@ describe('DependencyLinter', function() {
             name: 'myModule',
             files: ['server.js'],
             scripts: [],
-            error: ERRORS.MISSING,
+            error: ErrorType.MISSING,
           });
         });
 
@@ -160,12 +173,12 @@ describe('DependencyLinter', function() {
 
       describe('ignored', function() {
         beforeEach(function() {
-          this.options.ignoreErrors.missing.push('myModule');
+          this.options.ignoreErrorType.missing.push('myModule');
           this.output.dependencies.push({
             name: 'myModule',
             files: ['server.js'],
             scripts: [],
-            error: ERRORS.MISSING,
+            error: ErrorType.MISSING,
             errorIgnored: true,
           });
         });
@@ -202,7 +215,7 @@ describe('DependencyLinter', function() {
             name: 'myModule',
             files: ['server.js'],
             scripts: [],
-            error: ERRORS.SHOULD_BE_DEPENDENCY,
+            error: ErrorType.SHOULD_BE_DEPENDENCY,
           });
         });
 
@@ -213,12 +226,12 @@ describe('DependencyLinter', function() {
 
       describe('ignored', function() {
         beforeEach(function() {
-          this.options.ignoreErrors.shouldBeDependency.push('myModule');
+          this.options.ignoreErrorType.shouldBeDependency.push('myModule');
           this.output.devDependencies.push({
             name: 'myModule',
             files: ['server.js'],
             scripts: [],
-            error: ERRORS.SHOULD_BE_DEPENDENCY,
+            error: ErrorType.SHOULD_BE_DEPENDENCY,
             errorIgnored: true,
           });
         });
@@ -246,7 +259,7 @@ describe('DependencyLinter', function() {
             name: 'myModule',
             files: ['server.js'],
             scripts: [],
-            error: ERRORS.SHOULD_BE_DEPENDENCY,
+            error: ErrorType.SHOULD_BE_DEPENDENCY,
           });
         });
 
@@ -257,12 +270,12 @@ describe('DependencyLinter', function() {
 
       describe('ignored', function() {
         beforeEach(function() {
-          this.options.ignoreErrors.shouldBeDependency.push('myModule');
+          this.options.ignoreErrorType.shouldBeDependency.push('myModule');
           this.output.devDependencies.push({
             name: 'myModule',
             files: ['server.js'],
             scripts: [],
-            error: ERRORS.SHOULD_BE_DEPENDENCY,
+            error: ErrorType.SHOULD_BE_DEPENDENCY,
             errorIgnored: true,
           });
         });
@@ -290,7 +303,7 @@ describe('DependencyLinter', function() {
             name: 'myModule',
             files: ['server_spec.js'],
             scripts: [],
-            error: ERRORS.MISSING,
+            error: ErrorType.MISSING,
           });
         });
 
@@ -301,12 +314,12 @@ describe('DependencyLinter', function() {
 
       describe('ignored', function() {
         beforeEach(function() {
-          this.options.ignoreErrors.missing.push('myModule');
+          this.options.ignoreErrorType.missing.push('myModule');
           this.output.devDependencies.push({
             name: 'myModule',
             files: ['server_spec.js'],
             scripts: [],
-            error: ERRORS.MISSING,
+            error: ErrorType.MISSING,
             errorIgnored: true,
           });
         });
@@ -328,7 +341,7 @@ describe('DependencyLinter', function() {
             name: 'myModule',
             files: ['server_spec.js'],
             scripts: [],
-            error: ERRORS.SHOULD_BE_DEV_DEPENDENCY,
+            error: ErrorType.SHOULD_BE_DEV_DEPENDENCY,
           });
         });
 
@@ -339,12 +352,12 @@ describe('DependencyLinter', function() {
 
       describe('ignored', function() {
         beforeEach(function() {
-          this.options.ignoreErrors.shouldBeDevDependency.push('myModule');
+          this.options.ignoreErrorType.shouldBeDevDependency.push('myModule');
           this.output.dependencies.push({
             name: 'myModule',
             files: ['server_spec.js'],
             scripts: [],
-            error: ERRORS.SHOULD_BE_DEV_DEPENDENCY,
+            error: ErrorType.SHOULD_BE_DEV_DEPENDENCY,
             errorIgnored: true,
           });
         });
@@ -389,7 +402,7 @@ describe('DependencyLinter', function() {
             name: 'myModule',
             files: ['server_spec.js'],
             scripts: [],
-            error: ERRORS.SHOULD_BE_DEV_DEPENDENCY,
+            error: ErrorType.SHOULD_BE_DEV_DEPENDENCY,
           });
         });
 
@@ -400,12 +413,12 @@ describe('DependencyLinter', function() {
 
       describe('ignored', function() {
         beforeEach(function() {
-          this.options.ignoreErrors.shouldBeDevDependency.push('myModule');
+          this.options.ignoreErrorType.shouldBeDevDependency.push('myModule');
           this.output.dependencies.push({
             name: 'myModule',
             files: ['server_spec.js'],
             scripts: [],
-            error: ERRORS.SHOULD_BE_DEV_DEPENDENCY,
+            error: ErrorType.SHOULD_BE_DEV_DEPENDENCY,
             errorIgnored: true,
           });
         });
@@ -433,7 +446,7 @@ describe('DependencyLinter', function() {
             name: 'myModule',
             files: ['server.js', 'server_spec.js'],
             scripts: [],
-            error: ERRORS.MISSING,
+            error: ErrorType.MISSING,
           });
         });
 
@@ -444,12 +457,12 @@ describe('DependencyLinter', function() {
 
       describe('ignored', function() {
         beforeEach(function() {
-          this.options.ignoreErrors.missing.push('myModule');
+          this.options.ignoreErrorType.missing.push('myModule');
           this.output.dependencies.push({
             name: 'myModule',
             files: ['server.js', 'server_spec.js'],
             scripts: [],
-            error: ERRORS.MISSING,
+            error: ErrorType.MISSING,
             errorIgnored: true,
           });
         });
@@ -486,7 +499,7 @@ describe('DependencyLinter', function() {
             name: 'myModule',
             files: ['server.js', 'server_spec.js'],
             scripts: [],
-            error: ERRORS.SHOULD_BE_DEPENDENCY,
+            error: ErrorType.SHOULD_BE_DEPENDENCY,
           });
         });
 
@@ -497,12 +510,12 @@ describe('DependencyLinter', function() {
 
       describe('ignored', function() {
         beforeEach(function() {
-          this.options.ignoreErrors.shouldBeDependency.push('myModule');
+          this.options.ignoreErrorType.shouldBeDependency.push('myModule');
           this.output.devDependencies.push({
             name: 'myModule',
             files: ['server.js', 'server_spec.js'],
             scripts: [],
-            error: ERRORS.SHOULD_BE_DEPENDENCY,
+            error: ErrorType.SHOULD_BE_DEPENDENCY,
             errorIgnored: true,
           });
         });
@@ -530,7 +543,7 @@ describe('DependencyLinter', function() {
             name: 'myModule',
             files: ['server.js', 'server_spec.js'],
             scripts: [],
-            error: ERRORS.SHOULD_BE_DEPENDENCY,
+            error: ErrorType.SHOULD_BE_DEPENDENCY,
           });
         });
 
@@ -541,12 +554,12 @@ describe('DependencyLinter', function() {
 
       describe('ignored', function() {
         beforeEach(function() {
-          this.options.ignoreErrors.shouldBeDependency.push('myModule');
+          this.options.ignoreErrorType.shouldBeDependency.push('myModule');
           this.output.devDependencies.push({
             name: 'myModule',
             files: ['server.js', 'server_spec.js'],
             scripts: [],
-            error: ERRORS.SHOULD_BE_DEPENDENCY,
+            error: ErrorType.SHOULD_BE_DEPENDENCY,
             errorIgnored: true,
           });
         });

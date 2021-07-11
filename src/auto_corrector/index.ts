@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import ERRORS from '../errors';
 import sortedObject from 'sorted-object';
 

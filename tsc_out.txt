@@ -1,0 +1,165 @@
+src/auto_corrector/index.ts(1,15): error TS7016: Could not find a declaration file for module 'lodash'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/lodash/lodash.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/lodash` if it exists or add a new declaration (.d.ts) file containing `declare module 'lodash';`
+src/auto_corrector/index.ts(2,20): error TS7016: Could not find a declaration file for module '../errors'. '/Users/charlesrudolph/Code/dependency-lint/src/errors.js' implicitly has an 'any' type.
+src/auto_corrector/index.ts(3,26): error TS7016: Could not find a declaration file for module 'sorted-object'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/sorted-object/lib/sorted-object.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/sorted-object` if it exists or add a new declaration (.d.ts) file containing `declare module 'sorted-object';`
+src/auto_corrector/index.ts(6,13): error TS7031: Binding element 'packageJson' implicitly has an 'any' type.
+src/auto_corrector/index.ts(6,26): error TS7031: Binding element 'results' implicitly has an 'any' type.
+src/auto_corrector/index.ts(12,14): error TS7006: Parameter 'results' implicitly has an 'any' type.
+src/auto_corrector/index.ts(14,21): error TS7018: Object literal's property 'dependencies' implicitly has an 'any[]' type.
+src/auto_corrector/index.ts(14,39): error TS7018: Object literal's property 'devDependencies' implicitly has an 'any[]' type.
+src/auto_corrector/index.ts(21,11): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ dependencies: any[]; devDependencies: any[]; }'.
+  No index signature with a parameter of type 'string' was found on type '{ dependencies: any[]; devDependencies: any[]; }'.
+src/auto_corrector/index.ts(28,3): error TS7030: Not all code paths return a value.
+src/auto_corrector/index.ts(28,15): error TS7031: Binding element 'module' implicitly has an 'any' type.
+src/auto_corrector/index.ts(28,23): error TS7031: Binding element 'type' implicitly has an 'any' type.
+src/auto_corrector/index.ts(30,7): error TS7030: Not all code paths return a value.
+src/auto_corrector/index.ts(35,25): error TS7006: Parameter 'packageJson' implicitly has an 'any' type.
+src/auto_corrector/index.ts(47,16): error TS7006: Parameter 'packageJson' implicitly has an 'any' type.
+src/auto_corrector/index.ts(51,18): error TS7031: Binding element 'changes' implicitly has an 'any' type.
+src/auto_corrector/index.ts(51,27): error TS7031: Binding element 'packageJson' implicitly has an 'any' type.
+src/configuration_loader/index.ts(1,15): error TS7016: Could not find a declaration file for module 'lodash'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/lodash/lodash.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/lodash` if it exists or add a new declaration (.d.ts) file containing `declare module 'lodash';`
+src/configuration_loader/index.ts(2,34): error TS7016: Could not find a declaration file for module 'fs-extra'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/fs-extra/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/fs-extra` if it exists or add a new declaration (.d.ts) file containing `declare module 'fs-extra';`
+src/configuration_loader/index.ts(3,18): error TS2307: Cannot find module 'path' or its corresponding type declarations.
+src/configuration_loader/index.ts(4,18): error TS7016: Could not find a declaration file for module 'js-yaml'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/js-yaml/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/js-yaml` if it exists or add a new declaration (.d.ts) file containing `declare module 'js-yaml';`
+src/configuration_loader/index.ts(8,10): error TS2339: Property 'defaultConfigPath' does not exist on type 'ConfigurationLoader'.
+src/configuration_loader/index.ts(9,7): error TS2304: Cannot find name '__dirname'.
+src/configuration_loader/index.ts(17,14): error TS7006: Parameter 'dir' implicitly has an 'any' type.
+src/configuration_loader/index.ts(22,33): error TS7006: Parameter 'objValue' implicitly has an 'any' type.
+src/configuration_loader/index.ts(22,43): error TS7006: Parameter 'srcValue' implicitly has an 'any' type.
+src/configuration_loader/index.ts(30,20): error TS7006: Parameter 'filePath' implicitly has an 'any' type.
+src/configuration_loader/index.ts(36,33): error TS2339: Property 'defaultConfigPath' does not exist on type 'ConfigurationLoader'.
+src/configuration_loader/index.ts(39,24): error TS7006: Parameter 'dir' implicitly has an 'any' type.
+src/formatters/error_messages.ts(1,20): error TS7016: Could not find a declaration file for module '../errors'. '/Users/charlesrudolph/Code/dependency-lint/src/errors.js' implicitly has an 'any' type.
+src/formatters/json_formatter.ts(1,15): error TS7016: Could not find a declaration file for module 'lodash'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/lodash/lodash.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/lodash` if it exists or add a new declaration (.d.ts) file containing `declare module 'lodash';`
+src/formatters/json_formatter.ts(6,17): error TS7031: Binding element 'stream' implicitly has an 'any' type.
+src/formatters/json_formatter.ts(7,10): error TS2339: Property 'stream' does not exist on type 'JsonFormatter'.
+src/formatters/json_formatter.ts(11,11): error TS7031: Binding element 'fixes' implicitly has an 'any' type.
+src/formatters/json_formatter.ts(11,18): error TS7031: Binding element 'results' implicitly has an 'any' type.
+src/formatters/json_formatter.ts(15,40): error TS7006: Parameter 'modules' implicitly has an 'any' type.
+src/formatters/json_formatter.ts(15,49): error TS7006: Parameter 'type' implicitly has an 'any' type.
+src/formatters/json_formatter.ts(16,31): error TS7006: Parameter 'module' implicitly has an 'any' type.
+src/formatters/json_formatter.ts(22,17): error TS2339: Property 'stream' does not exist on type 'JsonFormatter'.
+src/formatters/summary_formatter.ts(1,15): error TS7016: Could not find a declaration file for module 'lodash'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/lodash/lodash.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/lodash` if it exists or add a new declaration (.d.ts) file containing `declare module 'lodash';`
+src/formatters/summary_formatter.ts(7,17): error TS7031: Binding element 'minimal' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(7,26): error TS7031: Binding element 'stream' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(8,10): error TS2339: Property 'minimal' does not exist on type 'SummaryFormatter'.
+src/formatters/summary_formatter.ts(9,10): error TS2339: Property 'stream' does not exist on type 'SummaryFormatter'.
+src/formatters/summary_formatter.ts(13,11): error TS7031: Binding element 'fixes' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(13,18): error TS7031: Binding element 'results' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(19,16): error TS2339: Property 'minimal' does not exist on type 'SummaryFormatter'.
+src/formatters/summary_formatter.ts(22,14): error TS7031: Binding element 'error' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(22,21): error TS7031: Binding element 'errorIgnored' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(28,12): error TS2554: Expected 2 arguments, but got 1.
+src/formatters/summary_formatter.ts(33,12): error TS2554: Expected 2 arguments, but got 1.
+src/formatters/summary_formatter.ts(35,15): error TS2339: Property 'minimal' does not exist on type 'SummaryFormatter'.
+src/formatters/summary_formatter.ts(36,12): error TS2554: Expected 2 arguments, but got 1.
+src/formatters/summary_formatter.ts(40,18): error TS7031: Binding element 'error' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(40,25): error TS7031: Binding element 'errorIgnored' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(40,39): error TS7031: Binding element 'files' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(40,46): error TS7031: Binding element 'name' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(40,52): error TS7031: Binding element 'scripts' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(40,63): error TS7006: Parameter 'fixed' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(56,10): error TS7006: Parameter 'str' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(56,15): error TS7006: Parameter 'count' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(62,9): error TS7006: Parameter 'data' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(62,15): error TS7006: Parameter 'indent' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(69,14): error TS7006: Parameter 'str' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(71,17): error TS2339: Property 'stream' does not exist on type 'SummaryFormatter'.
+src/formatters/summary_formatter.ts(74,14): error TS7006: Parameter 'results' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(87,15): error TS7006: Parameter 'usage' implicitly has an 'any' type.
+src/formatters/summary_formatter.ts(101,17): error TS7006: Parameter 'results' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(1,15): error TS7016: Could not find a declaration file for module 'lodash'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/lodash/lodash.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/lodash` if it exists or add a new declaration (.d.ts) file containing `declare module 'lodash';`
+src/linter/dependency_linter.ts(3,20): error TS7016: Could not find a declaration file for module '../errors'. '/Users/charlesrudolph/Code/dependency-lint/src/errors.js' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(4,23): error TS7016: Could not find a declaration file for module 'minimatch'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/minimatch/minimatch.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/minimatch` if it exists or add a new declaration (.d.ts) file containing `declare module 'minimatch';`
+src/linter/dependency_linter.ts(8,15): error TS7006: Parameter 'config' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(9,10): error TS2339: Property 'config' does not exist on type 'DependencyLinter'.
+src/linter/dependency_linter.ts(10,10): error TS2551: Property 'devFiles' does not exist on type 'DependencyLinter'. Did you mean 'isDevFile'?
+src/linter/dependency_linter.ts(11,12): error TS2339: Property 'config' does not exist on type 'DependencyLinter'.
+src/linter/dependency_linter.ts(12,12): error TS2339: Property 'config' does not exist on type 'DependencyLinter'.
+src/linter/dependency_linter.ts(14,10): error TS2339: Property 'ignoreErrors' does not exist on type 'DependencyLinter'.
+src/linter/dependency_linter.ts(17,12): error TS2339: Property 'ignoreErrors' does not exist on type 'DependencyLinter'.
+src/linter/dependency_linter.ts(17,39): error TS2339: Property 'config' does not exist on type 'DependencyLinter'.
+src/linter/dependency_linter.ts(28,10): error TS7031: Binding element 'listedModules' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(28,25): error TS7031: Binding element 'usedModules' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(31,7): error TS7018: Object literal's property 'dependencies' implicitly has an 'any[]' type.
+src/linter/dependency_linter.ts(32,7): error TS7018: Object literal's property 'devDependencies' implicitly has an 'any[]' type.
+src/linter/dependency_linter.ts(51,34): error TS7006: Parameter 'moduleData' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(52,40): error TS7018: Object literal's property 'files' implicitly has an 'any[]' type.
+src/linter/dependency_linter.ts(52,51): error TS7018: Object literal's property 'scripts' implicitly has an 'any[]' type.
+src/linter/dependency_linter.ts(54,26): error TS2339: Property 'error' does not exist on type '{ name: any; files: any[]; scripts: any[]; }'.
+src/linter/dependency_linter.ts(56,11): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ dependencies: any[]; devDependencies: any[]; }'.
+  No index signature with a parameter of type 'string' was found on type '{ dependencies: any[]; devDependencies: any[]; }'.
+src/linter/dependency_linter.ts(62,23): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ dependencies: any[]; devDependencies: any[]; }'.
+  No index signature with a parameter of type 'string' was found on type '{ dependencies: any[]; devDependencies: any[]; }'.
+src/linter/dependency_linter.ts(63,23): error TS7006: Parameter 'result' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(63,23): error TS7030: Not all code paths return a value.
+src/linter/dependency_linter.ts(68,7): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ dependencies: any[]; devDependencies: any[]; }'.
+  No index signature with a parameter of type 'string' was found on type '{ dependencies: any[]; devDependencies: any[]; }'.
+src/linter/dependency_linter.ts(74,20): error TS7031: Binding element 'error' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(74,27): error TS7031: Binding element 'name' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(75,24): error TS2339: Property 'ignoreErrors' does not exist on type 'DependencyLinter'.
+src/linter/dependency_linter.ts(75,45): error TS7006: Parameter 'regex' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(78,21): error TS7031: Binding element 'files' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(78,28): error TS7031: Binding element 'scripts' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(85,13): error TS7006: Parameter 'file' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(86,24): error TS2551: Property 'devFiles' does not exist on type 'DependencyLinter'. Did you mean 'isDevFile'?
+src/linter/dependency_linter.ts(86,34): error TS7006: Parameter 'pattern' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(89,15): error TS7006: Parameter 'script' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(90,24): error TS2339: Property 'config' does not exist on type 'DependencyLinter'.
+src/linter/dependency_linter.ts(90,63): error TS7006: Parameter 'regex' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(95,19): error TS7006: Parameter 'usedModule' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(95,31): error TS7006: Parameter 'status' implicitly has an 'any' type.
+src/linter/dependency_linter.ts(95,39): error TS7006: Parameter 'result' implicitly has an 'any' type.
+src/linter/index.ts(1,15): error TS7016: Could not find a declaration file for module 'lodash'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/lodash/lodash.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/lodash` if it exists or add a new declaration (.d.ts) file containing `declare module 'lodash';`
+src/linter/index.ts(4,30): error TS7016: Could not find a declaration file for module './used_module_finder'. '/Users/charlesrudolph/Code/dependency-lint/src/linter/used_module_finder/index.js' implicitly has an 'any' type.
+src/linter/index.ts(7,15): error TS7006: Parameter 'config' implicitly has an 'any' type.
+src/linter/index.ts(8,10): error TS2339: Property 'dependencyLinter' does not exist on type 'Linter'.
+src/linter/index.ts(9,10): error TS2339: Property 'installedModuleValidater' does not exist on type 'Linter'.
+src/linter/index.ts(10,10): error TS2339: Property 'usedModuleFinder' does not exist on type 'Linter'.
+src/linter/index.ts(13,20): error TS7006: Parameter 'packageJson' implicitly has an 'any' type.
+src/linter/index.ts(16,17): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
+  No index signature with a parameter of type 'string' was found on type '{}'.
+src/linter/index.ts(21,16): error TS7031: Binding element 'dir' implicitly has an 'any' type.
+src/linter/index.ts(21,21): error TS7031: Binding element 'packageJson' implicitly has an 'any' type.
+src/linter/index.ts(22,16): error TS2339: Property 'installedModuleValidater' does not exist on type 'Linter'.
+src/linter/index.ts(23,36): error TS2339: Property 'usedModuleFinder' does not exist on type 'Linter'.
+src/linter/index.ts(25,17): error TS2339: Property 'dependencyLinter' does not exist on type 'Linter'.
+src/linter/installed_module_validator.ts(1,15): error TS7016: Could not find a declaration file for module 'lodash'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/lodash/lodash.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/lodash` if it exists or add a new declaration (.d.ts) file containing `declare module 'lodash';`
+src/linter/installed_module_validator.ts(2,34): error TS7016: Could not find a declaration file for module 'fs-extra'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/fs-extra/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/fs-extra` if it exists or add a new declaration (.d.ts) file containing `declare module 'fs-extra';`
+src/linter/installed_module_validator.ts(3,18): error TS2307: Cannot find module 'path' or its corresponding type declarations.
+src/linter/installed_module_validator.ts(4,21): error TS7016: Could not find a declaration file for module 'bluebird'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/bluebird/js/release/bluebird.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/bluebird` if it exists or add a new declaration (.d.ts) file containing `declare module 'bluebird';`
+src/linter/installed_module_validator.ts(5,20): error TS7016: Could not find a declaration file for module 'semver'. '/Users/charlesrudolph/Code/dependency-lint/node_modules/semver/semver.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/semver` if it exists or add a new declaration (.d.ts) file containing `declare module 'semver';`
+src/linter/installed_module_validator.ts(8,21): error TS7006: Parameter 'issues' implicitly has an 'any' type.
+src/linter/installed_module_validator.ts(10,10): error TS7031: Binding element 'name' implicitly has an 'any' type.
+src/linter/installed_module_validator.ts(10,16): error TS7031: Binding element 'status' implicitly has an 'any' type.
+src/linter/installed_module_validator.ts(20,27): error TS7031: Binding element 'dir' implicitly has an 'any' type.
+src/linter/installed_module_validator.ts(20,32): error TS7031: Binding element 'name' implicitly has an 'any' type.
+src/linter/installed_module_validator.ts(20,38): error TS7031: Binding element 'version' implicitly has an 'any' type.
+src/linter/installed_module_validator.ts(34,7): error TS7030: Not all code paths return a value.
+src/linter/installed_module_validator.ts(39,20): error TS7031: Binding element 'dir' implicitly has an 'any' type.
+src/linter/installed_module_validator.ts(39,25): error TS7031: Binding element 'packageJson' implicitly has an 'any' type.
+src/linter/installed_module_validator.ts(45,11): error TS7034: Variable 'issues' implicitly has type 'any[]' in some locations where its type cannot be determined.
+src/linter/installed_module_validator.ts(47,29): error TS7006: Parameter 'version' implicitly has an 'any' type.
+src/linter/installed_module_validator.ts(47,38): error TS7006: Parameter 'name' implicitly has an 'any' type.
+src/linter/installed_module_validator.ts(59,46): error TS7005: Variable 'issues' implicitly has an 'any[]' type.
+src/util/exit_with_error.ts(2,18): error TS2307: Cannot find module 'util' or its corresponding type declarations.
+src/util/exit_with_error.ts(4,39): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/util/exit_with_error.ts(6,3): error TS2584: Cannot find name 'console'. Do you need to change your target library? Try changing the 'lib' compiler option to include 'dom'.
+src/util/exit_with_error.ts(7,3): error TS2580: Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+src/util/prepend_to_error.ts(1,31): error TS7006: Parameter 'str' implicitly has an 'any' type.
+src/util/prepend_to_error.ts(1,36): error TS7006: Parameter 'prefix' implicitly has an 'any' type.
+src/util/prepend_to_error.ts(9,40): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/util/prepend_to_error.ts(9,45): error TS7006: Parameter 'prefix' implicitly has an 'any' type.

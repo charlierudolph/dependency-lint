@@ -1,7 +1,5 @@
-import _ from 'lodash';
 import { access, readJson } from 'fs-extra';
 import path from 'path';
-import Promise from 'bluebird';
 import semver from 'semver';
 
 export default class InstalledModuleValidater {
