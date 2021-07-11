@@ -13,7 +13,7 @@
     "prefeature-test": "yarn build",
     "prepublishOnly": "yarn build",
     "feature-test": "yarn run cucumber-test && yarn run self-test",
-    "self-test": "./bin/dependency-lint",
+    "self-test": "node ./bin/dependency-lint",
     "test": "yarn run lint && yarn run unit-test && yarn run feature-test",
     "unit-test": "mocha src"
   },
