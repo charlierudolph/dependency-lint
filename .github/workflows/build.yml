@@ -12,6 +12,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
+          - windows-latest
         node-version: [12.x, 14.x, 16.x]
       fail-fast: false
 
@@ -22,4 +23,5 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: yarn install
-    - run: yarn test
+    - run: yarn build
+    - run: yarn self-test
