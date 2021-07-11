@@ -96,6 +96,7 @@ export default class ExecutedModulesFinder {
       linkRealPath
     );
     const binName = path.basename(binPath);
+    console.log(binPath, linkRealPath, linkRelativePath);
     const moduleNameParts = linkRelativePath.split(path.sep);
     let moduleName = moduleNameParts[0];
     if (moduleName[0] === '@') {
