@@ -1,5 +1,14 @@
 # Changelog
 
+### 7.0.0 (2021-07-10)
+
+* Drop support for Node 8, 10
+* Update how listed dependency executables are found
+  * BEFORE: Search `node_modules/*/package.json` and `node_modules/*/*/package.json` files for executable configuration
+  * AFTER: Search the executables in `node_modules/.bin` and follow the symbolic links to determine the package
+
+---
+
 ### 6.0.0 (2019-04-13)
 
 * Drop support for Node 6
