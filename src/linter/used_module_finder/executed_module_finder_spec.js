@@ -112,6 +112,7 @@ describe('ExecutedModuleFinder', function() {
             );
             await mkdir(path.dirname(binPath), { recursive: true });
             await symlink(linkPath, binPath);
+            await outputFile(path.join(binPath, '..', linkPath), '');
           }
           if (file) {
             const fullPath = path.join(this.tmpDir, file.path);

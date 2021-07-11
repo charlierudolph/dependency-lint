@@ -134,6 +134,7 @@ Given(/^the "([^"]*)" module exposes the executable "([^"]*)"$/, async function(
   const linkPath = path.join('..', name, 'path/to/executable');
   await mkdir(path.dirname(binPath), { recursive: true });
   await symlink(linkPath, binPath);
+  await outputFile(path.join(binPath, '..', linkPath), '');
 });
 
 Then(/^now I have the file "([^"]*)" with the default config$/, async function(
