@@ -1,5 +1,11 @@
 # Changelog
 
+### 7.1.0 (2021-07-24)
+
+* Add windows testing to CI
+* Update how listed dependency executables are found to reading the `package.json` files of your `dependencies` and `devDependecies`. Thus it is no longer possible to find missing modules via executable usage.
+
+---
 
 ### 7.0.1 (2021-07-10)
 
@@ -10,7 +16,7 @@
 ### 7.0.0 (2021-07-10)
 
 * Drop support for Node 8, 10
-* Update how listed dependency executables are found
+* Update how listed dependency executables are found (**NOTE**: this was changed again in 7.1.0)
   * BEFORE: Search `node_modules/*/package.json` and `node_modules/*/*/package.json` files for executable configuration
   * AFTER: Search the executables in `node_modules/.bin` and follow the symbolic links to determine the package
 
