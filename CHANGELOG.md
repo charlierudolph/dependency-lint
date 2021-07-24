@@ -1,6 +1,6 @@
 # Changelog
 
-### 7.1.0 (2021-07-10)
+### 7.1.0 (2021-07-24)
 
 * Add windows testing to CI
 * Update how listed dependency executables are found but reading the `package.json` files only of your `dependencies` and `devDependecies`. Thus it is no longer possible to find missing modules via executables.
