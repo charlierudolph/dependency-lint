@@ -22,6 +22,7 @@ const examples = [
       bin: 'path/to/executable',
     },
     packageJson: {
+      dependencies: { myModule: '0.0.1' },
       scripts: { test: 'myModule --opt arg' },
     },
   },
@@ -34,6 +35,7 @@ const examples = [
       bin: { myExecutable: 'path/to/executable' },
     },
     packageJson: {
+      dependencies: { myModule: '0.0.1' },
       scripts: { test: 'myExecutable --opt arg' },
     },
   },
@@ -46,6 +48,7 @@ const examples = [
       bin: { myExecutable: 'path/to/executable' },
     },
     packageJson: {
+      dependencies: { '@myOrganization/myModule': '0.0.1' },
       scripts: { test: 'myExecutable --opt arg' },
     },
   },
@@ -59,6 +62,7 @@ const examples = [
       bin: { myExecutable: 'path/to/executable' },
     },
     packageJson: {
+      dependencies: { myModule: '0.0.1' },
       scripts: { test: 'othermyExecutable --opt arg' },
     },
   },
@@ -74,7 +78,9 @@ const examples = [
       name: 'myModule',
       bin: { myExecutable: 'path/to/executable' },
     },
-    packageJson: {},
+    packageJson: {
+      dependencies: { myModule: '0.0.1' },
+    },
   },
 ];
 

@@ -13,8 +13,11 @@ export default class ExecutedModulesFinder {
   }
 
   async find({ dir, packageJson }) {
+    const installedModules = _.keys(packageJson.devDependencies).concat(
+      _.keys(packageJson.dependencies)
+    );
     const [moduleExecutables, shellScripts] = await Promise.all([
-      this.getModuleExecutables(dir),
+      this.getModuleExecutables(installedModules, dir),
       this.readShellScripts(dir),
     ]);
     const packageJsonScripts = packageJson.scripts || {};
@@ -70,9 +73,11 @@ export default class ExecutedModulesFinder {
     return result;
   }
 
-  async getModuleExecutables(dir) {
+  async getModuleExecutables(installedModules, dir) {
     const nodeModulesPath = path.join(dir, 'node_modules');
-    const files = await glob(`${nodeModulesPath}/{*,*/*}/package.json`);
+    const files = installedModules.map(x =>
+      path.join(nodeModulesPath, x, 'package.json')
+    );
     return _.fromPairs(await Promise.map(files, this.getModuleExecutablesPair));
   }
 
